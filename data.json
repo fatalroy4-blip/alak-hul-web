@@ -1,0 +1,314 @@
+{
+  "character": "Alak Hul",
+  "classLine": "CLÉRIGO · DOMINIO DE LA LUZ",
+  "subtitle": "Trucos, conjuros y herramientas de combate",
+  "spells": [
+    {
+      "name": "Llama sagrada",
+      "level": 0,
+      "description": "Una criatura dentro del alcance debe superar una TS de Destreza o recibir 1d8 puntos de daño radiante. No hay ventaja por cubrirse del ataque. El daño aumenta a nivel 5 (2d8), a nivel 11 (3d8) y a nivel 17 (4d8).\nTruco, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies\nDuración: Instantáneo\nTirada de salvación: Destreza niega\nAtaque: Contra salvación 1d8 radiante\nListas de conjuros: Conjuros de clérigo\nUn resplandor similar al de una llama desciende sobre una criatura que puedes ver dentro del alcance. El objetivo debe superar una tirada de salvación de Destreza para no recibir 1d8 puntos de daño radiante. El objetivo no obtiene ningún beneficio por cubrirse para esta tirada de salvación.\nEl daño del conjuro aumenta en 1d8 cuando subes al nivel 5 (2d8), al nivel 11 (3d8) y al nivel 17 (4d8).",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Guía",
+      "level": 0,
+      "description": "Una criatura voluntaria tocada, una vez antes de que acabe el conjuro, puede tirar 1d4 y sumar el resultado a una prueba de característica de su elección. Puede tirar el dado antes o después de hacer la prueba. Luego el conjuro termina.\nTruco, adivinación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Concentración 1 minuto\nListas de conjuros: Conjuros de clérigo y Conjuros de druida\nTocas a una criatura voluntaria. Una vez antes de que el conjuro termine, el objetivo puede tirar 1d4 y sumar el resultado a una prueba de característica de su elección. Puede tirar el dado antes o después de hacer la prueba. Luego el conjuro termina.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Reparar a los moribundos",
+      "level": 0,
+      "description": "Tocas a una criatura viva que tenga 0 puntos de golpe. La criatura se estabiliza. Este conjuro no tiene efecto sobre no muertos ni constructos.\nTruco, nigromancia\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Instantáneo\nListas de conjuros: Conjuros de clérigo\nTocas a una criatura viva que tenga 0 puntos de golpe. La criatura se estabiliza. Este conjuro no tiene efecto sobre no muertos ni constructos.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Luz",
+      "level": 0,
+      "description": "Un objeto de no más de 10 pies emite luz brillante del color que quieras en un radio de 20 pies y luz tenue en 20 pies adicionales. Si el portador del objeto es hostil, debe superar una TS de Destreza para evitar el conjuro.\nTruco, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, M (una luciérnaga o musgo fosforescente)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: 1 hora\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo, Conjuros de hechicero y Conjuros de mago\nTocas un objeto de no más de 10 pies en cualquier dimensión. Hasta que el conjuro termine, el objeto emite luz brillante en un radio de 20 pies y luz tenue en otros 20 pies adicionales. La luz puede ser del color que quieras. Cubrir completamente el objeto con algo opaco bloquea la luz. El conjuro termina si lo lanzas otra vez o si lo disipas como acción.\nSi eliges como objetivo a un objeto que una criatura hostil lleva puesto o transporta, dicha criatura debe superar una tirada de salvación de Destreza para evitar el conjuro.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Taumaturgia",
+      "level": 0,
+      "description": "Realizas una maravilla menor dentro del alcance: tu voz retumba hasta 3 veces más; las llamas titilan, se avivan, debilitan o cambian de color; provocas temblores inofensivos; creas un sonido en un punto; una puerta o ventana se abre o cierra de golpe o cambias tus ojos.\nTruco, transmutación\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: 1 minuto\nListas de conjuros: Conjuros de clérigo\nRealizas una maravilla menor, una muestra de poder sobrenatural, dentro del alcance. Creas uno de los siguientes efectos mágicos dentro del alcance:\nTu voz retumba hasta tres veces igual de fuerte que tu tono normal durante 1 minuto.\nHaces que las llamas titilen, se aviven, se debiliten o cambien de color durante 1 minuto.\nProvocas temblores inofensivos en el suelo durante 1 minuto.\nCreas un sonido instantáneo que se origina en un punto que elijas dentro del alcance, como el sonido sordo de un trueno, el graznido de un cuervo o unos susurros ominosos.\nHaces que una puerta o una ventana se abra de repente o se cierre dando un golpe.\nAlteras la apariencia de tus ojos durante 1 minuto.\nSi lanzas este conjuro varias veces, puedes tener hasta tres de estos efectos de 1 minuto activos a la vez. Puedes disipar uno de estos efectos como acción.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Reparar",
+      "level": 0,
+      "description": "Repara una única rotura o rasgadura (no mayor de 1 pies) de un objeto que tocas, como una malla metálica rota, las dos mitades de una llave, una capa rasgada o una bota de vino que gotea. No deja rastro del daño anterior.\nTruco, transmutación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (dos magnetitas)\nTiempo de lanzamiento: 1 minuto\nAlcance: Toque\nDuración: Instantáneo\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo, Conjuros de druida, Conjuros de hechicero y Conjuros de mago\nEste conjuro repara una única rotura o rasgadura de un objeto que tocas, como una malla metálica rota, las dos mitades de una llave, una capa rasgada o una bota de vino que gotea. Mientras la rotura o rasgadura no sea mayor de 1 pies en cualquier dimensión, la remiendas y no dejas ningún rastro del daño anterior.\nEste conjuro puede reparar físicamente un objeto mágico o un constructo, pero no puede restaurar su magia.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Resistencia",
+      "level": 0,
+      "description": "Tocas a una criatura voluntaria. Una vez antes de que el conjuro termine, puede tirar 1d4 y añadir el resultado a una tirada de salvación de su elección. Puede tirar el dado antes o después de hacer la TS. Entonces, termina el conjuro.\nTruco, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una capa en miniatura)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Concentración 1 minuto\nListas de conjuros: Conjuros de clérigo y Conjuros de druida\nTocas a una criatura voluntaria. Una vez antes de que el conjuro termine, el objetivo puede tirar 1d4 y añadir el resultado a una tirada de salvación de su elección. Puede tirar el dado antes o después de hacer la tirada de salvación. Entonces, termina el conjuro.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Curar Heridas",
+      "level": 1,
+      "description": "Una criatura que tocas recupera un número de puntos de golpe igual a 1d8/nivel de conjuro + tu modificador por característica para lanzar conjuros. Este conjuro no tiene efecto ni en no muertos ni en constructos.\nNivel 1, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Instantáneo\nListas de conjuros: Conjuros de paladín, Conjuros de bardo, Conjuros de clérigo, Conjuros de druida y Conjuros de explorador\nUna criatura que tocas recupera un número de puntos de golpe igual a 1d8 + tu modificador por característica para lanzar conjuros. Este conjuro no tiene efecto ni en no muertos ni en constructos.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, la curación aumentan 1d8 por cada nivel por encima del nivel 1.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Escudo de Fe",
+      "level": 1,
+      "description": "Un campo brillante rodea a la criatura que elijas dentro del alcance y le concede un bonificador de +2 a la CA mientras dura el conjuro.\nNivel 1, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (un pequeño pergamino que tiene escrito un fragmento de texto sagrado)\nTiempo de lanzamiento: 1 acción adicional\nAlcance: 60 pies\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín y Conjuros de clérigo\nUn campo brillante rodea a la criatura que elijas dentro del alcance y le concede un bonificador de +2 a la CA mientras dura el conjuro.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Saeta Guiada",
+      "level": 1,
+      "description": "Un rayo de luz cae sobre una criatura. Si impactas un ataque de conjuro a distancia, el objetivo recibe 4d6 (+1d6 por cada nivel de conjuro por encima de 1) puntos de daño radiante y el siguiente ataque contra el objetivo tiene ventaja si se realiza antes de que termine tu siguiente turno.\nNivel 1, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 120 pies\nDuración: 1 asalto\nAtaque: A distancia 4d6 radiante\nListas de conjuros: Conjuros de clérigo\nLanzas un rayo de luz hacia una criatura de tu elección dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, la criatura recibe 4d6 de daño radiante. Además, la siguiente tirada de ataque contra el objetivo tiene ventaja si se realiza antes del final de tu siguiente turno, gracias a la tenue luz mística que lo iluminará hasta ese momento.\nA niveles superiores. Cuando lanzas este conjuro utilizando un espacio de conjuro de nivel 2 o más, el daño aumenta en 1d6 por cada nivel por encima de 1 que tenga el espacio que hayas empleado.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Castigo Abrasador (1 vez por descanso largo)",
+      "level": 1,
+      "description": "evocación de primer nivel\nTiempo de lanzamiento: 1 acción adicional\nAlcance: Personal\nComponentes: V\nDuración: Concentración, hasta 1 minuto\nLa próxima vez que golpees a una criatura con un ataque de arma cuerpo a cuerpo durante la duración del hechizo, tu arma brillará con una intensidad incandescente, el ataque infligirá 1d6 puntos de daño de fuego adicionales al objetivo y hará que este se incendie.\nAl comienzo de cada uno de sus turnos hasta que termine el conjuro, el objetivo debe realizar una tirada de salvación de Constitución. Si falla, recibe 1d6 de daño por fuego. Si tiene éxito, el conjuro termina. Si el objetivo o una criatura a menos de 1,5 metros de él usa una acción para apagar las llamas, o si algún otro efecto las extingue (como que el objetivo quede sumergido en agua), el conjuro termina.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de 2.º nivel o superior, el daño adicional inicial infligido por el ataque aumenta en 1d6 por cada espacio por encima del 1.º.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Santuario",
+      "level": 1,
+      "description": "Proteges de un ataque a una criatura. Cualquier criatura que le ataque debe superar una TS de SAB. Si falla, debe elegir un nuevo objetivo o perder el ataque o conjuro. No protege contra efectos de área. Si la criatura protegida dirige un ataque, un conjuro o daña a un enemigo, el conjuro termina.\nNivel 1, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (un espejo de plata pequeño)\nTiempo de lanzamiento: 1 acción adicional\nAlcance: 30 pies\nDuración: 1 minuto\nListas de conjuros: Conjuros de clérigo\nProteges de los ataques a una criatura que esté dentro del alcance. Hasta el final del conjuro, cualquier criatura que haga objetivo a la criatura protegida con un ataque o un conjuro hostil deberá realizar antes una tirada de salvación de Sabiduría. Si la falla, la criatura deberá elegir un nuevo objetivo o perder el ataque o conjuro. Este conjuro no salva-guarda a la criatura protegida ante los efectos de área, como la explosión de una bola de fuego.\nSi la criatura protegida realiza un ataque, lanza un conjuro que afecte a una criatura enemiga, o hace daño a una criatura enemiga, santuario termina inmediatamente.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Manos Ardientes (Dominio de la luz)",
+      "level": 1,
+      "description": "Creas una lámina de fuego en un cono de 15 pies. Las criaturas afectadas deben superar una TS de salvación de Destreza. Si fallan, reciben 3d6 (+1d6 por nivel de conjuro por encima de 1) puntos de daño por fuego y, si tienen éxito, la mitad.\nNivel 1, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Personal (Cono de 15 pies)\nDuración: Instantáneo\nTirada de salvación: Destreza mitad\nAtaque: Contra salvación 3d6 fuego\nListas de conjuros: Conjuros de hechicero y Conjuros de mago\nJuntas las manos con los dedos extendidos y una lámina de fuego se dispara desde las puntas de tus dedos. Todas las criaturas que se encuentren en un cono de 15 pies deben hacer una tirada de salvación de Destreza. Si fallan, reciben 3d6 puntos de daño por fuego y, si tienen éxito, la mitad.\nEl fuego quema cualquier objeto inflamable que se encuentre dentro del área y que nadie lleve puesto ni transporte.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, el daño aumenta en 1d6 por cada nivel por encima de 1.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Fuego Feérico (Dominio de la luz)",
+      "level": 1,
+      "description": "Ilumina con una luz azul, verde o violeta (según decidas) el contorno de todo objeto y criatura que no supere una TS de Destreza que se encuentre en un cubo de 20 pies dentro del alcance. Emiten luz tenue en un radio de 10 pies, son visibles y cualquier ataque contra ellos tiene ventaja.\nNivel 1, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies (Cubo de 20 pies)\nDuración: Concentración 1 minuto\nTirada de salvación: Destreza niega\nListas de conjuros: Conjuros de bardo y Conjuros de druida\nEl conjuro ilumina con luz azul, verde o violeta, a tu elección, el contorno de todos los objetos en un cubo de 20 pies dentro del alcance. Se ilumina también el contorno de cualquier criatura dentro del área que falle una tirada de salvación de Destreza. Hasta el final de la duración del conjuro, los objetos y criaturas afectados emiten luz tenue en un radio de 10 pies.\nTodas las tiradas de ataque contra una criatura u objeto afectado tienen ventaja si el atacante puede ver a su objetivo. Además, aunque sean invisibles no recibirán ninguno de los beneficios de ese estado mientras sigan afectados por fuego feérico.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Protección Contra el Bien y el Mal",
+      "level": 1,
+      "description": "Proteges a una criatura voluntaria contra aberraciones, celestiales, elementales, feéricos, infernales y no muertos, las cuales tienen desventaja en los ataques contra el objetivo, y no le pueden hechizar, asustar o poseer. Si ya se encontraba en uno de estos estados, puede volver a tirar la TS.\nNivel 1, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (agua bendita o polvo de plata y hierro, los cuales consume el conjuro)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín, Conjuros de brujo, Conjuros de clérigo, Conjuros de druida y Conjuros de mago\nHasta que el conjuro termine, una criatura voluntaria a la que tocas está protegida contra ciertos tipos de criaturas: aberraciones, celestiales, elementales, feéricos, infernales y no muertos.\nLa protección garantiza varios beneficios. Las criaturas de esos tipos tienen desventaja en las tiradas de ataque que hagan contra el objetivo. El objetivo tampoco puede ser hechizado, asustado o poseído por ellas. Si el objetivo ya está hechizado, asustado o poseído por una criatura de ese tipo, tiene ventaja en una nueva tirada de salvación que haga contra el efecto pertinente.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Orden Imperiosa",
+      "level": 1,
+      "description": "Le das una orden de una palabra a una criatura / nivel de conjuro que puedas ver dentro del alcance. Debe superar una TS de Sabiduría para no seguir la orden durante su siguiente turno. No tiene efecto si el objetivo es no muerto, no te entiende o tu orden es dañina para él.\nNivel 1, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies\nDuración: Instantáneo\nTirada de salvación: Sabiduría niega\nListas de conjuros: Conjuros de paladín, Conjuros de bardo y Conjuros de clérigo\nLe das una orden de una palabra a una criatura que puedas ver dentro del alcance. El objetivo debe superar una tirada de salvación de Sabiduría para no seguir la orden durante su siguiente turno. El conjuro no tiene efecto si el objetivo es un no muerto, si no entiende tu idioma o si tu orden es directamente dañina para él.\nA continuación tienes algunas órdenes comunes y sus efectos. Puedes dar una orden diferente a las que aparecen aquí, en cuyo caso el director de juego determina el comportamiento del objetivo. Si el objetivo no puede seguir tu orden, el conjuro termina.\nAcércate. El objetivo se mueve hacia ti por la ruta más corta y directa, y termina su turno si se acerca a 5 pies o menos de ti.\nDetente. El objetivo no se mueve y no realiza acciones. Una criatura que vuela se mantiene en el aire, siempre y cuando sea capaz de hacerlo. Si debe moverse para mantenerse en el aire, vuela la distancia mínima necesaria para hacerlo.\nHuye. El objetivo dedica su turno a alejarse de ti lo más rápido posible.\nTíralo. El objetivo tira cualquier cosa que esté sujetando y termina su turno.\nTúmbate. El objetivo se queda tumbado y termina su turno.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, puedes afectar a una criatura adicional por cada nivel por encima de 1. Las criaturas deben estar a 30 pies o menos de distancia entre sí cuando las apuntes.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Bendición",
+      "level": 1,
+      "description": "Bendices hasta a tres criaturas de tu elección dentro del alcance. Cuando un objetivo haga una tirada de ataque o de salvación antes de que termine el conjuro, puede tirar 1d4 y sumar el resultado a su tirada. Afecta a una criatura más por cada nivel de conjuro por encima de 1.\nNivel 1, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (unas gotas de agua bendita)\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: Concentración 1 minuto\nListas de conjuros: Conjuros de paladín y Conjuros de clérigo\nBendices hasta a tres criaturas de tu elección dentro del alcance. Cuando un objetivo haga una tirada de ataque o de salvación antes de que termine el conjuro, puede tirar 1d4 y sumar el resultado a su tirada.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de nivel 2 o superior, puedes elegir como objetivo a una criatura adicional por cada nivel por encima de 1.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Crear o destruir agua",
+      "level": 1,
+      "description": "Creas o destruyes 10 galones de agua en un recipiente abierto. O haces llover agua (extinguiendo las llamas que haya) o eliminas niebla en un cubo de 30 pies de lado. Al lanzarlo usando nivel mayor de 1, creas/destruyes 10 galones/nivel o aumenta el lado del cubo 5 pies/nivel.\nNivel 1, transmutación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una gota de agua si creas agua o unos cuantos granos de arena si la destruyes)\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: Instantáneo\nListas de conjuros: Conjuros de clérigo y Conjuros de druida\nDestruyes agua o la creas.\nCrear agua. Creas hasta 10 galones de agua limpia en un recipiente abierto dentro del alcance. De manera alternativa, el agua cae como lluvia en un cubo de 30 pies de lado dentro del alcance y extingue las llamas expuestas que haya en el área.\nDestruir agua. Destruyes hasta 10 galones de agua en un recipiente abierto dentro del área. De manera alternativa, también puedes destruir una niebla en un cubo de 30 pies de lado dentro del alcance.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, creas o destruyes 10 galones de agua adicionales, o el tamaño del cubo aumenta en 5 pies por cada nivel por encima de 1.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Detectar el bien y el mal",
+      "level": 1,
+      "description": "Mientras dura el conjuro, sabes si hay alguna aberración, celestial, elemental, fatal, infernal o no muerto a 30 pies o menos de ti, así como dónde se encuentra. También si hay algún lugar u objeto a 30 pies o menos de ti que haya sido consagrado o profanado.\nNivel 1, adivinación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín y Conjuros de clérigo\nMientras dura el conjuro, sabes si hay alguna aberración, celestial, elemental, fatal, infernal o no muerto a 30 pies o menos de ti, así como dónde se encuentra. Del mismo modo, sabes si hay algún lugar u objeto a 30 pies o menos de ti que haya sido consagrado o profanado.\nEl conjuro puede penetrar la mayoría de las barreras, pero no a partir de 1 pies de piedra, 1 pulgada de metal común, una lámina de plomo o 3 pies de madera o tierra.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Detectar magia",
+      "level": 1,
+      "description": "Sientes la presencia de la magia hasta a 30 pies de ti. Si sientes alguna magia, puedes usar tu acción para ver una débil aura alrededor de cualquier criatura u objeto visible dentro del área que la tenga, y puedes averiguar de qué escuela es, si la tiene.\nNivel 1, adivinación (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín, Conjuros de bardo, Conjuros de clérigo, Conjuros de druida, Conjuros de explorador, Conjuros de hechicero y Conjuros de mago\nMientras dura el conjuro, sientes la presencia de la magia hasta a 30 pies de ti. Si sientes alguna magia, puedes usar tu acción para ver una débil aura alrededor de cualquier criatura u objeto visible dentro del área que la tenga, y puedes averiguar de qué escuela es, si la tiene.\nEl conjuro puede penetrar la mayoría de las barreras, pero no a partir de 1 pies de piedra, 1 pulgada de metal común, una lámina de plomo o 3 pies de madera o tierra.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Detectar venenos y enfermedades",
+      "level": 1,
+      "description": "Puedes sentir la presencia y la localización de veneno, criaturas venenosas y enfermedades a 30 pies de ti o menos. También puedes identificar el tipo de veneno, criatura venenosa o enfermedad en cada caso.\nNivel 1, adivinación (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una hoja de tejo)\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín, Conjuros de clérigo, Conjuros de druida y Conjuros de explorador\nMientras dura el conjuro, puedes sentir la presencia y la localización de veneno, criaturas venenosas y enfermedades a 30 pies de ti o menos. También puedes identificar el tipo de veneno, criatura venenosa o enfermedad en cada caso.\nEl conjuro puede penetrar la mayoría de las barreras, pero no a partir de 1 pies de piedra, 1 pulgada de metal común, una lámina de plomo o 3 pies de madera o tierra.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Infligir heridas",
+      "level": 1,
+      "description": "Haces un ataque de conjuro cuerpo a cuerpo contra una criatura que puedas alcanzar. Si impactas, el objetivo recibe 3d10 puntos de daño necrótico. El daño aumenta 1d10 por cada nivel de conjuro por encima de 1.\nNivel 1, nigromancia\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Instantáneo\nAtaque: Cuerpo a cuerpo 3d10 necrótico\nListas de conjuros: Conjuros de clérigo\nHaces un ataque de conjuro cuerpo a cuerpo contra una criatura que puedas alcanzar. Si impactas, el objetivo recibe 3d10 puntos de daño necrótico.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, el daño aumenta en 1d10 por cada nivel por encima de 1.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Palabra de curación",
+      "level": 1,
+      "description": "Una criatura de tu elección que puedas ver dentro del alcance recupera puntos de golpe iguales a 1d4 / nivel de conjuro + tu modificador por característica para lanzar conjuros. Este conjuro no tiene efecto ni en no muertos ni en constructos.\nNivel 1, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 1 acción adicional\nAlcance: 60 pies\nDuración: Instantáneo\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo y Conjuros de druida\nUna criatura de tu elección que puedas ver dentro del alcance recupera puntos de golpe iguales a 1d4 + tu modificador por característica para lanzar conjuros. Este conjuro no tiene efecto ni en no muertos ni en constructos.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 2 o superior, la cantidad de los puntos recuperados aumenta en 1d4 por cada nivel por encima de 1.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Perdición",
+      "level": 1,
+      "description": "Hasta 3 criaturas (+1 criatura / nivel de hechizo por encima de 1) de tu elección deben hacer una TS de Carisma. Si un objetivo falla, al realizar una tirada de ataque o de salvación antes de que termine el conjuro, debe tirar 1d4 y restar el resultado.\nNivel 1, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una gota de sangre)\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: Concentración 1 minuto\nTirada de salvación: Carisma niega\nListas de conjuros: Conjuros de bardo y Conjuros de clérigo\nHasta tres criaturas de tu elección que puedas ver y que estén dentro del alcance del conjuro deben hacer una tirada de salvación de Carisma. Cuando un objetivo que haya fallado la salvación haga una tirada de ataque o de salvación antes de que termine el conjuro, debe tirar 1d4 y restar el resultado a la tirada de ataque o de salvación.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de nivel 2 o superior, puedes elegir como objetivo a una criatura más por cada nivel por encima de 1.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Purificar comida y bebida",
+      "level": 1,
+      "description": "La comida y la bebida no mágicas dentro de una esfera de 5 pies de radio cuyo centro sea un punto que elijas dentro del alcance es purificada y queda libre de veneno y enfermedad.\nNivel 1, transmutación (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 10 pies (Esfera de 5 pies)\nDuración: Instantáneo\nListas de conjuros: Conjuros de paladín, Conjuros de clérigo y Conjuros de druida\nLa comida y la bebida no mágicas dentro de una esfera de 5 pies de radio cuyo centro sea un punto que elijas dentro del alcance es purificada y queda libre de veneno y enfermedad.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Esfera Flamingera (Domino de la luz)",
+      "level": 2,
+      "description": "Creas una esfera de fuego de 5 pies de diámetro. Criatura que termine su turno a 5 pies de la esfera o sea impactado por ella debe hacer una TS de Des. Recibe 2d6 de daño de fuego si falla y la mitad si tiene éxito. El daño aumenta 1d6 por nivel por encima de 2. Puedes moverla 30 pies como ac. adic.\nNivel 2, conjuración\nOrigen: El Resurgir del Dragón\nComponentes: V, S, M (un poco de sebo, una pizca de azufre y un poco de hierro pulverizado)\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies\nDuración: Concentración 1 minuto\nTirada de salvación: Destreza mitad\nAtaque: Contra salvación 2d6 fuego\nListas de conjuros: Conjuros de druida y Conjuros de mago\nUna esfera de fuego de 5 pies de diámetro aparece en un espacio libre de tu elección dentro del alcance y dura mientras lo haga el conjuro. Cualquier criatura que termine su turno a 5 pies o menos de la esfera debe hacer una tirada de salvación de Destreza. Si falla, recibe 2d6 puntos de daño por fuego y, si tiene éxito, la mitad.\nComo acción adicional, puedes mover la esfera hasta 30 pies. Si se la arrojas a una criatura, esta debe hacer una tirada de salvación contra el daño de la esfera y la esfera deja de moverse durante su turno.\nCuando mueves la esfera, esta puede salvar barreras de hasta 5 pies de alto y hoyos de hasta 10 pies de ancho. La esfera incinera objetos inflamables que nadie lleve puestos ni transporte, y emite luz brillante en un radio de 20 pies y luz tenue en otros 20 pies adicionales.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, el daño aumenta en 1d6 por cada nivel por encima de 2.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Rayo Abrasador (Dominio de la luz)",
+      "level": 2,
+      "description": "Lanzas tres rayos de fuego hacia objetivos dentro del alcance. Puedes lanzárselo a un objetivo o a varios. Haz un ataque de conjuro a distancia por cada rayo. Si impactas, el objetivo recibe 2d6 puntos de daño por fuego. Creas un rayo adicional por cada nivel por encima de 2.\nNivel 2, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 120 pies\nDuración: Instantáneo\nAtaque: A distancia 2d6 fuego\nListas de conjuros: Conjuros de hechicero y Conjuros de mago\nCreas tres rayos de fuego y los lanzas hacia objetivos que se encuentren dentro del alcance. Puedes lanzárselo a un objetivo o a varios. Haz un ataque de conjuro a distancia por cada rayo. Si impactas, el objetivo recibe 2d6 puntos de daño por fuego.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, creas un rayo adicional por cada nivel por encima de 2.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Auxilio",
+      "level": 2,
+      "description": "Tu conjuro concede a tus aliados dureza y determinación. Elige hasta tres criaturas dentro del alcance. El máximo de puntos de golpe y los puntos de golpe actuales de cada objetivo aumentan en 5 mientras dura el conjuro. Se otorgan 5 PG adicionales por cada nivel por encima de 2.\nNivel 2, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (un girón diminuto de tela blanca)\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: 8 horas\nListas de conjuros: Conjuros de paladín, Conjuros de bardo, Conjuros de clérigo y Conjuros de explorador\nTu conjuro concede a tus aliados dureza y determinación. Elige hasta tres criaturas dentro del alcance. El máximo de puntos de golpe y los puntos de golpe actuales de cada objetivo aumentan en 5 mientras dura el conjuro.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, los puntos de golpe del objetivo aumentan 5 puntos adicionales por cada nivel por encima de 2.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Arma Espiritual",
+      "level": 2,
+      "description": "Creas un arma espectral flotante que ataca a una criatura. Supera un ataque de conjuro cuerpo a cuerpo contra inflige 1d8 puntos de daño por fuerza + tu mod. por característica mágica. El daño aumenta 1d8 por cada dos niveles por encima de 2. Acción adicional para moverla 20 pies y repetir ataque.\nNivel 2, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción adicional\nAlcance: 60 pies\nDuración: 1 minuto\nAtaque: Cuerpo a cuerpo 1d8 fuerza\nListas de conjuros: Conjuros de clérigo\nCreas un arma espectral flotante dentro del alcance que dura mientras lo haga el conjuro o hasta que vuelvas a lanzarlo. Cuando invocas el arma, puedes hacer un ataque de conjuro cuerpo a cuerpo contra una criatura que se encuentre a 5 pies o menos del arma. Si impactas, el objetivo recibe daño por fuerza igual a 1d8 + tu modificador por característica para lanzar conjuros.\nComo acción adicional en tu turno, puedes mover el arma hasta 20 pies y repetir el ataque contra una criatura que se encuentre a 5 pies o menos de ella.\nEl arma puede adoptar cualquier forma que elijas. Los clérigos de deidades asociadas con un arma en particular (como san Cuthbert, que es conocido por su maza, y Thor, por su martillo) hacen que el efecto de este conjuro se parezca a esa arma.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, el daño aumenta en 1d8 puntos por cada dos niveles por encima de 2.",
+      "defaultPrepared": true
+    },
+    {
+      "name": "Augurio",
+      "level": 2,
+      "description": "Recibes un augurio de una entidad de otro mundo sobre el resultado de una acción específica que planeas realizar en los 30 minutos siguientes. El DJ debe elegir como augurio \"dicha\", \"desdicha\", \"dicha y desdicha\" o \"nada\". Si se lanza el conjuro más veces pueden salir lecturas al azar.\nNivel 2, adivinación (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (varillas, huesos o piezas similares tallados de manera especial de al menos 25 po de valor)\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Instantáneo\nListas de conjuros: Conjuros de clérigo, Conjuros de druida y Conjuros de mago\nTirando varillas con gemas engarzadas, haciendo girar huesos de dragón, echando cartas adornadas o empleando alguna otra herramienta divina, recibes un augurio de una entidad de otro mundo sobre el resultado de una acción específica que planeas realizar en los 30 minutos siguientes. El director de juego elige uno de los siguientes augurios posibles:\nDicha: buenos resultados.\nDesdicha: malos resultados.\nDicha y desdicha: resultados tanto buenos como malos.\nNada: resultados que no son ni especialmente buenos ni especialmente malos.\nEl conjuro no tiene en cuenta ninguna circunstancia posible que pueda cambiar el resultado, como que se lancen otros conjuros o que se pierda o se gane un compañero.\nSi lanzas el conjuro dos o más veces antes de completar tu siguiente descanso prolongado, hay un 25 % de probabilidades acumulativas de conseguir una lectura aleatoria. El director de juego hace esta tirada en secreto",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Calmar emociones",
+      "level": 2,
+      "description": "Reprimes emociones fuertes en un radio de 20 pies de tu posición. Los humanoides afectados tienen que superar una TS de Carisma. Si fallan, puedes eliminar los estados hechizado o asustado, o hacer que sean los objetivos sean hostiles o indiferentes hacia criaturas de tu elección.\nNivel 2, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Personal (Esfera de 20 pies)\nDuración: Concentración 1 minuto\nTirada de salvación: Carisma niega\nListas de conjuros: Conjuros de bardo y Conjuros de clérigo\nIntentas reprimir emociones fuertes en un grupo de personas. Todos los humanoides que se encuentren dentro de una esfera de 20 pies de radio, cuyo centro es un punto que tú decides, deben realizar una tirada de salvación de Carisma. Si lo desean, pueden decidir fallarla automáticamente. Si una criatura falla la salvación, elige uno de los siguientes dos efectos:\nPuedes reprimir cualquier efecto que haga que el objetivo quede hechizado o asustado. Cuando este conjuro termine, cualquier efecto anulado continúa, siempre y cuando su duración no haya terminado mientras tanto.\nPuedes hacer que un objetivo que sea hostil hacia determinadas criaturas de tu elección sea indiferente a ellas. Esta indiferencia termina si el objetivo es atacado o dañado por un conjuro, o si ve cómo dañan a un aliado. Cuando el conjuro termine, la criatura se vuelve hostil de nuevo, a menos que el director de juego decida lo contrario.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Detectar trampas",
+      "level": 2,
+      "description": "Sientes la presencia (pero no la ubicación exacta) de cualquier trampa dentro del alcance y en tu línea de visión. Se entiende como trampa cualquier cosa que podría provocar un efecto repentino o inesperado que consideras dañino o indeseable preparada intencionalmente por su creador.\nNivel 2, adivinación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 120 pies\nDuración: Instantáneo\nListas de conjuros: Conjuros de clérigo, Conjuros de druida y Conjuros de explorador\nSientes la presencia de cualquier trampa dentro del alcance y que esté en tu línea de visión. Una trampa, a efectos de este conjuro, es cualquier cosa que podría provocar un efecto repentino o inesperado que consideras dañino o indeseable preparada intencionalmente por su creador. Por ejemplo, el conjuro sentiría un área afectada por el conjuro Alarma, Glifo custodio o una trampa mecánica, pero no revelaría un defecto en el suelo, un tejado inestable o un socavón escondido.\nEste conjuro solamente revela que hay una trampa. No detectas su localización, pero sí la naturaleza del peligro que esta supone.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Dulce descanso",
+      "level": 2,
+      "description": "Tocas un cadáver u otros restos. Mientras dure el conjuro, el objetivo está protegido de la descomposición y no puede convertirse en no muerto. Además prolonga el tiempo límite en que el objetivo podrá ser devuelto a la vida.\nNivel 2, nigromancia (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una pizca de sal y dos monedas de cobre que colocar en sendos ojos del cadáver, las cuales deben permanecer ahí mientras dure el conjuro)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: 10 días\nListas de conjuros: Conjuros de clérigo y Conjuros de mago\nTocas un cadáver u otros restos. Mientras dure el conjuro, el objetivo está protegido de la descomposición y no puede convertirse en no muerto.\nEl conjuro también prolonga el tiempo límite en que el objetivo podrá ser devuelto a la vida, dado que los días que pasa bajo la influencia de este conjuro no se tienen en cuenta para el límite de tiempo posible para usar sobre él conjuros como Revivir a los muertos.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Inmovilizar persona",
+      "level": 2,
+      "description": "Un humanoide que puedas ver debe superar una TS de Sabiduría o quedar paralizado. Al final de cada turno puede reintentar la TS para terminar el conjuro. Puedes apuntar con el conjuro a un humanoide adicional por cada nivel de conjuro por encima de 2. Deben estar a 30 pies entre sí.\nNivel 2, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (un pedazo de hierro, pequeño y recto)\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies\nDuración: Concentración 1 minuto\nTirada de salvación: Sabiduría niega\nListas de conjuros: Conjuros de bardo, Conjuros de brujo, Conjuros de clérigo, Conjuros de druida, Conjuros de hechicero y Conjuros de mago\nElige a un humanoide que puedas ver dentro del alcance. El objetivo debe superar una tirada de salvación de Sabiduría para no quedar paralizado mientras dure el conjuro. Al final de cada uno de sus turnos, puede hacer otra tirada de salvación de Sabiduría. Si tiene éxito, el conjuro termina.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, puedes elegir como objetivo a otro humanoide adicional por cada espacio de conjuro por encima de 2. Los humanoides deben estar a 30 pies o menos entre sí.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Llama permanente",
+      "level": 2,
+      "description": "Una llama tan luminosa como una antorcha surge de un objeto que tocas. Parece una llama normal, pero no da calor y no consume oxígeno. La llama se puede cubrir o esconder, pero no apagar ni extinguir.\nNivel 2, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (polvo de rubí de 50 po de valor, que el conjuro consume)\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Hasta disipado\nListas de conjuros: Conjuros de clérigo, Conjuros de druida y Conjuros de mago\nUna llama tan luminosa como una antorcha surge de un objeto que tocas. Parece una llama normal, pero no da calor y no consume oxígeno. La llama se puede cubrir o esconder, pero no apagar ni extinguir.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Localizar objeto",
+      "level": 2,
+      "description": "Describe un objeto que te sea familiar. Sientes la dirección en la que se encuentra, siempre y cuando esté a 1000 pies o menos de ti. Si el objeto se mueve, sabes la dirección. Un obstáculo de plomo bloquearía el conjuro. También puede localizar el objeto más cercano de un tipo en particular.\nNivel 2, adivinación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una rama con forma de horca)\nTiempo de lanzamiento: 1 acción\nAlcance: Personal\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de paladín, Conjuros de bardo, Conjuros de clérigo, Conjuros de druida, Conjuros de explorador y Conjuros de mago\nDescribe o nombra un objeto que te sea familiar. Sientes la dirección en la que se encuentra dicho objeto, siempre y cuando esté a 1000 pies o menos de ti. Si el objeto se mueve, sabes la dirección.\nEl conjuro puede localizar un objeto específico que conoces, siempre y cuando lo hayas visto de cerca (a 30 pies o menos) al menos una vez. El conjuro también puede localizar el objeto más cercano de un tipo en particular, como un cierto tipo de vestimenta, joya, mueble, herramienta o arma.\nEste conjuro no puede localizar un objeto si algo de plomo, aunque sea una capa fina, bloquea un camino directo entre el objeto y tú.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Plegaria de curación",
+      "level": 2,
+      "description": "Hasta seis criaturas de tu elección que puedas ver dentro del alcance recuperan PG igual a 2d8 + tu modificador por característica para lanzar conjuros. No afecta a no muertos ni a constructos. La curación aumenta en 1d8 por cada nivel por encima de 2.\nNivel 2, evocación\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 10 minutos\nAlcance: 30 pies\nDuración: Instantáneo\nListas de conjuros: Conjuros de clérigo\nHasta seis criaturas de tu elección que puedas ver dentro del alcance del conjuro recuperan cada una un número de puntos de golpe igual a 2d8 + tu modificador por característica para lanzar conjuros. Este conjuro no tiene efecto ni sobre no muertos ni sobre constructos.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, la curación aumenta en 1d8 por cada nivel por encima de 2.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Potenciar característica",
+      "level": 2,
+      "description": "Tocas a una criatura y le otorgas una mejora mágica: ventaja en las pruebas de Inteligencia, Destreza (y evitar daño por caída de 20 pies), Carisma, Fuerza (y duplicar carga), Constitución (y 2d6 PG temporales) o Sabiduría. Puedes afectar a una criatura más por cada nivel por encima de 2.\nNivel 2, transmutación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (pelo o una pluma de una bestia)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Concentración 1 hora\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo, Conjuros de druida, Conjuros de explorador, Conjuros de hechicero y Conjuros de mago\nTocas a una criatura y le otorgas una mejora mágica. Elige uno de los siguientes efectos; el objetivo consigue dicho efecto hasta que termina el conjuro.\nAstucia de zorro. El objetivo tiene ventaja en las pruebas de Inteligencia.\nElegancia de gato. El objetivo tiene ventaja en las pruebas de Destreza. Asimismo, no recibe daño por caer 20 pies o menos si no está incapacitado.\nEsplendor de águila. El objetivo tiene ventaja en las pruebas de Carisma.\nFuerza de toro. El objetivo tiene ventaja en las pruebas de Fuerza y su carga transportable se duplica.\nResistencia de oso. El objetivo tiene ventaja en las pruebas de Constitución. También gana 2d6 puntos de golpe temporales, los cuales se pierden cuando termina el conjuro.\nSabiduría de búho. El objetivo tiene ventaja en las pruebas de Sabiduría.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, puedes elegir como objetivo a una criatura adicional por cada nivel por encima de 2.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Protección contra veneno",
+      "level": 2,
+      "description": "Tocas a una criatura. Si está envenenada, neutralizas el veneno. Si más de un veneno aflige al objetivo, neutralizas un veneno que sabes que está presente o uno al azar. El objetivo gana ventaja en las TS que haga contra ser envenenado y tiene resistencia al daño por veneno.\nNivel 2, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: 1 hora\nListas de conjuros: Conjuros de paladín, Conjuros de clérigo, Conjuros de druida y Conjuros de explorador\nTocas a una criatura. Si está envenenada, neutralizas el veneno. Si más de un veneno aflige al objetivo, neutralizas un veneno que sabes que está presente o uno al azar.\nMientras dura el conjuro, el objetivo tiene ventaja en las tiradas de salvación que haga contra ser envenenado y tiene resistencia al daño por veneno.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Restablecimiento menor",
+      "level": 2,
+      "description": "Tocas a una criatura y puedes terminar con una enfermedad o con un estado que la aflija. El estado puede ser cegado, ensordecido, paralizado o envenenado.\nNivel 2, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Instantáneo\nListas de conjuros: Conjuros de paladín, Conjuros de bardo, Conjuros de clérigo, Conjuros de druida y Conjuros de explorador\nTocas a una criatura y puedes terminar con una enfermedad o con un estado que la aflija. El estado puede ser cegado, ensordecido, paralizado o envenenado.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Silencio",
+      "level": 2,
+      "description": "No se puede crear ningún sonido en una esfera de 20 pies de radio, y ningún sonido puede atravesarla. Cualquier criatura u objeto que esté dentro de la esfera es inmune al daño por trueno y las criaturas quedan ensordecidas mientras están dentro. No se pueden lanzar conjuros con componente verbal.\nNivel 2, ilusión (ritual)\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 120 pies (Esfera de 20 pies)\nDuración: Concentración 10 minutos\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo y Conjuros de explorador\nMientras dura el conjuro, no se puede crear ningún sonido en una esfera de 20 pies de radio cuyo centro es un punto que elijas dentro del alcance, y ningún sonido puede atravesarla. Cualquier criatura u objeto que esté completamente dentro de la esfera es inmune al daño por trueno y las criaturas quedan ensordecidas mientras permanezcan dentro. Es imposible lanzar un conjuro que incluya un componente verbal.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Sordera / Ceguera",
+      "level": 2,
+      "description": "Una criatura que puedas ver dentro el alcance realiza una TS de Constitución. Si falla, queda cegado o ensordecido (según decidas). Al final de cada uno de sus turnos, puede reintentar la TS para anular el conjuro. Apunta a una criatura adicional por cada nivel por encima de 2.\nNivel 2, nigromancia\nSmall\nOrigen: Reglas básicas\nComponentes: V\nTiempo de lanzamiento: 1 acción\nAlcance: 30 pies\nDuración: 1 minuto\nTirada de salvación: Constitución niega\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo, Conjuros de hechicero y Conjuros de mago\nPuedes cegar o ensordecer a un enemigo. Elige una criatura que puedas ver dentro del alcance para que haga una tirada de salvación de Constitución. Si falla, queda cegado o ensordecido (según decidas) mientras dura el conjuro. Al final de cada uno de sus turnos, puede hacer una tirada de salvación de Constitución para intentar anular el conjuro.\nEn niveles superiores. Cuando lanzas este conjuro usando un espacio de conjuro de nivel 3 o superior, puedes apuntar a una criatura adicional por cada nivel por encima de 2.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Vínculo protector",
+      "level": 2,
+      "description": "Proteges a una criatura voluntaria con una conexión mística. Mientras esté a 60 pies o menos de ti, obtiene +1 a la CA y a las TS y es resistente a todos los daños. Cada vez que recibe daño, tú recibes la misma cantidad. Una criatura no puede tener dos vínculos custodios.\nNivel 2, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (un par de anillos de platino de al menos 50 po de valor cada uno, los cuales debéis llevar el objetivo y tú mientras dure el conjuro)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: 1 hora\nListas de conjuros: Conjuros de clérigo\nEste conjuro protege a una criatura voluntaria que tocas o crea una conexión mística entre ella y tú hasta que el conjuro termina. Mientras que el objeto esté a 60 pies o menos de ti, consigue un bonificador de +1 a la CA y a las tiradas de salvación y tiene resistencia a todos los daños. Asimismo, cada vez que reciba daño, tú recibes la misma cantidad.\nEl conjuro termina si tus puntos de golpe se reducen a 0 o si el objetivo se aleja más de 60 pies de ti. También termina si se vuelve a lanzar el conjuro en cualquiera de las dos criaturas conectadas. Puedes disipar el conjuro como acción.",
+      "defaultPrepared": false
+    },
+    {
+      "name": "Zona de verdad",
+      "level": 2,
+      "description": "Creas una zona que te protege del engaño en una esfera de 15 pies. Al entrar o comenzar el turno en el área, toda criatura debe hacer una TS de Carisma. Si falla, no puede decir una mentira deliberadamente dentro del área. Tú sabes si ha acertado o fallado. La criatura es consciente del conjuro.\nNivel 2, encantamiento\nSmall\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies (Esfera de 15 pies)\nDuración: 10 minutos\nListas de conjuros: Conjuros de paladín, Conjuros de bardo y Conjuros de clérigo\nCreas una zona mágica que te protege del engaño en una esfera de 15 pies de radio cuyo centro es un punto de tu elección dentro del alcance. Hasta que el conjuro termine, toda criatura que entre en el área del conjuro por primera vez en un turno o que empiece su turno ahí debe hacer una tirada de salvación de Carisma. Si falla, no puede decir una mentira deliberadamente mientras se encuentre dentro del radio. Tú sabes si falla o tiene éxito en la tirada de salvación.\nLa criatura afectada se da cuenta del conjuro y puede evitar responder preguntas a las que normalmente respondería con una mentira. Tal criatura puede dar respuestas evasivas siempre y cuando se mantenga en los límites de la verdad.",
+      "defaultPrepared": false
+    }
+  ],
+  "levels": [
+    0,
+    1,
+    2
+  ],
+  "spellSlots": {
+    "0": 0,
+    "1": 4,
+    "2": 2
+  },
+  "channels": [
+    {
+      "name": "Expulsar muertos vivientes",
+      "description": "Puedes usar Canalizar divinidad para expulsar a los muertos vivientes. Como acción, presentas tu símbolo sagrado y dices una oración. Cada muerto que te vea o te escuche en un radio de 30 pies debe hacer una TS de Sabiduría. Una criatura expulsada debe dedicar su turno a intentar alejarse de ti.\nOrigen: Reglas básicas\nClase: Clérigo\nNivel necesario: 2\nAdquisición: Automático\nPuedes usar Canalizar divinidad para expulsar a los muertos vivientes.\nComo acción, presentas tu símbolo sagrado y dices una oración para expulsar a los muertos vivientes. Cada muerto que te vea o te escuche en un radio de 30 pies debe hacer una tirada de salvación de Sabiduría. Si falla, es expulsado durante un minuto o hasta que reciba daño.\nUna criatura expulsada debe dedicar su turno a intentar moverse tan lejos de ti como pueda. No puede moverse voluntariamente a un espacio que se encuentre a menos de 30 pies de ti ni realizar reacciones. Durante su acción, solo puede realizar la acción de esprintar o intentar escapar del efecto que le impida moverse. Si no hay ningún lugar al que pueda moverse, puede usar la acción esquivar."
+    },
+    {
+      "name": "Resplandor del Alba",
+      "description": "A partir del nivel 2, puedes usar tu Canalizar Divinidad para aprovechar la luz solar, disipar la oscuridad mágica y hacer daño radiante a tus enemigos.\nComo acción, puedes levantar tu símbolo sagrado para que cualquier oscuridad mágica a 30 pies de ti sea disipada.\nAdemás, cada criatura hostil a 30 pies de ti debe realizar una tirada de salvación de Constitución.\nUna criatura sufre daño radiante igual a:\n2d10 + tu nivel de clérigo\nSi falla la tirada de salvación, recibe todo el daño.\nSi supera la tirada, recibe la mitad del daño.\nUna criatura con cobertura total contra ti no es afectada."
+    }
+  ],
+  "combatants": [
+    "Lucy",
+    "Are",
+    "Polito",
+    "Serch",
+    "Diego",
+    "Roger",
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "E7",
+    "E8",
+    "E9",
+    "E10",
+    "E11",
+    "E12",
+    "E13",
+    "E14",
+    "E15"
+  ]
+}

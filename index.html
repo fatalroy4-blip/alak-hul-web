@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Alak Hul · Trucos y Conjuros</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="hero">
+  <div>
+    <p id="classLine" class="eyebrow"></p>
+    <h1 id="characterName"></h1>
+    <p id="subtitle" class="subtitle"></p>
+  </div>
+  <button id="resetBtn" class="outline-btn">Restablecer sesión</button>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="spells">Conjuros</button>
+  <button class="tab" data-tab="channel">Canalizar Divinidad</button>
+  <button class="tab" data-tab="combat">Combate</button>
+  <button class="tab" data-tab="sheet">Hoja de personaje</button>
+</nav>
+
+<main>
+<section id="spells" class="panel active">
+
+  <div id="slotsArea" class="slots-area"></div>
+
+  <label class="search">
+    <span>⌕</span>
+    <input id="searchInput" type="search" placeholder="Buscar truco o conjuro…">
+  </label>
+
+  <section class="prepared-panel">
+    <div class="section-heading compact">
+      <p class="eyebrow">ACCESO RÁPIDO</p>
+      <h2>Preparados</h2>
+      <p>Marca los trucos y conjuros que quieras tener a la mano. Se organizan por nivel.</p>
+    </div>
+    <div id="preparedGroups" class="prepared-groups"></div>
+  </section>
+
+  <div id="spellSections" class="spell-sections"></div>
+</section>
+
+<section id="channel" class="panel">
+  <div class="section-heading">
+    <p class="eyebrow">RECURSOS SAGRADOS</p>
+    <h2>Canalizar Divinidad</h2>
+  </div>
+  <div id="channelList" class="spell-list wide"></div>
+</section>
+
+<section id="combat" class="panel">
+  <div class="section-heading combat-heading">
+    <div>
+      <p class="eyebrow">SEGUIMIENTO RÁPIDO</p>
+      <h2>Combate</h2>
+      <p>Selecciona participantes, asigna iniciativa y registra daño acumulado.</p>
+    </div>
+    <button id="newCombatBtn" class="danger-btn">Nuevo combate</button>
+  </div>
+
+  <div class="combat-layout">
+    <aside class="roster-panel">
+      <h3>Participantes</h3>
+      <div id="rosterList" class="roster-list"></div>
+    </aside>
+
+    <section class="initiative-panel">
+      <div class="initiative-head">
+        <div><p class="eyebrow">ORDEN DE TURNO</p><h3>Iniciativa</h3></div>
+      </div>
+      <div id="initiativeList" class="initiative-list"></div>
+    </section>
+  </div>
+</section>
+
+<section id="sheet" class="panel">
+  <div class="section-heading sheet-heading">
+    <div>
+      <p class="eyebrow">PDF EDITABLE ORIGINAL</p>
+      <h2>Hoja de personaje</h2>
+      <p>Este visor carga directamente el PDF editable de Alak Hul. No hay campos HTML superpuestos: son los campos reales del PDF.</p>
+    </div>
+    <div class="sheet-actions">
+      <a class="outline-btn pdf-open-btn" href="assets/Alak-Hul-N3-editable.pdf" target="_blank" rel="noopener">Abrir PDF aparte</a>
+    </div>
+  </div>
+
+  <div class="sheet-page-tabs native-pdf-tabs">
+    <button class="sheet-page-tab active" data-pdf-page="1">Página 1</button>
+    <button class="sheet-page-tab" data-pdf-page="2">Página 2</button>
+    <button class="sheet-page-tab" data-pdf-page="3">Página 3</button>
+  </div>
+
+  <div class="sheet-tip native-pdf-tip">
+    Las 3 páginas están dentro del mismo PDF y se desplazan una debajo de otra en el visor.
+    Haz clic directamente en los campos de la hoja para editarlos. Para conservar una copia con tus cambios, usa el botón de guardar/descargar del visor PDF.
+  </div>
+
+  <div class="native-pdf-shell">
+    <iframe
+      id="characterPdfFrame"
+      class="native-pdf-frame"
+      src="assets/Alak-Hul-N3-editable.pdf#page=1&zoom=page-width&toolbar=1&navpanes=0"
+      title="Hoja de personaje editable de Alak Hul">
+    </iframe>
+    <div class="pdf-fallback">
+      Si tu navegador no muestra el formulario dentro de la página,
+      <a href="assets/Alak-Hul-N3-editable.pdf" target="_blank" rel="noopener">abre el PDF editable directamente</a>.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<dialog id="spellDialog">
+  <button class="dialog-close" aria-label="Cerrar">×</button>
+  <div id="dialogContent"></div>
+</dialog>
+
+<footer>Alak Hul · Grimorio digital</footer>
+<script src="script.js"></script>
+</body>
+</html>
