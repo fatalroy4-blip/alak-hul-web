@@ -1335,3 +1335,48 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
     grid-template-columns:1fr;
   }
 }
+
+
+/* ==========================================================
+   v14 · Círculos de competencia
+   ========================================================== */
+
+#character .prof-dot{
+  appearance:none;
+  -webkit-appearance:none;
+  width:14px !important;
+  height:14px !important;
+  min-width:14px;
+  padding:0 !important;
+  margin:0;
+  border:1.7px solid #332c23 !important;
+  border-radius:50% !important;
+  background:transparent !important;
+  cursor:pointer;
+  box-shadow:none !important;
+}
+
+#character .prof-dot:checked{
+  background:#332c23 !important;
+  box-shadow:inset 0 0 0 2.5px #efe2c4 !important;
+}
+
+#character .prof-dot:focus{
+  outline:2px solid rgba(109,40,217,.30) !important;
+  outline-offset:2px;
+}
+
+#character .save-grid label{
+  grid-template-columns:16px 52px minmax(0,1fr) !important;
+  gap:8px !important;
+}
+
+#character .skill-line{
+  grid-template-columns:16px 52px minmax(0,1fr) !important;
+  gap:8px !important;
+}
+
+#character .save-grid label > input:not(.prof-dot),
+#character .skill-line > input:not(.prof-dot){
+  width:100% !important;
+}

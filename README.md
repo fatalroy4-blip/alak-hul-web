@@ -1,12 +1,9 @@
-# Alak Hul Web v13
+# Alak Hul Web v14
 
 Cambios:
-- Se agregó una tercera página dentro de Personaje.
-- Página 3 reproduce la estructura de la hoja de conjuros de D&D.
-- Incluye clase lanzadora, característica de lanzamiento, CD y bonificador de ataque.
-- Incluye Trucos y niveles 1–9.
-- Nivel 1 precargado con 4 espacios; nivel 2 con 2 espacios.
-- Se precargaron los conjuros que ya aparecen en la ficha actual de Alak Hul.
-- Los niveles superiores quedan disponibles para el crecimiento futuro del personaje.
-- Todo es editable y usa el mismo guardado automático de la ficha.
-- La pestaña Conjuros independiente se mantiene intacta, aunque exista información repetida.
+- Se agregaron círculos de competencia a Tiradas de salvación.
+- Se agregaron círculos de competencia a todas las Habilidades.
+- Los círculos son clicables y se guardan con el resto de la ficha.
+- Se marcaron por defecto las competencias de salvación de Sabiduría y Carisma.
+- Se marcaron por defecto Perspicacia, Medicina, Persuasión y Religión.
+- Se conserva todo lo demás de v13, incluida la Página 3 de conjuros.
