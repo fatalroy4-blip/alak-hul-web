@@ -18,14 +18,14 @@
 </header>
 
 <nav class="tabs">
-  <button class="tab active" data-tab="spells">Conjuros</button>
+  <button class="tab active" data-tab="character">Personaje</button>
+  <button class="tab" data-tab="spells">Conjuros</button>
   <button class="tab" data-tab="channel">Canalizar Divinidad</button>
   <button class="tab" data-tab="combat">Combate</button>
-  <button class="tab" data-tab="sheet">Hoja de personaje</button>
 </nav>
 
 <main>
-<section id="spells" class="panel active">
+<section id="spells" class="panel">
 
   <div id="slotsArea" class="slots-area"></div>
 
@@ -79,42 +79,502 @@
   </div>
 </section>
 
-<section id="sheet" class="panel">
-  <div class="section-heading sheet-heading">
+
+<section id="character" class="panel active">
+  <div class="character-intro">
     <div>
-      <p class="eyebrow">PDF EDITABLE ORIGINAL</p>
+      <p class="eyebrow">FICHA DIGITAL</p>
       <h2>Hoja de personaje</h2>
-      <p>Este visor carga directamente el PDF editable de Alak Hul. No hay campos HTML superpuestos: son los campos reales del PDF.</p>
+      <p>Distribución 1:1 basada en la hoja de personaje de D&amp;D 5e, con campos web reales y guardado automático.</p>
     </div>
-    <div class="sheet-actions">
-      <a class="outline-btn pdf-open-btn" href="assets/Alak-Hul-N3-editable.pdf" target="_blank" rel="noopener">Abrir PDF aparte</a>
-    </div>
+    <span id="charSaveStatus" class="save-status">Guardado automático</span>
   </div>
 
-  <div class="sheet-page-tabs native-pdf-tabs">
-    <button class="sheet-page-tab active" data-pdf-page="1">Página 1</button>
-    <button class="sheet-page-tab" data-pdf-page="2">Página 2</button>
-    <button class="sheet-page-tab" data-pdf-page="3">Página 3</button>
-  </div>
+  <div class="sheet-scroll">
+    <!-- PÁGINA 1 -->
+    <article class="digital-sheet dnd-sheet page-one">
+      <div class="dnd-sheet-brand">
+        <div class="brand-mark">D&amp;D</div>
+        <div class="brand-sub">FICHA DE PERSONAJE</div>
+      </div>
 
-  <div class="sheet-tip native-pdf-tip">
-    Las 3 páginas están dentro del mismo PDF y se desplazan una debajo de otra en el visor.
-    Haz clic directamente en los campos de la hoja para editarlos. Para conservar una copia con tus cambios, usa el botón de guardar/descargar del visor PDF.
-  </div>
+      <header class="ds-header dnd-header">
+        <div class="ds-name">
+          <label>
+            <span>Nombre del personaje</span>
+            <input data-char="name" value="Alak Hul">
+          </label>
+        </div>
+        <div class="ds-header-grid">
+          <label><span>Clase y nivel</span><input data-char="classLevel" value="Clérigo N3"></label>
+          <label><span>Trasfondo</span><input data-char="background" value="Acólito"></label>
+          <label><span>Nombre del jugador</span><input data-char="player" value="Roger"></label>
+          <label><span>Raza</span><input data-char="race" value="Tiefling (Zariel)"></label>
+          <label><span>Alineamiento</span><input data-char="alignment" value="Neutral bueno"></label>
+          <label><span>Puntos de experiencia</span><input data-char="xp" value="1200"></label>
+        </div>
+      </header>
 
-  <div class="native-pdf-shell">
-    <iframe
-      id="characterPdfFrame"
-      class="native-pdf-frame"
-      src="assets/Alak-Hul-N3-editable.pdf#page=1&zoom=page-width&toolbar=1&navpanes=0"
-      title="Hoja de personaje editable de Alak Hul">
-    </iframe>
-    <div class="pdf-fallback">
-      Si tu navegador no muestra el formulario dentro de la página,
-      <a href="assets/Alak-Hul-N3-editable.pdf" target="_blank" rel="noopener">abre el PDF editable directamente</a>.
-    </div>
+      <div class="dnd-page1-grid">
+        <!-- Columna extrema izquierda: atributos -->
+        <aside class="dnd-abilities">
+          <div class="ability-box"><span>Fuerza</span><input data-char="ability_0" value="11"><input class="ability-mod" data-char="abilitymod_0" value="+0"></div>
+          <div class="ability-box"><span>Destreza</span><input data-char="ability_1" value="14"><input class="ability-mod" data-char="abilitymod_1" value="+2"></div>
+          <div class="ability-box"><span>Constitución</span><input data-char="ability_2" value="13"><input class="ability-mod" data-char="abilitymod_2" value="+1"></div>
+          <div class="ability-box"><span>Inteligencia</span><input data-char="ability_3" value="8"><input class="ability-mod" data-char="abilitymod_3" value="-1"></div>
+          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4" value="15"><input class="ability-mod" data-char="abilitymod_4" value="+2"></div>
+          <div class="ability-box"><span>Carisma</span><input data-char="ability_5" value="14"><input class="ability-mod" data-char="abilitymod_5" value="+2"></div>
+        </aside>
+
+        <!-- Columna izquierda interior: inspiración, competencia, salvaciones, habilidades -->
+        <div class="dnd-left-info">
+          <div class="dnd-pill-row">
+            <label class="dnd-pill"><input data-char="inspiration" value="3"><span>Inspiración</span></label>
+            <label class="dnd-pill"><input data-char="profBonus" value="+2"><span>Bonif. competencia</span></label>
+          </div>
+
+          <section class="ds-box saving">
+            <h3>Tiradas de salvación</h3>
+            <div class="save-grid">
+              <label><input data-char="save_str" value="+0"><span>Fuerza</span></label>
+              <label><input data-char="save_dex" value="+2"><span>Destreza</span></label>
+              <label><input data-char="save_con" value="+1"><span>Constitución</span></label>
+              <label><input data-char="save_int" value="-1"><span>Inteligencia</span></label>
+              <label><input data-char="save_wis" value="+4"><span>Sabiduría</span></label>
+              <label><input data-char="save_cha" value="+4"><span>Carisma</span></label>
+            </div>
+          </section>
+
+          <section class="ds-box skills">
+            <h3>Habilidades</h3>
+            <label class="skill-line"><input data-char="skill_0" value="+2"><span>Acrobacias (Des)</span></label>
+            <label class="skill-line"><input data-char="skill_1" value="+2"><span>Trato con Animales (Sab)</span></label>
+            <label class="skill-line"><input data-char="skill_2" value="-1"><span>Arcanos (Int)</span></label>
+            <label class="skill-line"><input data-char="skill_3" value="0"><span>Atletismo (Fue)</span></label>
+            <label class="skill-line"><input data-char="skill_4" value="+2"><span>Engaño (Car)</span></label>
+            <label class="skill-line"><input data-char="skill_5" value="-1"><span>Historia (Int)</span></label>
+            <label class="skill-line"><input data-char="skill_6" value="+4"><span>Perspicacia (Sab)</span></label>
+            <label class="skill-line"><input data-char="skill_7" value="+2"><span>Intimidación (Car)</span></label>
+            <label class="skill-line"><input data-char="skill_8" value="-1"><span>Investigación (Int)</span></label>
+            <label class="skill-line"><input data-char="skill_9" value="+4"><span>Medicina (Sab)</span></label>
+            <label class="skill-line"><input data-char="skill_10" value="-1"><span>Naturaleza (Int)</span></label>
+            <label class="skill-line"><input data-char="skill_11" value="+2"><span>Percepción (Sab)</span></label>
+            <label class="skill-line"><input data-char="skill_12" value="+2"><span>Interpretación (Car)</span></label>
+            <label class="skill-line"><input data-char="skill_13" value="+4"><span>Persuasión (Car)</span></label>
+            <label class="skill-line"><input data-char="skill_14" value="+1"><span>Religión (Int)</span></label>
+            <label class="skill-line"><input data-char="skill_15" value="+2"><span>Juego de Manos (Des)</span></label>
+            <label class="skill-line"><input data-char="skill_16" value="+2"><span>Sigilo (Des)</span></label>
+            <label class="skill-line"><input data-char="skill_17" value="+2"><span>Supervivencia (Sab)</span></label>
+          </section>
+
+          <section class="passive-box">
+            <label><input data-char="passive" value="12"><span>Sabiduría pasiva (Percepción)</span></label>
+          </section>
+
+          <section class="ds-box proficiencies-box">
+            <h3>Otras competencias e idiomas</h3>
+            <textarea data-char="proficiencies">Armaduras
+- Armadura ligera
+- Armadura media
+- Escudos
+
+Armas
+- Armas simples
+
+Idiomas
+- Común
+- Infernal
+- Celestial
+- Abisal</textarea>
+          </section>
+        </div>
+
+        <!-- Columna central -->
+        <div class="dnd-center">
+          <div class="combat-top">
+            <label class="shield-field"><input data-char="ac" value="18"><span>Clase de armadura</span></label>
+            <label><input data-char="initiative" value="+2"><span>Iniciativa</span></label>
+            <label><input data-char="speed" value="30"><span>Velocidad</span></label>
+          </div>
+
+          <section class="ds-box hp-box">
+            <label><span>Máx. puntos de golpe</span><input data-char="hpMax" value="21"></label>
+            <label class="hp-current"><input data-char="hpCurrent" value="21"><span>Puntos de golpe actuales</span></label>
+            <label class="hp-temp"><input data-char="hpTemp" value="0"><span>Puntos de golpe temporales</span></label>
+          </section>
+
+          <div class="hitdeath-grid">
+            <section class="ds-box">
+              <h3>Dados de golpe</h3>
+              <label><span>Total</span><input data-char="hitDice" value="3d8"></label>
+            </section>
+            <section class="ds-box death-box">
+              <h3>Salv. contra muerte</h3>
+              <label><span>Éxitos</span><input data-char="deathSuccess" value="0"></label>
+              <label><span>Fallos</span><input data-char="deathFail" value="0"></label>
+            </section>
+          </div>
+
+          <section class="ds-box attacks">
+            <h3>Ataques y conjuros</h3>
+            <div class="attack-head"><span>Nombre</span><span>Bonif.</span><span>Daño / tipo</span></div>
+            <div class="attack-row"><input data-char="atk1_name" value="Maza"><input data-char="atk1_bonus" value="+2"><input data-char="atk1_damage" value="1d6 cont."></div>
+            <div class="attack-row"><input data-char="atk2_name" value="Ballesta ligera"><input data-char="atk2_bonus" value="+4"><input data-char="atk2_damage" value="1d8+2 perforante"></div>
+            <div class="attack-row"><input data-char="atk3_name" value="Llama sagrada"><input data-char="atk3_bonus" value="CD 12"><input data-char="atk3_damage" value="1d8 radiante"></div>
+            <textarea data-char="attackNotes">Saeta guía: ataque de conjuro +4, 4d6 radiante. El siguiente ataque contra el objetivo tiene ventaja.</textarea>
+          </section>
+
+          <section class="ds-box equipment-box">
+            <h3>Equipo</h3>
+            <div class="equipment-layout">
+              <div class="coin-rail">
+                <label>CP<input data-char="coin_cp" value="0"></label>
+                <label>PP<input data-char="coin_pp" value="0"></label>
+                <label>PE<input data-char="coin_pe" value="0"></label>
+                <label>PO<input data-char="coin_po" value="120"></label>
+                <label>PT<input data-char="coin_pt" value="0"></label>
+              </div>
+              <textarea data-char="equipment">Maza
+Cota de escamas
+Ballesta ligera
+20 virotes
+Escudo
+Símbolo sagrado de Pelor
+Paquete de sacerdote
+
+Por trasfondo de Acólito:
+Símbolo sagrado adicional o reliquia de Pelor
+Libro de oraciones
+5 varas de incienso
+Vestiduras
+Ropa común
+Bolsa con 15 po</textarea>
+            </div>
+          </section>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="dnd-right">
+          <section class="ds-box personality-box"><h3>Rasgos de personalidad</h3><textarea data-char="personality">Intento mantener la calma incluso cuando la oscuridad parece rodearlo todo. Si yo cedo al miedo, otros también caerán.</textarea></section>
+          <section class="ds-box personality-box"><h3>Ideales</h3><textarea data-char="ideals">La luz no existe para castigar, sino para guiar incluso a quienes han sido tocados por la sombra.</textarea></section>
+          <section class="ds-box personality-box"><h3>Vínculos</h3><textarea data-char="bonds">La Marca de la Oscuridad me recuerda la traición de mi antiguo maestro y la misión que Pelor puso sobre mis hombros.</textarea></section>
+          <section class="ds-box personality-box"><h3>Defectos</h3><textarea data-char="flaws">Temo que la oscuridad dentro de mí no sea una maldición, sino una parte verdadera de lo que soy.</textarea></section>
+          <section class="ds-box features-box">
+            <h3>Rasgos y características</h3>
+            <textarea data-char="features">Rasgos raciales — Tiefling de Zariel
+
+Visión en la oscuridad
+Puedes ver en oscuridad tenue a 60 pies como si fuera luz brillante, y en oscuridad total como si fuera luz tenue.
+
+Resistencia infernal
+Tienes resistencia al daño de fuego.
+
+Legado de Averno
+A nivel 1 conoces el truco:
+Taumaturgia
+
+Canalizar Divinidad (Nivel 2)
+Puedes usar Canalizar Divinidad 1 vez por descanso corto o largo.
+
+Opciones
+- Expulsar muertos vivientes
+- Resplandor del alba
+
+Rasgos de dominio — Dominio Divino: Luz
+
+Truco adicional
+Aprendes el truco:
+Luz
+
+Destello protector
+Cuando una criatura que puedas ver a 30 pies de ti te ataque, puedes usar tu reacción para imponerle desventaja, haciendo que una luz divina estalle frente a ella.
+
+Puedes usarlo un número de veces igual a tu modificador de Sabiduría.
+
+Usos: 2 por descanso largo.
+No funciona contra criaturas que no puedan ser cegadas.</textarea>
+          </section>
+        </div>
+      </div>
+    </article>
+
+    <!-- PÁGINA 2 -->
+    <article class="digital-sheet dnd-sheet page-two">
+      <div class="dnd-sheet-brand small-brand"><div class="brand-mark">D&amp;D</div><div class="brand-sub">DETALLES DEL PERSONAJE</div></div>
+
+      <header class="ds-header second-header">
+        <div class="ds-name"><label><span>Nombre del personaje</span><input data-char="name2" value="Alak Hul"></label></div>
+        <div class="physical-grid">
+          <label><span>Edad</span><input data-char="age" value="24"></label>
+          <label><span>Altura</span><input data-char="height" value="186 cm"></label>
+          <label><span>Peso</span><input data-char="weight" value="78 kg"></label>
+          <label><span>Ojos</span><input data-char="eyes" value="Negros"></label>
+          <label><span>Piel</span><input data-char="skin" value="Azul"></label>
+          <label><span>Cabello</span><input data-char="hair" value="Negro"></label>
+        </div>
+      </header>
+
+      <div class="dnd-page2-grid">
+        <section class="ds-box portrait-panel">
+          <h3>Apariencia del personaje</h3>
+          <div class="character-portrait"><img id="characterPortrait" src="assets/alak-hul.jpg" alt="Alak Hul"></div>
+          <label class="portrait-upload">Cambiar imagen<input id="portraitUpload" type="file" accept="image/*" hidden></label>
+        </section>
+
+        <section class="ds-box allies-panel">
+          <h3>Aliados y organizaciones</h3>
+          <textarea data-char="allies">10 raciones de comida</textarea>
+          <div class="symbol-card"><div class="sun-symbol">☀</div><span>Símbolo de Pelor</span></div>
+        </section>
+
+        <section class="ds-box backstory-panel">
+          <h3>Historia del personaje</h3>
+          <textarea data-char="backstory">Alak Hul fue criado en un templo de Pelor, donde aprendió que la luz debe abrirse paso incluso en los lugares más corruptos. Durante años creyó que su destino era servir como sanador, guía y protector, hasta que su propio maestro, secretamente corrompido por la nigromancia, lo traicionó y dejó sobre él una marca oscura. Desde entonces, Alak Hul vive dividido entre la fe que lo salvó y la sombra que intenta reclamarlo. La Profecía del Ocaso habla de un hijo del sol que caminará entre nieblas para enfrentar a los muertos y desafiar a una oscuridad ancestral. Cuando una extraña carta proveniente de Barovia llegó a sus manos, Alak Hul comprendió que su prueba apenas comenzaba.</textarea>
+        </section>
+
+        <section class="ds-box additional-panel"><h3>Rasgos y características adicionales</h3><textarea data-char="additional"></textarea></section>
+        <section class="ds-box treasure-panel"><h3>Tesoro</h3><textarea data-char="treasure"></textarea></section>
+      </div>
+    </article>
+
+    <!-- PÁGINA 3 -->
+    <article class="digital-sheet dnd-sheet page-three">
+      <div class="dnd-sheet-brand small-brand">
+        <div class="brand-mark">D&amp;D</div>
+        <div class="brand-sub">HOJA DE CONJUROS</div>
+      </div>
+
+      <header class="spell-sheet-header">
+        <label>
+          <span>Clase lanzadora de conjuros</span>
+          <input data-char="spell_class" value="Clérigo">
+        </label>
+        <label>
+          <span>Característica de lanzamiento</span>
+          <input data-char="spell_ability" value="Sabiduría">
+        </label>
+        <label>
+          <span>Salvación de conjuro</span>
+          <input data-char="spell_save_dc" value="12">
+        </label>
+        <label>
+          <span>Bonificador de ataque de conjuro</span>
+          <input data-char="spell_attack_bonus" value="+4">
+        </label>
+      </header>
+
+      <div class="spell-page-grid">
+
+        <section class="spell-level-box cantrip-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">0</div>
+            <div>
+              <h3>Trucos</h3>
+              <span>Conjuros conocidos</span>
+            </div>
+          </div>
+
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell0prep_1"><input data-char="spell0_1" value="Llama sagrada"></label>
+            <label><input type="checkbox" data-char="spell0prep_2"><input data-char="spell0_2" value="Guía"></label>
+            <label><input type="checkbox" data-char="spell0prep_3"><input data-char="spell0_3" value="Reparar a los moribundos"></label>
+            <label><input type="checkbox" data-char="spell0prep_4"><input data-char="spell0_4" value="Taumaturgia"></label>
+            <label><input type="checkbox" data-char="spell0prep_5"><input data-char="spell0_5" value="Luz"></label>
+            <label><input type="checkbox" data-char="spell0prep_6"><input data-char="spell0_6" value=""></label>
+            <label><input type="checkbox" data-char="spell0prep_7"><input data-char="spell0_7" value=""></label>
+            <label><input type="checkbox" data-char="spell0prep_8"><input data-char="spell0_8" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">1</div>
+            <div class="spell-level-title">
+              <h3>Nivel 1</h3>
+              <div class="spell-slots-inline">
+                <label><span>Espacios totales</span><input data-char="spell_slots1_total" value="4"></label>
+                <label><span>Gastados</span><input data-char="spell_slots1_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell1prep_1"><input data-char="spell1_1" value="Curar heridas"></label>
+            <label><input type="checkbox" data-char="spell1prep_2"><input data-char="spell1_2" value="Saeta Guiada"></label>
+            <label><input type="checkbox" data-char="spell1prep_3"><input data-char="spell1_3" value="Santuario"></label>
+            <label><input type="checkbox" data-char="spell1prep_4"><input data-char="spell1_4" value="Manos ardientes (Dominio de la luz)"></label>
+            <label><input type="checkbox" data-char="spell1prep_5"><input data-char="spell1_5" value="Fuego feérico (Dominio de la luz)"></label>
+            <label><input type="checkbox" data-char="spell1prep_6"><input data-char="spell1_6" value="Protección contra el bien y el mal"></label>
+            <label><input type="checkbox" data-char="spell1prep_7"><input data-char="spell1_7" value="Orden Imperiosa"></label>
+            <label><input type="checkbox" data-char="spell1prep_8"><input data-char="spell1_8" value="Escudo de fe"></label>
+            <label><input type="checkbox" data-char="spell1prep_9"><input data-char="spell1_9" value="Castigo abrasador (Tiefling Zariel)"></label>
+            <label><input type="checkbox" data-char="spell1prep_10"><input data-char="spell1_10" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">2</div>
+            <div class="spell-level-title">
+              <h3>Nivel 2</h3>
+              <div class="spell-slots-inline">
+                <label><span>Espacios totales</span><input data-char="spell_slots2_total" value="2"></label>
+                <label><span>Gastados</span><input data-char="spell_slots2_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell2prep_1"><input data-char="spell2_1" value="Rayo abrasador (Dominio de la luz)"></label>
+            <label><input type="checkbox" data-char="spell2prep_2"><input data-char="spell2_2" value="Auxilio"></label>
+            <label><input type="checkbox" data-char="spell2prep_3"><input data-char="spell2_3" value="Arma espiritual"></label>
+            <label><input type="checkbox" data-char="spell2prep_4"><input data-char="spell2_4" value="Esfera flamíngera (Dominio de la luz)"></label>
+            <label><input type="checkbox" data-char="spell2prep_5"><input data-char="spell2_5" value=""></label>
+            <label><input type="checkbox" data-char="spell2prep_6"><input data-char="spell2_6" value=""></label>
+            <label><input type="checkbox" data-char="spell2prep_7"><input data-char="spell2_7" value=""></label>
+            <label><input type="checkbox" data-char="spell2prep_8"><input data-char="spell2_8" value=""></label>
+            <label><input type="checkbox" data-char="spell2prep_9"><input data-char="spell2_9" value=""></label>
+            <label><input type="checkbox" data-char="spell2prep_10"><input data-char="spell2_10" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">3</div>
+            <div class="spell-level-title">
+              <h3>Nivel 3</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots3_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots3_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell3prep_1"><input data-char="spell3_1" value=""></label>
+            <label><input type="checkbox" data-char="spell3prep_2"><input data-char="spell3_2" value=""></label>
+            <label><input type="checkbox" data-char="spell3prep_3"><input data-char="spell3_3" value=""></label>
+            <label><input type="checkbox" data-char="spell3prep_4"><input data-char="spell3_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">4</div>
+            <div class="spell-level-title">
+              <h3>Nivel 4</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots4_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots4_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell4prep_1"><input data-char="spell4_1" value=""></label>
+            <label><input type="checkbox" data-char="spell4prep_2"><input data-char="spell4_2" value=""></label>
+            <label><input type="checkbox" data-char="spell4prep_3"><input data-char="spell4_3" value=""></label>
+            <label><input type="checkbox" data-char="spell4prep_4"><input data-char="spell4_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">5</div>
+            <div class="spell-level-title">
+              <h3>Nivel 5</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots5_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots5_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell5prep_1"><input data-char="spell5_1" value=""></label>
+            <label><input type="checkbox" data-char="spell5prep_2"><input data-char="spell5_2" value=""></label>
+            <label><input type="checkbox" data-char="spell5prep_3"><input data-char="spell5_3" value=""></label>
+            <label><input type="checkbox" data-char="spell5prep_4"><input data-char="spell5_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">6</div>
+            <div class="spell-level-title">
+              <h3>Nivel 6</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots6_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots6_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell6prep_1"><input data-char="spell6_1" value=""></label>
+            <label><input type="checkbox" data-char="spell6prep_2"><input data-char="spell6_2" value=""></label>
+            <label><input type="checkbox" data-char="spell6prep_3"><input data-char="spell6_3" value=""></label>
+            <label><input type="checkbox" data-char="spell6prep_4"><input data-char="spell6_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">7</div>
+            <div class="spell-level-title">
+              <h3>Nivel 7</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots7_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots7_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell7prep_1"><input data-char="spell7_1" value=""></label>
+            <label><input type="checkbox" data-char="spell7prep_2"><input data-char="spell7_2" value=""></label>
+            <label><input type="checkbox" data-char="spell7prep_3"><input data-char="spell7_3" value=""></label>
+            <label><input type="checkbox" data-char="spell7prep_4"><input data-char="spell7_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">8</div>
+            <div class="spell-level-title">
+              <h3>Nivel 8</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots8_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots8_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell8prep_1"><input data-char="spell8_1" value=""></label>
+            <label><input type="checkbox" data-char="spell8prep_2"><input data-char="spell8_2" value=""></label>
+            <label><input type="checkbox" data-char="spell8prep_3"><input data-char="spell8_3" value=""></label>
+            <label><input type="checkbox" data-char="spell8prep_4"><input data-char="spell8_4" value=""></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">9</div>
+            <div class="spell-level-title">
+              <h3>Nivel 9</h3>
+              <div class="spell-slots-inline">
+                <label><span>Total</span><input data-char="spell_slots9_total" value="0"></label>
+                <label><span>Gastados</span><input data-char="spell_slots9_spent" value="0"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell9prep_1"><input data-char="spell9_1" value=""></label>
+            <label><input type="checkbox" data-char="spell9prep_2"><input data-char="spell9_2" value=""></label>
+            <label><input type="checkbox" data-char="spell9prep_3"><input data-char="spell9_3" value=""></label>
+            <label><input type="checkbox" data-char="spell9prep_4"><input data-char="spell9_4" value=""></label>
+          </div>
+        </section>
+
+      </div>
+    </article>
+
   </div>
 </section>
+
 
 </main>
 

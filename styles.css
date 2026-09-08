@@ -128,3 +128,1210 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 @media(max-width:760px){
   .native-pdf-frame{height:78vh;min-height:720px}
 }
+
+/* ===== Ficha digital v7 ===== */
+.character-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:18px}.character-intro h2{margin:3px 0 8px;font-size:38px;font-weight:500;color:#d8b4fe}.character-intro p:last-child{color:var(--muted)}.save-status{font:700 12px system-ui,sans-serif;color:#a78bfa;border:1px solid #352a42;border-radius:999px;padding:8px 12px;white-space:nowrap}.sheet-scroll{overflow-x:auto;padding-bottom:22px}.digital-sheet{width:1120px;min-height:1450px;margin:0 auto 34px;background:#09090c;border:1px solid #39294a;border-radius:20px;padding:24px;box-shadow:0 28px 90px rgba(0,0,0,.65)}
+.digital-sheet input,.digital-sheet textarea{width:100%;background:#030304;border:1px solid #2d2336;color:#f7f1ff;border-radius:8px;padding:7px 8px;font:13px system-ui,sans-serif;outline:none}.digital-sheet input:focus,.digital-sheet textarea:focus{border-color:#8b5cf6;box-shadow:0 0 0 2px rgba(139,92,246,.15)}.digital-sheet textarea{resize:none;line-height:1.4}.digital-sheet label{display:block;color:#9f94aa;font:800 9px system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase}.digital-sheet h3{margin:0 0 10px;color:#c4a7e7;font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-family:system-ui,sans-serif}.ds-header{display:grid;grid-template-columns:35% 65%;gap:12px;border-bottom:1px solid #2b2135;padding-bottom:16px;margin-bottom:16px}.ds-name input{font:500 32px Georgia,serif;color:#d8b4fe;padding:14px}.ds-header-grid,.physical-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px}.ds-main-grid{display:grid;grid-template-columns:25% 42% 33%;gap:14px}.ds-left,.ds-center,.ds-right{display:flex;flex-direction:column;gap:12px}.ds-box{border:1px solid #31263b;background:#050507;border-radius:14px;padding:12px}.ability-stack{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.ability-box{border:1px solid #39294a;border-radius:14px;padding:9px;text-align:center;background:#060609}.ability-box span{display:block;color:#a99db4;font:800 9px system-ui,sans-serif;text-transform:uppercase}.ability-box input{text-align:center;font-size:24px;color:#d8b4fe}.ability-box .ability-mod{width:56px;margin:7px auto 0;border-radius:999px;font-size:14px}.save-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.skill-line{display:grid!important;grid-template-columns:1fr 55px;align-items:center;gap:8px;margin:5px 0}.skill-line span{text-transform:none;letter-spacing:0;font-size:11px;color:#c9c1d2}.skill-line input{text-align:center;padding:5px}.passive-box{border:1px solid #39294a;border-radius:999px;padding:8px 12px;background:#060609}.passive-box label{display:grid;grid-template-columns:1fr 58px;align-items:center;gap:10px}.passive-box input{text-align:center}.tall-box textarea{min-height:210px}.combat-top{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.combat-top label,.proficiency-inspiration label{border:1px solid #39294a;border-radius:12px;padding:9px;text-align:center}.combat-top input,.proficiency-inspiration input{text-align:center;font-size:22px;color:#d8b4fe}.shield-field{border-radius:28px 28px 12px 12px!important}.proficiency-inspiration{display:grid;grid-template-columns:1fr 1fr;gap:9px}.hp-box{display:grid;grid-template-columns:1fr;gap:9px}.hp-box input{text-align:center;font-size:20px}.hitdeath-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.hitdeath-grid label{margin-top:7px}.attack-head,.attack-row{display:grid;grid-template-columns:1.4fr .55fr 1.2fr;gap:7px}.attack-head{font:800 9px system-ui,sans-serif;text-transform:uppercase;color:#81768d;padding:0 4px 6px}.attack-row{margin-bottom:7px}.attacks textarea{min-height:120px;margin-top:5px}.money{display:grid!important;grid-template-columns:50px 100px;align-items:center;gap:8px;margin-top:10px}.personality-box textarea{min-height:95px}.features-box{flex:1}.features-box textarea{min-height:470px}.second-header{grid-template-columns:35% 65%}.ds-page2-grid{display:grid;grid-template-columns:31% 1fr;grid-template-rows:420px 470px 300px;gap:14px}.portrait-panel{grid-column:1;grid-row:1}.allies-panel{grid-column:2;grid-row:1}.backstory-panel{grid-column:1;grid-row:2/4}.additional-panel{grid-column:2;grid-row:2}.treasure-panel{grid-column:2;grid-row:3}.character-portrait{height:325px;border-radius:10px;overflow:hidden;background:#020203}.character-portrait img{width:100%;height:100%;object-fit:cover;object-position:center top}.portrait-upload{display:block!important;text-align:center;margin-top:10px;padding:9px;border:1px dashed #5b3b72;border-radius:999px;color:#c084fc!important;cursor:pointer}.allies-panel textarea{height:180px}.symbol-card{height:150px;border:1px solid #2d2336;border-radius:12px;margin-top:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9c8ba9}.sun-symbol{font-size:68px;color:#d8b4fe}.backstory-panel textarea,.additional-panel textarea,.treasure-panel textarea{height:calc(100% - 30px)}
+.invocation{margin-top:26px;padding:18px;border-top:1px solid #382746;background:#0d0912;border-radius:0 0 12px 12px}.invocation span{display:block;color:#a78bfa;font:800 10px system-ui,sans-serif;letter-spacing:.12em;margin-bottom:9px}.invocation blockquote{margin:0;color:#f0ddff;font:italic 20px/1.45 Georgia,serif}
+@media(max-width:700px){.character-intro{display:block}.save-status{display:inline-block;margin-top:10px}.digital-sheet{transform-origin:top left}.sheet-scroll{padding-bottom:10px}}
+
+
+/* ==========================================================
+   v10 · SOLO PERSONAJE: ficha D&D / pergamino
+   El resto del sitio conserva el tema violeta original.
+   ========================================================== */
+
+#character{
+  --sheet-ink:#241d16;
+  --sheet-line:#332c23;
+  --sheet-muted:#716451;
+  --sheet-paper:#efe3c6;
+  --sheet-paper-2:#e5d6b2;
+  --sheet-accent:#7b211d;
+}
+
+#character .character-intro{
+  max-width:1240px;
+  margin:0 auto 22px;
+}
+#character .character-intro h2{
+  color:#c084fc;
+}
+#character .sheet-scroll{
+  overflow-x:auto;
+  padding:18px 6px 70px;
+}
+
+#character .dnd-sheet{
+  position:relative;
+  width:1180px;
+  min-width:1180px;
+  height:1530px;
+  margin:0 auto 48px;
+  padding:48px 46px 42px;
+  box-sizing:border-box;
+  color:var(--sheet-ink);
+  background:
+    linear-gradient(rgba(247,240,218,.985),rgba(235,222,188,.99)),
+    repeating-linear-gradient(0deg,rgba(91,68,37,.025) 0 1px,transparent 1px 4px);
+  border:1px solid #b9a681;
+  border-radius:3px;
+  box-shadow:
+    0 28px 85px rgba(0,0,0,.55),
+    inset 0 0 44px rgba(96,67,28,.075);
+}
+
+#character .dnd-sheet:before{
+  content:"";
+  position:absolute;
+  inset:16px;
+  border:2px solid rgba(51,44,35,.76);
+  outline:1px solid rgba(51,44,35,.18);
+  pointer-events:none;
+}
+#character .dnd-sheet:after{
+  content:"";
+  position:absolute;
+  inset:24px;
+  border:1px solid rgba(123,33,29,.18);
+  pointer-events:none;
+}
+
+#character .dnd-sheet-brand{
+  position:absolute;
+  left:58px;
+  top:18px;
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  color:#2b241b;
+  z-index:2;
+}
+#character .brand-mark{
+  font:800 30px/1 Georgia,serif;
+  letter-spacing:-.06em;
+}
+#character .brand-sub{
+  font:700 9px/1 Georgia,serif;
+  letter-spacing:.14em;
+  color:#6a5c48;
+}
+
+#character .dnd-sheet input,
+#character .dnd-sheet textarea{
+  box-sizing:border-box;
+  color:#241d16;
+  background:rgba(255,255,255,.16);
+  border:0;
+  border-bottom:1px solid rgba(51,44,35,.35);
+  border-radius:0;
+  box-shadow:none;
+  font-family:Georgia,"Times New Roman",serif;
+  resize:none;
+}
+
+#character .dnd-sheet input:focus,
+#character .dnd-sheet textarea:focus{
+  outline:1px solid rgba(109,40,217,.38);
+  background:rgba(255,251,235,.78);
+}
+
+#character .dnd-sheet label,
+#character .dnd-sheet span{
+  color:#2f2921;
+}
+#character .dnd-sheet h3{
+  margin:0 0 8px;
+  color:#211b15;
+  font:700 10px/1.2 Georgia,"Times New Roman",serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-align:center;
+}
+
+/* Encabezado más amplio */
+#character .dnd-header,
+#character .second-header{
+  display:grid;
+  grid-template-columns:38% 62%;
+  gap:18px;
+  align-items:end;
+  height:118px;
+  margin:16px 22px 18px;
+  padding:0;
+  border:0;
+}
+#character .ds-name{
+  align-self:end;
+  padding:0 9px 7px;
+  border-bottom:2px solid #332c23;
+}
+#character .ds-name label{
+  display:flex;
+  flex-direction:column-reverse;
+  gap:4px;
+}
+#character .ds-name label span,
+#character .ds-header-grid label span,
+#character .physical-grid label span{
+  font:700 8.5px/1.2 Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+#character .ds-name input{
+  height:38px;
+  padding:4px 5px;
+  font-size:25px;
+}
+#character .ds-header-grid,
+#character .physical-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  border:2px solid #332c23;
+  border-radius:14px;
+  overflow:hidden;
+}
+#character .ds-header-grid label,
+#character .physical-grid label{
+  min-width:0;
+  padding:7px 9px 5px;
+  border-right:1px solid #766b58;
+  border-bottom:1px solid #766b58;
+}
+#character .ds-header-grid label:nth-child(3n),
+#character .physical-grid label:nth-child(3n){border-right:0}
+#character .ds-header-grid label:nth-child(n+4),
+#character .physical-grid label:nth-child(n+4){border-bottom:0}
+#character .ds-header-grid input,
+#character .physical-grid input{
+  width:100%;
+  height:27px;
+  padding:3px 2px;
+  font-size:14px;
+}
+
+/* Página 1 */
+#character .dnd-page1-grid{
+  display:grid;
+  grid-template-columns:12% 21% 31% 33%;
+  gap:14px;
+  height:1280px;
+  padding:0 22px;
+}
+#character .dnd-abilities,
+#character .dnd-left-info,
+#character .dnd-center,
+#character .dnd-right{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+#character .dnd-abilities{
+  gap:18px;
+  padding-top:4px;
+}
+#character .ability-box{
+  position:relative;
+  height:158px;
+  padding:12px 6px 22px;
+  border:2px solid #332c23;
+  border-radius:18px 18px 22px 22px;
+  background:rgba(255,255,255,.08);
+  text-align:center;
+  box-sizing:border-box;
+}
+#character .ability-box:before,
+#character .ability-box:after{
+  content:"";
+  position:absolute;
+  left:10px;
+  right:10px;
+  height:4px;
+  border-top:1px solid #5b5141;
+  border-bottom:1px solid #5b5141;
+}
+#character .ability-box:before{top:7px}
+#character .ability-box:after{bottom:7px}
+#character .ability-box span{
+  display:block;
+  margin-top:5px;
+  font:700 9.5px Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+}
+#character .ability-box > input:not(.ability-mod){
+  width:100%;
+  height:70px;
+  text-align:center;
+  font-size:40px;
+  border-bottom:0;
+  background:transparent;
+}
+#character .ability-box .ability-mod{
+  position:absolute;
+  left:50%;
+  bottom:-19px;
+  transform:translateX(-50%);
+  width:64px;
+  height:41px;
+  border:2px solid #332c23;
+  border-radius:50%;
+  text-align:center;
+  font-size:20px;
+  background:#efe2c4;
+  z-index:2;
+}
+
+/* Cajas */
+#character .dnd-sheet .ds-box,
+#character .passive-box{
+  box-sizing:border-box;
+  border:2px solid #332c23;
+  border-radius:12px;
+  background:rgba(255,255,255,.055);
+  padding:11px;
+  box-shadow:none;
+}
+
+/* Columna izquierda */
+#character .dnd-pill-row{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#character .dnd-pill{
+  min-height:58px;
+  display:grid;
+  grid-template-columns:58px 1fr;
+  align-items:center;
+  border:2px solid #332c23;
+  border-radius:29px 11px 11px 29px;
+  overflow:hidden;
+}
+#character .dnd-pill input{
+  height:100%;
+  text-align:center;
+  font-size:21px;
+  border-right:1px solid #5e5444;
+  border-bottom:0;
+}
+#character .dnd-pill span{
+  padding:0 9px;
+  font:700 8.5px Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+}
+
+#character .saving{height:210px}
+#character .save-grid{
+  display:grid;
+  gap:5px;
+}
+#character .save-grid label{
+  display:grid;
+  grid-template-columns:46px 1fr;
+  align-items:center;
+  gap:5px;
+}
+#character .save-grid input{
+  height:24px;
+  padding:2px;
+  text-align:center;
+  font-size:14px;
+}
+#character .save-grid span{font-size:11px}
+
+#character .skills{height:545px}
+#character .skill-line{
+  display:grid;
+  grid-template-columns:46px 1fr;
+  gap:5px;
+  align-items:center;
+  min-height:26px;
+  margin:0;
+}
+#character .skill-line input{
+  height:23px;
+  padding:2px;
+  text-align:center;
+  font-size:13px;
+}
+#character .skill-line span{
+  font-size:10px;
+  line-height:1.2;
+}
+
+#character .passive-box{
+  height:62px;
+  padding:7px 9px;
+}
+#character .passive-box label{
+  display:grid;
+  grid-template-columns:52px 1fr;
+  align-items:center;
+  gap:6px;
+}
+#character .passive-box input{
+  height:32px;
+  text-align:center;
+  font-size:18px;
+}
+#character .passive-box span{
+  font:700 8.5px/1.2 Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+}
+
+#character .proficiencies-box{
+  flex:1;
+  min-height:0;
+}
+#character .proficiencies-box textarea{
+  width:100%;
+  height:calc(100% - 28px);
+  min-height:0;
+  padding:7px;
+  font-size:11px;
+  line-height:1.45;
+}
+
+/* Centro */
+#character .combat-top{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+#character .combat-top label{
+  height:100px;
+  padding:9px 6px 6px;
+  border:2px solid #332c23;
+  border-radius:12px;
+  background:rgba(255,255,255,.055);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#character .combat-top label span{
+  text-align:center;
+  font:700 8px/1.2 Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+}
+#character .combat-top input{
+  flex:1;
+  text-align:center;
+  font-size:30px;
+  border-bottom:0;
+}
+#character .shield-field{
+  clip-path:polygon(14% 0,86% 0,100% 14%,92% 78%,50% 100%,8% 78%,0 14%);
+  border-radius:0;
+}
+
+#character .hp-box{
+  height:270px;
+  display:grid;
+  grid-template-rows:48px 1fr 1fr;
+  gap:8px;
+}
+#character .hp-box label{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#character .hp-box label span{
+  font:700 8.5px Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+}
+#character .hp-box > label:first-child{
+  display:grid;
+  grid-template-columns:1fr 90px;
+  align-items:center;
+}
+#character .hp-box > label:first-child input{
+  height:30px;
+  text-align:center;
+  font-size:18px;
+}
+#character .hp-current,
+#character .hp-temp{
+  border-top:1px solid #786d5b;
+  text-align:center;
+}
+#character .hp-current input,
+#character .hp-temp input{
+  height:58px;
+  text-align:center;
+  font-size:36px;
+  border-bottom:0;
+}
+
+#character .hitdeath-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  height:132px;
+}
+#character .hitdeath-grid .ds-box{height:100%}
+#character .hitdeath-grid input{
+  height:30px;
+  text-align:center;
+  font-size:17px;
+}
+#character .death-box label{
+  display:grid;
+  grid-template-columns:1fr 46px;
+  align-items:center;
+  gap:4px;
+}
+
+#character .attacks{height:335px}
+#character .attack-head,
+#character .attack-row{
+  display:grid;
+  grid-template-columns:1.35fr .55fr 1.25fr;
+  gap:5px;
+}
+#character .attack-head{
+  margin-bottom:5px;
+  font-size:9px;
+}
+#character .attack-row input{
+  height:28px;
+  padding:4px;
+  font-size:11px;
+}
+#character .attacks textarea{
+  width:100%;
+  height:158px;
+  margin-top:7px;
+  padding:6px;
+  font-size:11px;
+  line-height:1.4;
+}
+
+#character .equipment-box{
+  flex:1;
+  min-height:0;
+}
+#character .equipment-layout{
+  display:grid;
+  grid-template-columns:58px 1fr;
+  gap:10px;
+  height:calc(100% - 28px);
+}
+#character .coin-rail{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding-top:4px;
+}
+#character .coin-rail label{
+  display:grid;
+  grid-template-columns:20px 1fr;
+  align-items:center;
+  gap:3px;
+  font:700 9px Georgia,"Times New Roman",serif;
+}
+#character .coin-rail input{
+  height:29px;
+  min-width:0;
+  padding:3px;
+  text-align:center;
+  border:1px solid #51483a;
+  border-radius:12px;
+}
+#character .equipment-layout textarea{
+  width:100%;
+  height:100%;
+  min-height:0;
+  padding:7px;
+  font-size:11px;
+  line-height:1.45;
+}
+
+/* Derecha */
+#character .personality-box{height:165px}
+#character .personality-box textarea{
+  width:100%;
+  height:122px;
+  padding:7px;
+  font-size:11px;
+  line-height:1.42;
+}
+#character .features-box{
+  flex:1;
+  min-height:0;
+}
+#character .features-box textarea{
+  width:100%;
+  height:calc(100% - 28px);
+  min-height:0;
+  padding:8px;
+  font-size:10.7px;
+  line-height:1.42;
+}
+
+/* Página 2 */
+#character .page-two{
+  height:1530px;
+}
+#character .dnd-page2-grid{
+  display:grid;
+  grid-template-columns:31% 1fr;
+  grid-template-rows:440px 445px 265px;
+  gap:16px;
+  height:1168px;
+  padding:0 22px;
+}
+#character .portrait-panel{grid-column:1;grid-row:1}
+#character .allies-panel{grid-column:2;grid-row:1}
+#character .backstory-panel{grid-column:1;grid-row:2/4}
+#character .additional-panel{grid-column:2;grid-row:2}
+#character .treasure-panel{grid-column:2;grid-row:3}
+
+#character .character-portrait{
+  height:348px;
+  border:2px solid #332c23;
+  border-radius:2px;
+  background:#d8caab;
+  overflow:hidden;
+}
+#character .character-portrait img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+#character .portrait-upload{
+  display:block;
+  margin-top:8px;
+  padding:7px;
+  border:1px solid #4c4032;
+  background:#e6d8b6;
+  color:#362a1f;
+  border-radius:2px;
+  text-align:center;
+  font-size:10px;
+}
+#character .allies-panel textarea{
+  width:100%;
+  height:205px;
+  padding:7px;
+  font-size:11px;
+  line-height:1.45;
+}
+#character .symbol-card{
+  height:160px;
+  margin-top:10px;
+  border:1px solid #4b4134;
+  background:rgba(255,255,255,.08);
+  color:#40372c;
+}
+#character .backstory-panel textarea,
+#character .additional-panel textarea,
+#character .treasure-panel textarea{
+  width:100%;
+  height:calc(100% - 28px);
+  min-height:0;
+  padding:8px;
+  font-size:11.3px;
+  line-height:1.5;
+}
+
+/* Ornamentación mínima y sólo dentro de la ficha */
+#character .dnd-sheet .ds-box:before{
+  content:"";
+  display:block;
+  width:34px;
+  height:3px;
+  margin:-6px auto 6px;
+  border-top:1px solid #332c23;
+  border-bottom:1px solid #332c23;
+  opacity:.55;
+}
+
+@media(max-width:1220px){
+  #character .sheet-scroll{
+    padding-left:10px;
+  }
+}
+
+
+/* ==========================================================
+   v11 · Personaje usa todo el ancho disponible
+   Mantiene la distribución D&D, pero deja de imitar una hoja física estrecha.
+   ========================================================== */
+
+#character .sheet-scroll{
+  overflow-x:auto;
+  padding:18px 0 70px;
+}
+
+#character .dnd-sheet{
+  width:min(1680px, calc(100vw - 48px));
+  min-width:1320px;
+  height:auto;
+  min-height:1500px;
+  padding:54px 58px 48px;
+  margin:0 auto 52px;
+}
+
+/* más aire en encabezado */
+#character .dnd-header,
+#character .second-header{
+  grid-template-columns:34% 66%;
+  gap:26px;
+  height:126px;
+  margin:16px 24px 22px;
+}
+
+/* distribución principal más ancha */
+#character .dnd-page1-grid{
+  grid-template-columns:12% 23% 31% 34%;
+  gap:20px;
+  height:auto;
+  min-height:1290px;
+  padding:0 24px;
+}
+
+#character .dnd-abilities,
+#character .dnd-left-info,
+#character .dnd-center,
+#character .dnd-right{
+  gap:14px;
+}
+
+/* atributos */
+#character .dnd-abilities{
+  gap:22px;
+}
+#character .ability-box{
+  height:165px;
+}
+#character .ability-box > input:not(.ability-mod){
+  height:74px;
+}
+
+/* Tiradas de salvación: cada fila contiene valor + nombre dentro de la caja */
+#character .saving{
+  height:auto;
+  min-height:250px;
+  padding:14px 13px 13px;
+}
+#character .saving h3{
+  margin-bottom:12px;
+}
+#character .save-grid{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+#character .save-grid label{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  min-height:29px;
+  margin:0;
+  padding:2px 4px;
+  border-bottom:1px solid rgba(51,44,35,.16);
+}
+#character .save-grid label:last-child{
+  border-bottom:0;
+}
+#character .save-grid input{
+  width:100%;
+  height:27px;
+  padding:3px 4px;
+  text-align:center;
+  font-size:14px;
+}
+#character .save-grid span{
+  display:block;
+  min-width:0;
+  overflow:visible;
+  white-space:nowrap;
+  font-size:11.5px;
+  line-height:1.2;
+}
+
+/* habilidades más legibles */
+#character .skills{
+  height:auto;
+  min-height:590px;
+  padding:14px 13px 13px;
+}
+#character .skill-line{
+  grid-template-columns:58px minmax(0,1fr);
+  gap:9px;
+  min-height:28px;
+}
+#character .skill-line input{
+  width:100%;
+  height:25px;
+}
+#character .skill-line span{
+  white-space:normal;
+  overflow:visible;
+  font-size:10.6px;
+  line-height:1.25;
+}
+
+/* competencia e inspiración con más espacio */
+#character .dnd-pill{
+  grid-template-columns:68px minmax(0,1fr);
+  min-height:64px;
+}
+#character .dnd-pill span{
+  font-size:9px;
+  line-height:1.2;
+}
+
+/* centro con cajas más amplias */
+#character .combat-top{
+  gap:14px;
+}
+#character .combat-top label{
+  height:108px;
+}
+#character .hp-box{
+  height:290px;
+}
+#character .hitdeath-grid{
+  height:145px;
+  gap:14px;
+}
+#character .attacks{
+  height:360px;
+}
+#character .attacks textarea{
+  height:177px;
+}
+
+/* equipo y monedas */
+#character .equipment-layout{
+  grid-template-columns:70px minmax(0,1fr);
+  gap:14px;
+}
+#character .coin-rail{
+  gap:12px;
+}
+#character .coin-rail label{
+  grid-template-columns:24px minmax(0,1fr);
+}
+#character .coin-rail input{
+  height:32px;
+}
+
+/* derecha más cómoda */
+#character .personality-box{
+  height:178px;
+}
+#character .personality-box textarea{
+  height:133px;
+  font-size:11.4px;
+  line-height:1.5;
+}
+#character .features-box textarea{
+  font-size:11px;
+  line-height:1.5;
+}
+
+/* página 2 aprovecha el ancho también */
+#character .page-two{
+  min-height:1500px;
+}
+#character .dnd-page2-grid{
+  grid-template-columns:34% 66%;
+  grid-template-rows:470px 460px 280px;
+  gap:20px;
+  height:auto;
+  min-height:1230px;
+  padding:0 24px;
+}
+#character .character-portrait{
+  height:370px;
+}
+#character .allies-panel textarea{
+  height:220px;
+}
+#character .symbol-card{
+  height:175px;
+}
+#character .backstory-panel textarea,
+#character .additional-panel textarea,
+#character .treasure-panel textarea{
+  font-size:11.6px;
+  line-height:1.55;
+}
+
+/* En pantallas grandes, que Personaje realmente use el ancho */
+@media(min-width:1500px){
+  #character .dnd-sheet{
+    width:calc(100vw - 80px);
+    max-width:1760px;
+  }
+}
+
+/* En pantallas medias, no aplastar textos: se conserva el ancho mínimo y hay desplazamiento */
+@media(max-width:1399px){
+  #character .dnd-sheet{
+    min-width:1320px;
+  }
+}
+
+
+/* ==========================================================
+   v12 · Personaje fluido, sin caja desplazable ni scroll horizontal
+   ========================================================== */
+
+#character{
+  width:100%;
+}
+
+#character .character-intro{
+  width:min(96vw, 1700px);
+  max-width:none;
+  margin:0 auto 22px;
+}
+
+#character .sheet-scroll{
+  width:100%;
+  overflow:visible !important;
+  padding:18px 0 70px;
+}
+
+#character .dnd-sheet{
+  width:min(96vw, 1700px) !important;
+  max-width:none !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:0 !important;
+  margin:0 auto 52px;
+  padding:54px 58px 48px;
+}
+
+/* La ficha deja de comportarse como una lámina rígida */
+#character .dnd-page1-grid{
+  display:grid;
+  grid-template-columns:
+    minmax(120px, .75fr)
+    minmax(240px, 1.35fr)
+    minmax(320px, 1.75fr)
+    minmax(320px, 1.9fr);
+  gap:20px;
+  height:auto !important;
+  min-height:0 !important;
+  padding:0 24px;
+}
+
+/* Evitar que cualquier hijo fuerce el ancho */
+#character .dnd-page1-grid > *,
+#character .dnd-page2-grid > *,
+#character .dnd-header > *,
+#character .second-header > *{
+  min-width:0;
+}
+
+#character .dnd-header,
+#character .second-header{
+  grid-template-columns:minmax(280px, 34%) minmax(0, 66%);
+}
+
+/* Página 2 también completamente fluida */
+#character .page-two{
+  height:auto !important;
+  min-height:0 !important;
+}
+
+#character .dnd-page2-grid{
+  display:grid !important;
+  grid-template-columns:minmax(300px, 34%) minmax(0, 66%) !important;
+  grid-template-rows:470px 460px 280px !important;
+  gap:20px !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:0 24px;
+}
+
+/* campos siempre contenidos */
+#character input,
+#character textarea{
+  max-width:100%;
+}
+
+/* Pantallas medianas: se conserva la distribución sin provocar scroll horizontal */
+@media(max-width:1250px){
+  #character .dnd-sheet,
+  #character .character-intro{
+    width:97vw !important;
+  }
+
+  #character .dnd-sheet{
+    padding:48px 34px 42px;
+  }
+
+  #character .dnd-page1-grid{
+    grid-template-columns:
+      minmax(105px, .7fr)
+      minmax(215px, 1.3fr)
+      minmax(285px, 1.65fr)
+      minmax(285px, 1.85fr);
+    gap:14px;
+    padding:0 14px;
+  }
+
+  #character .dnd-header,
+  #character .second-header{
+    gap:16px;
+    margin-left:14px;
+    margin-right:14px;
+  }
+}
+
+/* En pantallas más pequeñas se reorganiza, en vez de crear una barra horizontal */
+@media(max-width:980px){
+  #character .dnd-page1-grid{
+    grid-template-columns:130px minmax(0,1fr) minmax(0,1fr);
+  }
+
+  #character .dnd-right{
+    grid-column:2 / 4;
+  }
+
+  #character .dnd-page2-grid{
+    grid-template-columns:1fr 1fr !important;
+    grid-template-rows:auto !important;
+  }
+
+  #character .portrait-panel,
+  #character .allies-panel,
+  #character .backstory-panel,
+  #character .additional-panel,
+  #character .treasure-panel{
+    grid-column:auto !important;
+    grid-row:auto !important;
+  }
+
+  #character .backstory-panel{
+    grid-column:1 / -1 !important;
+    min-height:460px;
+  }
+}
+
+/* Móvil: una sola columna limpia, nunca scroll horizontal */
+@media(max-width:720px){
+  #character .dnd-sheet{
+    width:96vw !important;
+    padding:44px 18px 28px;
+  }
+
+  #character .dnd-header,
+  #character .second-header{
+    grid-template-columns:1fr !important;
+    height:auto;
+  }
+
+  #character .dnd-page1-grid,
+  #character .dnd-page2-grid{
+    grid-template-columns:1fr !important;
+    padding:0 6px;
+  }
+
+  #character .dnd-right{
+    grid-column:auto;
+  }
+
+  #character .dnd-abilities{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  #character .ability-box{
+    height:145px;
+  }
+
+  #character .combat-top{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+
+/* ==========================================================
+   v13 · Página 3 de Personaje: hoja digital de conjuros D&D
+   ========================================================== */
+
+#character .page-three{
+  min-height:0 !important;
+  height:auto !important;
+  padding-bottom:58px;
+}
+
+#character .spell-sheet-header{
+  display:grid;
+  grid-template-columns:1.6fr 1fr .8fr 1fr;
+  gap:14px;
+  margin:52px 24px 26px;
+  padding:14px;
+  border:2px solid #332c23;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+}
+
+#character .spell-sheet-header label{
+  min-width:0;
+}
+
+#character .spell-sheet-header span{
+  display:block;
+  margin-bottom:5px;
+  font:700 8.5px/1.2 Georgia,"Times New Roman",serif;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+#character .spell-sheet-header input{
+  width:100%;
+  height:34px;
+  padding:4px 6px;
+  font-size:15px;
+}
+
+#character .spell-page-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  padding:0 24px 10px;
+  align-items:start;
+}
+
+#character .spell-level-box{
+  position:relative;
+  min-width:0;
+  min-height:420px;
+  padding:14px 14px 16px;
+  border:2px solid #332c23;
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+  box-sizing:border-box;
+}
+
+#character .spell-level-heading{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+#character .spell-level-number{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:54px;
+  height:54px;
+  border:2px solid #332c23;
+  border-radius:50%;
+  background:#efe2c4;
+  font:700 26px/1 Georgia,"Times New Roman",serif;
+  color:#241d16;
+}
+
+#character .spell-level-title{
+  min-width:0;
+}
+
+#character .spell-level-heading h3{
+  margin:0 0 4px;
+  text-align:left;
+  font-size:12px;
+}
+
+#character .spell-level-heading > div > span{
+  font-size:9px;
+  color:#655a49;
+}
+
+#character .spell-slots-inline{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:5px;
+}
+
+#character .spell-slots-inline label{
+  display:grid;
+  grid-template-columns:1fr 52px;
+  gap:5px;
+  align-items:center;
+  min-width:0;
+}
+
+#character .spell-slots-inline span{
+  font-size:8px;
+  line-height:1.1;
+  text-transform:uppercase;
+}
+
+#character .spell-slots-inline input{
+  width:100%;
+  height:28px;
+  padding:3px;
+  text-align:center;
+}
+
+#character .sheet-spell-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+#character .sheet-spell-list label{
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr);
+  gap:6px;
+  align-items:center;
+  min-height:30px;
+}
+
+#character .sheet-spell-list label > input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:#5b3f2b;
+  border:1px solid #51483a !important;
+  background:transparent !important;
+}
+
+#character .sheet-spell-list label > input:not([type="checkbox"]){
+  width:100%;
+  height:29px;
+  padding:3px 5px;
+  font-size:11px;
+}
+
+#character .compact-level{
+  min-height:270px;
+}
+
+#character .small-list label{
+  min-height:28px;
+}
+
+@media(max-width:1200px){
+  #character .spell-page-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  #character .spell-sheet-header{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:760px){
+  #character .spell-page-grid{
+    grid-template-columns:1fr;
+  }
+
+  #character .spell-sheet-header{
+    grid-template-columns:1fr;
+  }
+}

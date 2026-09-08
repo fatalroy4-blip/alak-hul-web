@@ -1,14 +1,12 @@
-# Alak Hul Web - PDF editable real
+# Alak Hul Web v13
 
-Esta versión elimina los campos HTML superpuestos.
-
-La pestaña **Hoja de personaje** carga el PDF editable real de Alak Hul dentro del navegador. El PDF incluido conserva sus valores, checkboxes y sus tres páginas. Se reparó únicamente el índice interno AcroForm para que los 333 campos reales sean reconocibles como formulario; la apariencia visual no fue modificada.
-
-- Conjuros, preparados y slots: conservados.
-- Canalizar Divinidad: conservado.
-- Combate: conserva orden por orden de selección, daño y Nuevo combate.
-- Hoja de personaje: PDF real editable, sin overlays HTML.
-- Botones Página 1/2/3: llevan el visor a cada página.
-- También hay un botón para abrir el PDF directamente en una pestaña nueva.
-
-Nota: el guardado de modificaciones del formulario se hace desde el propio visor PDF del navegador (guardar/descargar).
+Cambios:
+- Se agregó una tercera página dentro de Personaje.
+- Página 3 reproduce la estructura de la hoja de conjuros de D&D.
+- Incluye clase lanzadora, característica de lanzamiento, CD y bonificador de ataque.
+- Incluye Trucos y niveles 1–9.
+- Nivel 1 precargado con 4 espacios; nivel 2 con 2 espacios.
+- Se precargaron los conjuros que ya aparecen en la ficha actual de Alak Hul.
+- Los niveles superiores quedan disponibles para el crecimiento futuro del personaje.
+- Todo es editable y usa el mismo guardado automático de la ficha.
+- La pestaña Conjuros independiente se mantiene intacta, aunque exista información repetida.
