@@ -28,6 +28,7 @@
 <section id="spells" class="panel">
 
   <div id="slotsArea" class="slots-area"></div>
+  <div class="expansion-panel"><h3>Administrar espacios de conjuro</h3><p>Agrega niveles y ajusta cuántos espacios tienes disponibles. Los espacios ya marcados se conservan.</p><div class="expansion-fields"><label>Nivel <select id="newSlotLevel"></select></label><label>Espacios <input id="newSlotCount" type="number" min="0" max="30" value="3"></label><button id="applySlots" type="button">Guardar espacios</button></div><small>Control manual para reglas de tu mesa. No desbloquea conjuros automáticamente.</small></div>
 
   <label class="search">
     <span>⌕</span>
@@ -44,6 +45,7 @@
   </section>
 
   <div id="spellSections" class="spell-sections"></div>
+  <div class="expansion-panel"><h3>Añadir conjuro personalizado</h3><p>Guarda conjuros para los niveles 0 a 9. Aparecerán en su sección con descripción y botón para prepararlos.</p><div class="expansion-fields"><label>Nombre <input id="customSpellName" placeholder="Nombre del conjuro"></label><label>Nivel <select id="customSpellLevel"></select></label></div><label>Descripción <textarea id="customSpellDesc" rows="4" placeholder="Efecto, alcance, duración, salvaciones..."></textarea></label><button id="addCustomSpell" type="button">Añadir conjuro</button><p id="customSpellMessage" aria-live="polite"></p></div>
 </section>
 
 <section id="channel" class="panel">
@@ -106,7 +108,7 @@
           </label>
         </div>
         <div class="ds-header-grid">
-          <label><span>Clase y nivel</span><input data-char="classLevel" value="Clérigo N3"></label>
+          <label><span>Clase y nivel</span><input data-char="classLevel" value="Clérigo N4"></label>
           <label><span>Trasfondo</span><input data-char="background" value="Acólito"></label>
           <label><span>Nombre del jugador</span><input data-char="player" value="Roger"></label>
           <label><span>Raza</span><input data-char="race" value="Tiefling (Zariel)"></label>
@@ -120,9 +122,9 @@
         <aside class="dnd-abilities">
           <div class="ability-box"><span>Fuerza</span><input data-char="ability_0" value="11"><input class="ability-mod" data-char="abilitymod_0" value="+0"></div>
           <div class="ability-box"><span>Destreza</span><input data-char="ability_1" value="14"><input class="ability-mod" data-char="abilitymod_1" value="+2"></div>
-          <div class="ability-box"><span>Constitución</span><input data-char="ability_2" value="13"><input class="ability-mod" data-char="abilitymod_2" value="+1"></div>
+          <div class="ability-box"><span>Constitución</span><input data-char="ability_2" value="14"><input class="ability-mod" data-char="abilitymod_2" value="+2"></div>
           <div class="ability-box"><span>Inteligencia</span><input data-char="ability_3" value="8"><input class="ability-mod" data-char="abilitymod_3" value="-1"></div>
-          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4" value="15"><input class="ability-mod" data-char="abilitymod_4" value="+2"></div>
+          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4" value="17"><input class="ability-mod" data-char="abilitymod_4" value="+3"></div>
           <div class="ability-box"><span>Carisma</span><input data-char="ability_5" value="14"><input class="ability-mod" data-char="abilitymod_5" value="+2"></div>
         </aside>
 
@@ -198,8 +200,8 @@ Idiomas
           </div>
 
           <section class="ds-box hp-box">
-            <label><span>Máx. puntos de golpe</span><input data-char="hpMax" value="21"></label>
-            <label class="hp-current"><input data-char="hpCurrent" value="21"><span>Puntos de golpe actuales</span></label>
+            <label><span>Máx. puntos de golpe</span><input data-char="hpMax" value="31"></label>
+            <label class="hp-current"><input data-char="hpCurrent" value="31"><span>Puntos de golpe actuales</span></label>
             <label class="hp-temp"><input data-char="hpTemp" value="0"><span>Puntos de golpe temporales</span></label>
           </section>
 
@@ -210,8 +212,8 @@ Idiomas
             </section>
             <section class="ds-box death-box">
               <h3>Salv. contra muerte</h3>
-              <label><span>Éxitos</span><input data-char="deathSuccess" value="0"></label>
-              <label><span>Fallos</span><input data-char="deathFail" value="0"></label>
+              <div class="death-track"><span>Éxitos</span><input type="hidden" data-char="deathSuccess" value="0"><div class="death-circles" data-death="deathSuccess"></div></div>
+              <div class="death-track"><span>Fallos</span><input type="hidden" data-char="deathFail" value="0"><div class="death-circles" data-death="deathFail"></div></div>
             </section>
           </div>
 
@@ -355,11 +357,11 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
         </label>
         <label>
           <span>Salvación de conjuro</span>
-          <input data-char="spell_save_dc" value="12">
+          <input data-char="spell_save_dc" value="13">
         </label>
         <label>
           <span>Bonificador de ataque de conjuro</span>
-          <input data-char="spell_attack_bonus" value="+4">
+          <input data-char="spell_attack_bonus" value="+5">
         </label>
       </header>
 
@@ -417,7 +419,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-title">
               <h3>Nivel 2</h3>
               <div class="spell-slots-inline">
-                <label><span>Espacios totales</span><input data-char="spell_slots2_total" value="2"></label>
+                <label><span>Espacios totales</span><input data-char="spell_slots2_total" value="3"></label>
                 <label><span>Gastados</span><input data-char="spell_slots2_spent" value="0"></label>
               </div>
             </div>

@@ -1380,3 +1380,38 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 #character .skill-line > input:not(.prof-dot){
   width:100% !important;
 }
+
+/* v15: controles de combate y enlaces de la hoja base */
+.death-track{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 0;font-weight:700}
+.death-circles{display:flex;gap:10px;flex-shrink:0}
+.death-dot{width:22px;height:22px;border-radius:50%;border:2px solid #5e426f;background:transparent;cursor:pointer;padding:0}
+.death-dot.filled{background:#a78bfa;box-shadow:inset 0 0 0 3px #f6f0fe}
+.sheet-spell-list label{position:relative;display:flex;align-items:center;gap:4px}
+.sheet-spell-link{border:1px solid #8d6bb8;color:#6f3c9d;background:#f3eafb;border-radius:6px;cursor:pointer;padding:1px 7px;font-size:14px;flex-shrink:0}
+.sheet-spell-link:hover{background:#d7baf9}
+.turn-arrows{display:flex;flex-direction:column;gap:3px}
+.turn-arrows .icon-btn{min-width:28px;min-height:25px;padding:2px 5px}
+.turn-arrows button:disabled{opacity:.25;cursor:not-allowed}
+.damage-enter{display:flex;gap:4px;align-items:center}
+.damage-amount{width:76px;min-width:0;background:#17101f;color:#fff;border:1px solid #765395;border-radius:7px;padding:7px}
+.add-damage{background:#7c3aed;border:0;border-radius:7px;color:white;font-weight:700;padding:8px;cursor:pointer}
+.add-damage:hover{background:#9860ff}
+.initiative-row{gap:8px;flex-wrap:wrap}
+.damage-box{flex-wrap:wrap;gap:6px}
+@media(max-width:640px){.damage-box{width:100%}.initiative-row{align-items:center}.damage-amount{width:65px}}
+
+.subtract-damage{background:#276b6d;border:0;border-radius:7px;color:white;font-weight:700;padding:8px;cursor:pointer;white-space:nowrap}
+.subtract-damage:hover{background:#2a8b8e}
+.auto-skill-hint{font-size:12px;color:#b6a8d0;margin:4px 0 12px;line-height:1.4}
+@media(max-width:560px){.damage-enter{flex-wrap:wrap}.subtract-damage,.add-damage{flex:1}}
+
+.expansion-panel{margin:20px 0;padding:19px;border:1px solid #72568c;border-radius:16px;background:rgba(112,78,148,.09)}.expansion-panel h3{margin:0 0 10px;color:#d8b4fe}.expansion-panel p,.expansion-panel small{color:#c7bdd1}.expansion-fields{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:12px 0}.expansion-panel label{display:flex;flex-direction:column;gap:6px;flex:1;min-width:130px}.expansion-panel input,.expansion-panel select,.expansion-panel textarea{width:100%;padding:10px;border:1px solid #735888;border-radius:8px;background:#1f182b;color:#fff}.expansion-panel button{padding:10px 16px;border:1px solid #a283b7;border-radius:9px;background:#704a92;color:white;cursor:pointer}.expansion-panel button:hover{background:#875eaa}#customSpellMessage{min-height:1em}
+
+/* v19: espacios de conjuro visibles dentro de cada tarjeta de nivel */
+.prepared-box{display:flex;flex-direction:column}
+.prepared-inline-slots{margin-top:auto;padding-top:15px}
+.prepared-inline-slots-title{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #352642;padding-top:12px;margin-bottom:10px;font:600 12px system-ui,sans-serif;color:#c4a7e7}
+.prepared-inline-slots-title small{font:11px system-ui,sans-serif;color:var(--muted)}
+.prepared-inline-slots .slots{flex-wrap:wrap;gap:9px}
+.prepared-inline-slots .slot{width:26px;height:26px;flex:none}
+.inline-no-slots{font:12px system-ui,sans-serif;color:var(--muted)}
