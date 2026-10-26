@@ -27,8 +27,7 @@
 <main>
 <section id="spells" class="panel">
 
-  <div id="slotsArea" class="slots-area"></div>
-  <div class="expansion-panel"><h3>Administrar espacios de conjuro</h3><p>Agrega niveles y ajusta cuántos espacios tienes disponibles. Los espacios ya marcados se conservan.</p><div class="expansion-fields"><label>Nivel <select id="newSlotLevel"></select></label><label>Espacios <input id="newSlotCount" type="number" min="0" max="30" value="3"></label><button id="applySlots" type="button">Guardar espacios</button></div><small>Control manual para reglas de tu mesa. No desbloquea conjuros automáticamente.</small></div>
+  <div id="slotsArea" class="slots-area" hidden aria-hidden="true"></div>
 
   <label class="search">
     <span>⌕</span>
@@ -46,6 +45,7 @@
 
   <div id="spellSections" class="spell-sections"></div>
   <div class="expansion-panel"><h3>Añadir conjuro personalizado</h3><p>Guarda conjuros para los niveles 0 a 9. Aparecerán en su sección con descripción y botón para prepararlos.</p><div class="expansion-fields"><label>Nombre <input id="customSpellName" placeholder="Nombre del conjuro"></label><label>Nivel <select id="customSpellLevel"></select></label></div><label>Descripción <textarea id="customSpellDesc" rows="4" placeholder="Efecto, alcance, duración, salvaciones..."></textarea></label><button id="addCustomSpell" type="button">Añadir conjuro</button><p id="customSpellMessage" aria-live="polite"></p></div>
+  <div class="expansion-panel"><h3>Administrar espacios de conjuro</h3><p>Agrega niveles y ajusta cuántos espacios tienes disponibles. Los espacios ya marcados se conservan.</p><div class="expansion-fields"><label>Nivel <select id="newSlotLevel"></select></label><label>Espacios <input id="newSlotCount" type="number" min="0" max="30" value="3"></label><button id="applySlots" type="button">Guardar espacios</button></div><small>Control manual para reglas de tu mesa. No desbloquea conjuros automáticamente.</small></div>
 </section>
 
 <section id="channel" class="panel">

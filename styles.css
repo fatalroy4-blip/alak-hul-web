@@ -1415,3 +1415,23 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 .prepared-inline-slots .slots{flex-wrap:wrap;gap:9px}
 .prepared-inline-slots .slot{width:26px;height:26px;flex:none}
 .inline-no-slots{font:12px system-ui,sans-serif;color:var(--muted)}
+
+/* v20: una sola ubicación visible para los espacios: tarjetas de conjuros */
+#slotsArea{display:none!important}
+/* Combate compacto: una fila por participante, sin tarjetas altas */
+.initiative-list{gap:5px}
+.initiative-row{display:flex!important;flex-wrap:nowrap!important;align-items:center;gap:9px;padding:7px 10px;min-height:51px;width:100%;}
+.initiative-row .turn-number{flex:0 0 28px;width:28px;height:28px;font-size:12px;display:flex;align-items:center;justify-content:center}
+.initiative-row .init-name{font-size:15px;flex:1 1 85px;min-width:55px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.initiative-row .turn-arrows{order:5;flex:0 0 auto;flex-direction:row;gap:3px}
+.initiative-row .turn-arrows .icon-btn{width:25px;height:27px;min-width:25px;min-height:27px;padding:1px}
+.initiative-row .damage-box{display:flex;flex:0 1 auto;align-items:center;flex-wrap:nowrap!important;gap:5px;min-width:0;width:auto!important;margin:0;padding:0}
+.initiative-row .damage-label{font-size:9px;letter-spacing:0;white-space:nowrap}
+.initiative-row .damage-count{min-width:25px;font-size:15px}
+.initiative-row .icon-btn{width:27px;height:28px;border-radius:7px;flex:0 0 auto}
+.initiative-row .damage-enter{display:flex;flex-wrap:nowrap;gap:4px}
+.initiative-row .damage-amount{width:61px;height:29px;padding:4px 6px;font-size:12px}
+.initiative-row .add-damage,.initiative-row .subtract-damage{padding:6px 8px;font-size:11px;flex:0 0 auto}
+.initiative-row .dead-btn{font-size:13px}
+@media(max-width:950px){.initiative-panel{overflow-x:auto}.initiative-row{min-width:730px}.initiative-row .damage-label{display:none}}
+@media(max-width:560px){.initiative-row{grid-template-columns:none!important}.initiative-row .damage-box{grid-column:auto!important}.initiative-row .damage-enter{flex-wrap:nowrap!important}}
