@@ -1435,3 +1435,17 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 .initiative-row .dead-btn{font-size:13px}
 @media(max-width:950px){.initiative-panel{overflow-x:auto}.initiative-row{min-width:730px}.initiative-row .damage-label{display:none}}
 @media(max-width:560px){.initiative-row{grid-template-columns:none!important}.initiative-row .damage-box{grid-column:auto!important}.initiative-row .damage-enter{flex-wrap:nowrap!important}}
+
+/* v21: spell slots share the same header row as their prepared spell level */
+.prepared-box-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;min-height:28px}
+.prepared-box-heading h3{margin:0;flex-shrink:0}
+.prepared-heading-slots{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;min-width:0}
+.prepared-heading-slots .slot{width:24px;height:24px;flex-shrink:0}
+.prepared-heading-slots small{font:11px system-ui,sans-serif;color:var(--muted);text-align:right}
+@media(max-width:520px){.prepared-heading-slots .slot{width:22px;height:22px}.prepared-box-heading{gap:7px}}
+
+/* Descanso largo en barra superior */
+.long-rest-btn{margin-left:auto;flex-shrink:0;background:#3b1b64;color:#f4e8ff;border:1px solid #9b68d6;border-radius:999px;padding:10px 16px;cursor:pointer;font:700 13px system-ui,sans-serif;white-space:nowrap}
+.long-rest-btn:hover{background:#6322a1;border-color:#d2a9ff}
+.long-rest-btn:focus-visible{outline:2px solid #e5b9ff;outline-offset:3px}
+@media(max-width:700px){.tabs{overflow-x:auto}.long-rest-btn{margin-left:12px}}

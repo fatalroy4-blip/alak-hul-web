@@ -48,6 +48,13 @@ function bind(){
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');
  });
+ const restButton=document.getElementById('longRestBtn');
+ if(restButton) restButton.onclick=()=>{
+  if(!confirm('¿Realizar un descanso largo? Se borrará el daño acumulado de todos los participantes y se recuperarán todos los espacios de conjuro gastados. Esta acción no se puede deshacer.'))return;
+  Object.keys(state.slots||{}).forEach(lv=>{state.slots[lv]=Array(Number(slotCounts()[lv]||0)).fill(false);});
+  Object.keys(state.combat||{}).forEach(name=>{state.combat[name]={...state.combat[name],damage:0};});
+  saveState();renderSlots();renderPreparedGroups();renderInitiative();
+ };
  searchInput.addEventListener('input',renderSpellSections);
  document.querySelector('.dialog-close').onclick=()=>spellDialog.close();
  resetBtn.onclick=()=>{
@@ -67,21 +74,23 @@ function renderPreparedGroups(){
  allLevels().forEach(level=>{
   const box=document.createElement('div');box.className='prepared-box';
   const title=level===0?'Trucos':`Nivel ${level}`;
-  box.innerHTML=`<h3>${title}</h3><div class="prepared-list"></div>`;
-  const listHost=box.querySelector('.prepared-list');
+  const heading=document.createElement('div');heading.className='prepared-box-heading';
+  const label=document.createElement('h3');label.textContent=title;heading.appendChild(label);
+  if(level>0){
+   const n=Number(slotCounts()[level]||0);
+   const area=document.createElement('div');area.className='prepared-heading-slots';
+   area.setAttribute('aria-label',`Espacios de conjuro de nivel ${level}`);
+   if(n>0) fillSpellSlotButtons(area,level,n);
+   else { const empty=document.createElement('small');empty.textContent='Sin espacios';area.appendChild(empty); }
+   heading.appendChild(area);
+  }
+  box.appendChild(heading);
+  const listHost=document.createElement('div');listHost.className='prepared-list';box.appendChild(listHost);
   const list=spellsAll().filter(s=>s.level===level && state.prepared[s.name]);
   if(!list.length){listHost.innerHTML='<div class="empty-note">Nada preparado.</div>';}
   list.sort((a,b)=>a.name.localeCompare(b.name,'es')).forEach(s=>{
    const b=document.createElement('button');b.className='prepared-chip';b.textContent=s.name;b.onclick=()=>openSpell(s);listHost.appendChild(b);
   });
-  if(level>0){
-   const n=Number(slotCounts()[level]||0);
-   const area=document.createElement("div");area.className="prepared-inline-slots";
-   area.innerHTML=`<div class="prepared-inline-slots-title"><span>Espacios de conjuro</span><small>${n} ${n===1?"espacio":"espacios"}</small></div><div class="slots"></div>`;
-   if(n>0) fillSpellSlotButtons(area.querySelector(".slots"),level,n);
-   else area.querySelector(".slots").innerHTML=`<span class="inline-no-slots">Sin espacios asignados</span>`;
-   box.appendChild(area);
-  }
   host.appendChild(box);
  });
 }
