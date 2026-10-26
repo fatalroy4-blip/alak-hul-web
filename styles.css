@@ -1458,3 +1458,10 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 .spell-formatted{white-space:normal!important;line-height:1.6}
 .spell-formatted p{margin:.35rem 0}.spell-formatted .spell-gap{height:.65rem}.spell-formatted .spell-summary{color:#ecd8fd}
 @media(max-width:550px){.racial-castigo-line{flex-wrap:wrap}.racial-use-marker{font-size:11px}}
+
+.castigo-chip{display:flex;align-items:center;gap:8px;padding:6px 8px}
+.castigo-chip .castigo-open{flex:1;min-width:0;background:transparent;border:0;color:#eee7f8;text-align:left;padding:3px 2px;cursor:pointer;font:inherit}
+.castigo-chip .castigo-open:hover{color:#fff}
+.racial-use-marker{white-space:nowrap;cursor:pointer;border:1px solid #8b55b6;background:#21132b;color:#e8cbfa;padding:7px 10px;border-radius:999px;font:600 12px system-ui,sans-serif;flex-shrink:0}
+.racial-use-marker[aria-pressed="true"]{background:#52246b;color:#fff}
+@media(max-width:550px){.castigo-chip{flex-wrap:wrap}.racial-use-marker{font-size:11px}}
