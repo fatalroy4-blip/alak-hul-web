@@ -50,9 +50,14 @@ function bind(){
  });
  const restButton=document.getElementById('longRestBtn');
  if(restButton) restButton.onclick=()=>{
-  if(!confirm('¿Realizar un descanso largo? Se borrará el daño acumulado de todos los participantes y se recuperarán todos los espacios de conjuro gastados. Esta acción no se puede deshacer.'))return;
+  if(!confirm('¿Realizar un descanso largo? Se borrará el daño acumulado de todos los participantes, se recuperarán todos los espacios de conjuro, se restaurarán los PG de Roger y se reiniciarán sus salvaciones contra muerte. Esta acción no se puede deshacer.'))return;
   Object.keys(state.slots||{}).forEach(lv=>{state.slots[lv]=Array(Number(slotCounts()[lv]||0)).fill(false);});
   Object.keys(state.combat||{}).forEach(name=>{state.combat[name]={...state.combat[name],damage:0};});
+  // El descanso largo recupera los PG de Roger y limpia ambas salvaciones contra muerte.
+  const hp=hpInput('hpCurrent');if(hp)hp.value=String(maxRogerHp());
+  ['deathSuccess','deathFail'].forEach(key=>{const el=hpInput(key);if(el)el.value='0';});
+  if(state.combat.Roger)state.combat.Roger.dead=false;
+  saveCharacter();renderDeathSaves();
   saveState();renderSlots();renderPreparedGroups();renderInitiative();
  };
  searchInput.addEventListener('input',renderSpellSections);
@@ -159,6 +164,30 @@ function renderRoster(){
   host.appendChild(b);
  });
 }
+// Roger comparte los puntos de golpe de la hoja con el contador de daño en combate.
+function hpInput(key){return document.querySelector(`[data-char="${key}"]`);}
+function maxRogerHp(){return Math.max(0,Number(hpInput('hpMax')?.value)||0);}
+function syncRogerHpFromCombat(){
+ const field=hpInput('hpCurrent');if(!field)return;
+ const remaining=Math.max(0,maxRogerHp()-Number(combatState('Roger').damage||0));
+ field.value=String(remaining);saveCharacter();
+}
+function syncRogerCombatFromSheet(){
+ const field=hpInput('hpCurrent');if(!field)return;
+ const hp=Math.max(0,Math.min(maxRogerHp(),Number(field.value)||0));
+ const record=combatState('Roger');record.damage=Math.max(0,maxRogerHp()-hp);
+ state.combat.Roger=record;saveState();renderInitiative();
+}
+function initializeRogerHealth(){
+ // Al actualizar desde una versión anterior, no se pierde la vida actual guardada en la hoja.
+ if(!Object.prototype.hasOwnProperty.call(state.combat,'Roger')){
+  const cur=hpInput('hpCurrent');if(cur){
+   state.combat.Roger={damage:Math.max(0,maxRogerHp()-Math.max(0,Number(cur.value)||0)),dead:false};
+   saveState();
+  }
+ }
+ syncRogerHpFromCombat();
+}
 function combatState(n){return state.combat[n]||{damage:0,dead:false};}
 function renderInitiative(){
  const host=initiativeList;host.innerHTML='';
@@ -187,7 +216,7 @@ function moveCombatant(name,direction){
  [state.selectionOrder[a],state.selectionOrder[b]]=[state.selectionOrder[b],state.selectionOrder[a]];
  saveState();renderInitiative();
 }
-function changeDamage(n,d){const c=combatState(n);c.damage=Math.max(0,c.damage+d);state.combat[n]=c;saveState();renderInitiative();}
+function changeDamage(n,d){const c=combatState(n);c.damage=Math.max(0,c.damage+d);if(n==='Roger')c.damage=Math.min(maxRogerHp(),c.damage);state.combat[n]=c;saveState();if(n==='Roger')syncRogerHpFromCombat();renderInitiative();}
 function toggleDead(n){const c=combatState(n);c.dead=!c.dead;state.combat[n]=c;saveState();renderInitiative();}
 
 // Enlaces para ver conjuros directamente desde la hoja base.
@@ -235,6 +264,7 @@ function saveCharacter(){
 }
 function bindCharacter(){
   document.querySelectorAll('[data-char]').forEach(el=>el.addEventListener('input',saveCharacter));
+  ['hpCurrent','hpMax'].forEach(key=>{const el=hpInput(key);if(el)el.addEventListener('change',syncRogerCombatFromSheet);});
   const up=document.getElementById('portraitUpload');
   if(up)up.addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=document.getElementById('characterPortrait');if(img)img.src=r.result;let s={};try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){}s.portrait=r.result;localStorage.setItem(CHAR_KEY,JSON.stringify(s));};r.readAsDataURL(f)});
 }
@@ -382,6 +412,8 @@ setupAutoSkills();
 addSheetSpellLinks();
 renderDeathSaves();
 init();
+initializeRogerHealth();
+renderInitiative();
 
 
 // --- Visor del PDF editable real ---
