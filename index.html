@@ -64,7 +64,7 @@
       <h2>Combate</h2>
       <p>Selecciona participantes, asigna iniciativa y registra daño acumulado.</p>
     </div>
-    <button id="newCombatBtn" class="danger-btn">Nuevo combate</button>
+    <div class="combat-header-actions"><button id="combatSoundBtn" type="button" class="sound-btn" aria-pressed="true" title="Activar o desactivar sonidos">🔊 Sonidos: activados</button><button id="newCombatBtn" class="danger-btn">Nuevo combate</button></div>
   </div>
 
   <div class="combat-layout">
@@ -90,7 +90,10 @@
       <h2>Hoja de personaje</h2>
       <p>Distribución 1:1 basada en la hoja de personaje de D&amp;D 5e, con campos web reales y guardado automático.</p>
     </div>
-    <span id="charSaveStatus" class="save-status">Guardado automático</span>
+    <div class="character-intro-actions">
+      <button id="levelUpBtn" type="button" class="level-up-btn" title="Reproducir sonido de subida de nivel">✨ Subir de nivel</button>
+      <span id="charSaveStatus" class="save-status">Guardado automático</span>
+    </div>
   </div>
 
   <div class="sheet-scroll">

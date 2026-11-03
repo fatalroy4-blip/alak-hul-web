@@ -1459,9 +1459,41 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 .spell-formatted p{margin:.35rem 0}.spell-formatted .spell-gap{height:.65rem}.spell-formatted .spell-summary{color:#ecd8fd}
 @media(max-width:550px){.racial-castigo-line{flex-wrap:wrap}.racial-use-marker{font-size:11px}}
 
-.castigo-chip{display:flex;align-items:center;gap:8px;padding:6px 8px}
+/* v26: marcador racial dentro de la misma ficha de conjuro. */
+.castigo-chip{display:flex;align-items:center;gap:8px;padding:6px 8px;min-width:0}
 .castigo-chip .castigo-open{flex:1;min-width:0;background:transparent;border:0;color:#eee7f8;text-align:left;padding:3px 2px;cursor:pointer;font:inherit}
 .castigo-chip .castigo-open:hover{color:#fff}
-.racial-use-marker{white-space:nowrap;cursor:pointer;border:1px solid #8b55b6;background:#21132b;color:#e8cbfa;padding:7px 10px;border-radius:999px;font:600 12px system-ui,sans-serif;flex-shrink:0}
-.racial-use-marker[aria-pressed="true"]{background:#52246b;color:#fff}
-@media(max-width:550px){.castigo-chip{flex-wrap:wrap}.racial-use-marker{font-size:11px}}
+.castigo-chip .racial-use-marker{flex:0 0 auto;white-space:nowrap;padding:7px 10px;border-radius:999px}
+
+/* v26: combat with max and current hit points, still one compact horizontal row. */
+.combat-header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.sound-btn{padding:9px 12px;border:1px solid #6d5088;background:#180f26;color:#e8d5fb;border-radius:10px;font:700 12px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.sound-btn[aria-pressed="false"]{background:#0c0b10;border-color:#38313f;color:#aa9cb6}
+.sound-btn:hover{border-color:#c084fc}
+.initiative-row{flex-wrap:nowrap!important;min-width:1050px;gap:7px}
+.initiative-row .init-name{flex:0 1 100px;min-width:58px;max-width:125px}
+.initiative-row .turn-arrows{order:5}
+.initiative-row .damage-box{flex:1 0 auto;gap:5px}
+.initiative-row .damage-label{display:inline!important;font-size:9px}
+.initiative-row .hp-tracker{display:flex;align-items:center;gap:7px;border:1px solid #32233e;background:#0f0b15;border-radius:8px;padding:3px 6px;flex:0 0 auto;min-width:136px}
+.initiative-row .hp-max-label,.initiative-row .hp-left{display:flex;flex-direction:column;align-items:center;gap:2px;color:#b9a6c9;font:700 9px system-ui,sans-serif;white-space:nowrap}
+.initiative-row .hp-max-input{background:#1b1126;color:#fff;border:1px solid #604678;border-radius:5px;outline:none;width:53px;height:25px;padding:3px 4px;text-align:center;font:700 12px system-ui,sans-serif}
+.initiative-row .hp-max-input:focus{border-color:#c084fc}
+.initiative-row .hp-max-input::-webkit-inner-spin-button,.initiative-row .hp-max-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.initiative-row .hp-left{min-width:36px}
+.initiative-row .hp-left strong{font:800 16px system-ui,sans-serif;color:#6ee7b7}
+.initiative-row.no-hp .hp-left strong{color:#fda4af}
+.initiative-row .combat-side{width:25px;height:27px;flex:0 0 25px;background:#10302a;border:1px solid #348b71;border-radius:7px;color:#a7f3d0;font:800 12px system-ui,sans-serif;cursor:pointer}
+.initiative-row .combat-side.is-enemy{background:#351724;border-color:#a23a57;color:#fda4af}
+.initiative-row .dead-btn.active{border-color:#db5175;color:#fff;background:#54182f}
+@media(max-width:950px){.initiative-panel{overflow-x:auto}.initiative-row{min-width:1050px}}
+@media(max-width:800px){.combat-header-actions{justify-content:flex-start;margin-top:12px}}
+@media(max-width:550px){.castigo-chip{flex-wrap:nowrap}.castigo-chip .racial-use-marker{font-size:10px;padding:6px 8px}}
+
+
+/* v27: sonido de subida de nivel y acciones de cabecera de la ficha */
+.character-intro-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.level-up-btn{padding:9px 13px;border:1px solid #d8ad45;background:linear-gradient(180deg,#38270b,#1d1407);color:#ffe7a3;border-radius:10px;font:800 12px system-ui,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 0 0 1px rgba(255,214,102,.05) inset}
+.level-up-btn:hover{border-color:#ffe08a;box-shadow:0 0 16px rgba(255,205,74,.16)}
+.level-up-btn:active{transform:translateY(1px)}
+@media(max-width:700px){.character-intro-actions{justify-content:flex-start;width:100%}}
