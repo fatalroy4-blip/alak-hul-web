@@ -1,0 +1,17 @@
+Alak Hul Web v26 — Sonidos y PG por participante
+
+Abre index.html con styles.css, script.js y data.json en la misma carpeta.
+Para publicar, sube los cuatro archivos de la carpeta a la raíz del repositorio usado por Vercel.
+
+NUEVO: En Combate escribe los PG máximos de cada personaje/aliado/enemigo.
+La vida restante se calcula automáticamente como máximo menos daño acumulado.
+Roger mantiene su sincronización con la hoja principal de personaje.
+Pulsa A/E para alternar entre aliado y enemigo (E1-E15 parten como enemigos).
+Cuando un enemigo recibe daño suena un impacto; al curar, una secuencia ascendente;
+cuando un enemigo cae a 0 PG o se marca con ☠, una señal grave.
+Puedes silenciar los sonidos desde el botón de la pestaña Combate.
+Los valores de PG máximos, bando y preferencias de sonido se guardan en el navegador.
+Descanso largo recupera PG, espacios de conjuro y estados de caído del gestor.
+No requiere Internet ni archivos de audio externos.
+
+Incluye la ficha completa de Bola de fuego y el indicador racial de Castigo abrasador dentro de su recuadro.
