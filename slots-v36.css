@@ -1,6 +1,7 @@
-/* V36: solo la hoja de personaje contiene las bolitas de espacios por nivel. */
-#spells .prepared-heading-slots{display:none!important}
-#spells .prepared-slots-summary{font:700 10px/1.3 system-ui,sans-serif;color:#d1b998;text-align:right;max-width:125px}
+/* V38: las bolitas por nivel se muestran tanto en Conjuros como en la hoja. */
+#spells .prepared-heading-slots{display:flex!important;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+#spells .prepared-heading-slots .slot{width:20px;height:20px;min-width:20px;min-height:20px;border-color:#b785d7}
+#spells .prepared-heading-slots .slot:focus-visible{outline:2px solid #efd4ff;outline-offset:3px}
 #spells .prepared-list>.prepared-chip{width:100%}
 #spells .spell-use-tracker,#spells .spell-use-dots,#spells .spell-use-dot{display:none!important}
 /* El nombre y el enlace ocupan la línea completa: no hay círculos por conjuro. */

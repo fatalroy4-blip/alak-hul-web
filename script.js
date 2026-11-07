@@ -353,10 +353,12 @@ function renderPreparedGroups(){
   const label=document.createElement('h3');label.textContent=title;heading.appendChild(label);
   if(level>0){
    const n=Number(slotCounts()[level]||0);
-   const used=(state.slots[level]||[]).slice(0,n).filter(Boolean).length;
-   const summary=document.createElement('span');summary.className='prepared-slots-summary';
-   summary.textContent=n?`${n} espacios · ${used} ${used===1?'gastado':'gastados'}`:'Sin espacios';
-   heading.appendChild(summary);
+   const dots=document.createElement('div');
+   dots.className='prepared-heading-slots';
+   dots.setAttribute('role','group');
+   dots.setAttribute('aria-label',`Espacios de conjuro de nivel ${level}`);
+   fillSpellSlotButtons(dots,level,n);
+   heading.appendChild(dots);
   }
   box.appendChild(heading);
   const listHost=document.createElement('div');listHost.className='prepared-list';box.appendChild(listHost);
