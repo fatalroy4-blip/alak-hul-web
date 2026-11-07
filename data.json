@@ -42,14 +42,14 @@
       "name": "Reparar",
       "level": 0,
       "description": "Repara una única rotura o rasgadura (no mayor de 1 pies) de un objeto que tocas, como una malla metálica rota, las dos mitades de una llave, una capa rasgada o una bota de vino que gotea. No deja rastro del daño anterior.\nTruco, transmutación\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (dos magnetitas)\nTiempo de lanzamiento: 1 minuto\nAlcance: Toque\nDuración: Instantáneo\nListas de conjuros: Conjuros de bardo, Conjuros de clérigo, Conjuros de druida, Conjuros de hechicero y Conjuros de mago\nEste conjuro repara una única rotura o rasgadura de un objeto que tocas, como una malla metálica rota, las dos mitades de una llave, una capa rasgada o una bota de vino que gotea. Mientras la rotura o rasgadura no sea mayor de 1 pies en cualquier dimensión, la remiendas y no dejas ningún rastro del daño anterior.\nEste conjuro puede reparar físicamente un objeto mágico o un constructo, pero no puede restaurar su magia.",
-      "defaultPrepared": true,
+      "defaultPrepared": false,
       "invocation": "Que lo quebrado vuelva a ser uno."
     },
     {
       "name": "Resistencia",
       "level": 0,
       "description": "Tocas a una criatura voluntaria. Una vez antes de que el conjuro termine, puede tirar 1d4 y añadir el resultado a una tirada de salvación de su elección. Puede tirar el dado antes o después de hacer la TS. Entonces, termina el conjuro.\nTruco, abjuración\nSmall\nOrigen: Reglas básicas\nComponentes: V, S, M (una capa en miniatura)\nTiempo de lanzamiento: 1 acción\nAlcance: Toque\nDuración: Concentración 1 minuto\nListas de conjuros: Conjuros de clérigo y Conjuros de druida\nTocas a una criatura voluntaria. Una vez antes de que el conjuro termine, el objetivo puede tirar 1d4 y añadir el resultado a una tirada de salvación de su elección. Puede tirar el dado antes o después de hacer la tirada de salvación. Entonces, termina el conjuro.",
-      "defaultPrepared": true,
+      "defaultPrepared": false,
       "invocation": "Que la luz te sostenga."
     },
     {
@@ -413,7 +413,7 @@
       "name": "Luz del día",
       "level": 3,
       "description": "Una esfera de luz de 60 pies de radio se expande desde un punto de tu elección dentro del alcance. Emite luz tenue en 60 pies adicionales. Si el punto que eliges está en un objeto que sostienes o uno que nadie lleva puesto ni transporta, la luz emana del objeto y se mueve con el.\n\nNivel 3, evocación\n\nOrigen: Reglas básicas\nComponentes: V, S\nTiempo de lanzamiento: 1 acción\nAlcance: 60 pies (Cilindro de 60 pies)\nDuración: 1 hora\nListas de conjuros: Conjuros de paladín, Conjuros de clérigo, Conjuros de druida, Conjuros de explorador y Conjuros de hechicero\n\nUna esfera de luz de 60 pies de radio se expande desde un punto de tu elección dentro del alcance. La esfera es de luz brillante y emite luz tenue en 60 pies adicionales.\n\nSi el punto que eliges está en un objeto que sostienes o uno que nadie lleva puesto ni transporta, la luz emana del objeto y se mueve con él. Cubrirlo completamente con algo opaco, como un cuenco o un yelmo, bloquea la luz.\n\nSi cualquier parte del área del conjuro se solapa con un área de oscuridad creada por un conjuro de nivel 3 o inferior, el conjuro que ha creado la oscuridad se disipa.",
-      "defaultPrepared": true,
+      "defaultPrepared": false,
       "invocation": "¡Pelor, trae el mediodía a este reino sin sol!"
     },
     {
@@ -474,7 +474,7 @@
   "spellSlots": {
     "0": 0,
     "1": 4,
-    "2": 3
+    "2": 2
   },
   "channels": [
     {

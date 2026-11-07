@@ -1490,10 +1490,33 @@ footer{max-width:1180px;margin:auto;padding:20px 24px 35px;border-top:1px solid 
 @media(max-width:800px){.combat-header-actions{justify-content:flex-start;margin-top:12px}}
 @media(max-width:550px){.castigo-chip{flex-wrap:nowrap}.castigo-chip .racial-use-marker{font-size:10px;padding:6px 8px}}
 
+/* v27: estado del guardado en la nube y acceso desde el encabezado */
+.cloud-open-btn {cursor:pointer;border:1px solid #8060ab;color:#f3dfff;background:#1e1430;border-radius:999px;padding:9px 14px;white-space:nowrap;font:700 12px system-ui,sans-serif}
+.cloud-open-btn:hover{background:#42215c}
+.cloud-open-btn[data-cloud-state="online"]{border-color:#5bba9b;color:#c9fae7}
+.cloud-open-btn[data-cloud-state="pending"]{border-color:#d8ae67;color:#ffe8bc}
+.cloud-open-btn:focus-visible{outline:2px solid #dbb5ff;outline-offset:3px}
+.cloud-dialog{width:min(560px,calc(100vw - 24px));max-height:85vh;overflow:auto;box-sizing:border-box;color:#e9d9f8;background:#100e17;border:1px solid #5d4474;border-radius:15px;padding:25px;box-shadow:0 25px 80px #000a}
+.cloud-dialog::backdrop{background:#000c;backdrop-filter:blur(3px)}
+.cloud-dialog .dialog-close{position:sticky;float:right;top:0}
+.cloud-dialog h2{color:#d7b5f9;font:700 27px Georgia,serif;margin:4px 0 12px}
+.cloud-dialog p{line-height:1.55;color:#e4d7ef}
+.cloud-dialog a{color:#dab4ff}
+.cloud-status{margin:12px 0;padding:10px 12px;border:1px solid #503b63;border-radius:10px;background:#1b1523;font:600 13px/1.5 system-ui,sans-serif}
+.cloud-status[data-tone="ok"]{border-color:#508979;color:#d6ffec}
+.cloud-status[data-tone="warn"]{border-color:#ad854d;color:#ffe5b0}
+.cloud-status[data-tone="error"]{border-color:#b45e6a;color:#ffc0cb}
+.cloud-account{padding:8px 0;font-size:13px;color:#bfc5c8}
+.cloud-buttons{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.cloud-buttons button{padding:9px 14px;border:1px solid #8957bb;background:#6d28d9;color:white;border-radius:10px;cursor:pointer;font:700 12px system-ui,sans-serif}
+.cloud-buttons button.outline-btn{background:transparent;color:#e1c9f4}
+.cloud-buttons button:hover{filter:brightness(1.15)}
+.cloud-buttons button:disabled{opacity:.55;cursor:not-allowed}
+.cloud-setup-help,.cloud-conflict{border:1px solid #3d2d4b;border-radius:12px;padding:13px;margin-top:12px;background:#15111d}
+.cloud-setup-help p,.cloud-conflict p{margin:7px 0;font-size:13px}
+.cloud-setup-help small{font-size:12px;color:#aea0bd;line-height:1.4;display:block}
+.cloud-dialog [hidden]{display:none!important}
+@media(max-width:700px){.tabs{gap:6px}.cloud-open-btn{padding:8px 11px;font-size:11px}.cloud-dialog{padding:16px}.cloud-dialog h2{font-size:23px}}
 
-/* v27: sonido de subida de nivel y acciones de cabecera de la ficha */
-.character-intro-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.level-up-btn{padding:9px 13px;border:1px solid #d8ad45;background:linear-gradient(180deg,#38270b,#1d1407);color:#ffe7a3;border-radius:10px;font:800 12px system-ui,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 0 0 1px rgba(255,214,102,.05) inset}
-.level-up-btn:hover{border-color:#ffe08a;box-shadow:0 0 16px rgba(255,205,74,.16)}
-.level-up-btn:active{transform:translateY(1px)}
-@media(max-width:700px){.character-intro-actions{justify-content:flex-start;width:100%}}
+.cloud-import-label{display:inline-flex;gap:6px;align-items:center;border:1px solid #8957bb;color:#e1c9f4;background:transparent;border-radius:10px;padding:8px 10px;font:700 12px system-ui,sans-serif;cursor:pointer}
+.cloud-import-label input{max-width:180px;font-size:11px;cursor:pointer}

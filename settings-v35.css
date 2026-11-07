@@ -1,0 +1,55 @@
+/* Alak Hul v35 — administración apartada de la aventura. No modifica el pergamino de personaje. */
+#settings{position:relative;max-width:1450px;margin:0 auto;color:#f3e6f6}
+#settings .redesign-heading{max-width:940px}
+#settings .settings-index{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 22px}
+#settings .settings-index a{color:#fbe2ae;text-decoration:none;border:1px solid #8e6b76;border-radius:999px;background:#1a1225;padding:10px 14px;font:700 12px system-ui,sans-serif}
+#settings .settings-index a:hover,#settings .settings-index a:focus-visible{background:#432755;border-color:#d9ad93}
+#settings .settings-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:16px}
+#settings .settings-layout>div{min-width:0;scroll-margin-top:105px}
+#settings #settings-spell-editor,#settings #settings-combat-admin{grid-column:1/-1}
+#settings .v34-editor{margin:0;border-color:#856078;box-shadow:inset 0 1px 0 #f3c99d1d,0 14px 38px #0005;min-height:100%}
+#settings .v34-editor h3{font-size:clamp(21px,2vw,26px)}
+#settings .v34-editor label{color:#f1d2a3}
+#settings .v34-editor .spell-metadata-fieldset{border:1px solid #62466a;border-radius:12px;padding:12px 14px;margin-top:14px}
+#settings .spell-metadata-fieldset legend{color:#f8d393;font:700 13px Georgia,serif;padding:0 9px}
+#settings .spell-metadata-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 12px}
+#settings .editor-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px}
+#settings .editor-actions [hidden]{display:none}
+#settings .editor-actions button[hidden]{display:none}
+#settings .settings-item-list{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+#settings .settings-item-row{display:flex;gap:12px;align-items:center;padding:11px 13px;border:1px solid #604766;border-radius:11px;background:linear-gradient(90deg,#1c1525,#17121e);min-width:0}
+#settings .settings-item-description{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+#settings .settings-item-description>span:last-child{display:flex;flex-direction:column;gap:5px;min-width:0}
+#settings .settings-item-description strong{font:700 15px/1.3 Georgia,serif;color:#ffdfa1;overflow-wrap:anywhere}
+#settings .settings-item-description small{font:11px system-ui,sans-serif;color:#bfa9c9}
+#settings .settings-item-description .spell-thumb{width:39px;height:39px;flex-basis:39px}
+#settings .settings-emblem{font-size:24px;color:#f5cb8f}
+#settings .settings-item-row button{flex-shrink:0;padding:8px 12px}
+#settings .settings-item-row .settings-delete{color:#ffd7dc;background:#371d2a;border-color:#a36679}
+#settings .settings-empty{color:#bfafc9;font-style:italic;margin:2px 0}
+#settings .combat-admin summary{font:600 22px Georgia,serif}
+#settings #combatAdminList{margin-top:15px}
+#settings .combat-admin-groups{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* Marcadores de uso por conjuro: aparecen en Preparados y en el catálogo completo. */
+#spells .prepared-spell-entry{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border:1px solid #47364f;border-radius:11px;background:linear-gradient(90deg,#211729,#140f1d);padding:4px 6px}
+#spells .prepared-spell-entry>.prepared-chip{flex:1 1 140px;min-width:0;width:auto;background:none;border:none;box-shadow:none;padding:5px 4px}
+#spells .prepared-spell-entry>.prepared-chip:hover{transform:none;background:#2a1b34}
+#spells .spell-use-tracker{display:flex;gap:6px;align-items:center;white-space:nowrap;max-width:100%;min-width:0;flex-shrink:0}
+#spells .spell-use-label{color:#f0d4a1;font:700 10px/1.1 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+#spells .spell-use-dots{display:flex;gap:4px;align-items:center}
+#spells .spell-use-dot{width:15px;height:15px;min-width:15px;border-radius:50%;border:1.7px solid #bc84e4;background:#100c19;box-shadow:0 0 7px #915ed327;cursor:pointer;padding:0;transition:background .12s}
+#spells .spell-use-dot.filled{background:#ad6cdb;box-shadow:0 0 9px #a67ed7,inset 0 0 0 3px #341c45}
+#spells .spell-use-dot:hover,#spells .spell-use-dot:focus-visible{border-color:#ffda99;outline:1px solid #f5d398;outline-offset:2px}
+#spells .spell-use-plus{border:1px solid #8b648a;background:#281a36;color:#eed7f3;border-radius:5px;font:700 11px system-ui,sans-serif;padding:0 5px;height:19px;cursor:pointer}
+#spells .spell-row{grid-template-columns:minmax(0,1fr) auto;gap:7px}
+#spells .spell-row>.spell-use-tracker{grid-column:1/-1;justify-content:flex-start;padding:3px 0 4px 41px}
+#spells .spell-row>.spell-use-tracker .spell-use-dot{width:17px;height:17px}
+#spells .spell-row .spell-open{min-width:0}
+/* Misma jerarquía dorada que los hechizos originales; también para conjuros nuevos. */
+#spellDialog .spell-modal-banner h2{color:#ffdf9f;font-weight:700;font-size:clamp(27px,3.4vw,41px)}
+#spellDialog .spell-formatted strong,#spellDialog .spell-formatted b{color:#f5c77d!important;font-weight:800}
+#spellDialog .spell-formatted p{overflow-wrap:anywhere}
+@media(max-width:1050px){#settings .settings-layout{grid-template-columns:1fr}#settings #settings-spell-editor,#settings #settings-combat-admin{grid-column:auto}}
+@media(max-width:680px){#settings .spell-metadata-grid{grid-template-columns:1fr}#settings .settings-item-row{flex-wrap:wrap}#settings .combat-admin-groups{grid-template-columns:1fr}#spells .prepared-spell-entry>.prepared-chip{flex-basis:100%}#spells .spell-use-tracker{margin-left:0}#spells .spell-row>.spell-use-tracker{padding-left:0}}
+#settings .spell-thumb.has-image{overflow:hidden;padding:0}
+#settings .spell-thumb img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}

@@ -6,27 +6,83 @@
 <meta name="theme-color" content="#000000">
 <title>Alak Hul · Trucos y Conjuros</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="design-v29.css">
+<link rel="stylesheet" href="home-v30.css?v=31">
+<link rel="stylesheet" href="features-v34.css?v=35">
+<link rel="stylesheet" href="settings-v35.css?v=35">
+<link rel="stylesheet" href="slots-v36.css?v=37">
 </head>
 <body>
 <header class="hero">
-  <div>
-    <p id="classLine" class="eyebrow"></p>
-    <h1 id="characterName"></h1>
-    <p id="subtitle" class="subtitle"></p>
+  <div hidden aria-hidden="true"><span id="classLine"></span><span id="characterName"></span><span id="subtitle"></span></div>
+  <div class="brand-wrap">
+    <span class="sun-brand" aria-hidden="true">✺</span>
+    <div class="brand-copy"><p class="brand-title">ALAK HUL</p><p class="brand-kicker">EL GRIMORIO DE PELOR <span class="brand-dot">✦</span> BAROVIA</p></div>
   </div>
-  <button id="resetBtn" class="outline-btn">Restablecer sesión</button>
+  <div class="top-meta"><span class="meta-glow">✦</span> Tu aventura, siempre a mano</div>
+  <button id="resetBtn" class="outline-btn reset-btn" title="Restablecer preparados y combate">↺ Restablecer controles</button>
 </header>
-
-<nav class="tabs">
-  <button class="tab active" data-tab="character">Personaje</button>
-  <button class="tab" data-tab="spells">Conjuros</button>
-  <button class="tab" data-tab="channel">Canalizar Divinidad</button>
-  <button class="tab" data-tab="combat">Combate</button>
-  <button type="button" id="longRestBtn" class="long-rest-btn" title="Recuperar espacios de conjuro, PG de Roger y salvaciones contra muerte">☀ Descanso largo</button>
+<nav class="tabs" aria-label="Secciones de Alak Hul">
+  <div class="nav-primary">
+    <button class="tab" data-tab="home"><span aria-hidden="true">⌂</span> Inicio</button>
+    <button class="tab active" data-tab="character"><span aria-hidden="true">♟</span> Personaje</button>
+    <button class="tab" data-tab="spells"><span aria-hidden="true">▣</span> Conjuros</button>
+    <button class="tab" data-tab="channel"><span aria-hidden="true">☼</span> Canalizar Divinidad</button>
+    <button class="tab" data-tab="combat"><span aria-hidden="true">⚔</span> Combate</button>
+    <button class="tab" data-tab="settings"><span aria-hidden="true">⚙</span> Configuración</button>
+  </div>
+  <div class="nav-actions">
+    <button type="button" id="levelUpBtn" class="level-up-btn" title="Subir de nivel y escuchar fanfarria">✦ Subir de nivel</button>
+    <button type="button" id="cloudOpenBtn" class="cloud-open-btn" title="Sincronizar la hoja con Firebase">☁ <span id="cloudBtnText">Nube</span></button>
+    <button type="button" id="longRestBtn" class="long-rest-btn" title="Recuperar espacios, PG y salvaciones contra muerte">☀ Descanso largo</button>
+  </div>
 </nav>
 
 <main>
+<section id="home" class="panel active home-page" aria-label="Inicio de Alak Hul">
+  <div class="home-stage" aria-label="Santuario de Pelor: menú principal">
+    <img src="assets/home-santuario.png" alt="Santuario luminoso de Pelor con los accesos a Personaje, Conjuros, Canalizar Divinidad y Combate" class="home-art" draggable="false">
+    <button class="home-hit home-status" type="button" data-home-action="cloud" aria-label="Estado del guardado y nube" title="Guardado / nube"></button>
+    <button class="home-hit home-cloud" type="button" data-home-action="cloud" aria-label="Abrir Nube" title="Nube"></button>
+    <button class="home-hit home-settings" type="button" data-home-action="settings" aria-label="Abrir Ajustes" title="Ajustes"></button>
+    <button class="home-hit home-help" type="button" data-home-action="help" aria-label="Abrir Ayuda" title="Ayuda"></button>
+    <button class="home-hit home-character" type="button" data-home-target="character" aria-label="Abrir la hoja de personaje" title="Personaje"></button>
+    <button class="home-hit home-spells" type="button" data-home-target="spells" aria-label="Abrir la sección Conjuros" title="Conjuros"></button>
+    <button class="home-hit home-channel" type="button" data-home-target="channel" aria-label="Abrir Canalizar Divinidad" title="Canalizar Divinidad"></button>
+    <button class="home-hit home-combat" type="button" data-home-target="combat" aria-label="Abrir Combate" title="Combate"></button>
+    <button class="home-hit home-level" type="button" data-home-action="level" aria-label="Subir de nivel" title="Subir de nivel"></button>
+    <button class="home-hit home-rest" type="button" data-home-action="rest" aria-label="Realizar descanso largo" title="Descanso largo"></button>
+    <button class="home-hit home-roster" type="button" data-home-action="roster" aria-label="Abrir participantes" title="Participantes"></button>
+    <button class="home-hit home-sound" type="button" data-home-action="sound" aria-label="Activar o desactivar sonidos" title="Sonidos"></button>
+    <button class="home-hit home-current" type="button" data-home-target="character" aria-label="Consultar nivel actual del personaje" title="Nivel actual"></button>
+    <span class="home-live-label home-live-sound" id="homeSoundOverlay" hidden></span>
+    <span class="home-live-label home-live-level" id="homeLevelOverlay" hidden></span>
+  </div>
+  <div class="home-mobile" aria-label="Menú del Santuario de Pelor">
+    <p class="home-mobile-eyebrow">✦ EL SANTUARIO DE PELOR ✦</p>
+    <h1>ALAK HUL</h1>
+    <p class="home-mobile-subtitle">Hoja de Aventurero</p>
+    <div class="home-mobile-grid">
+      <button data-home-target="character"><span>☼</span><strong>Personaje</strong><small>Hoja de personaje</small></button>
+      <button data-home-target="spells"><span>▣</span><strong>Conjuros</strong><small>Grimorio y espacios</small></button>
+      <button data-home-target="channel"><span>✺</span><strong>Canalizar Divinidad</strong><small>Poderes de Pelor</small></button>
+      <button data-home-target="combat"><span>⚔</span><strong>Combate</strong><small>Encuentros e iniciativa</small></button>
+    </div>
+    <div class="home-mobile-actions">
+      <button data-home-action="level">✧ Subir de nivel</button>
+      <button data-home-action="rest">☼ Descanso largo</button>
+      <button data-home-action="roster">♟ Participantes</button>
+      <button data-home-action="sound" id="homeMobileSound">🔊 Sonidos: ON</button>
+      <button data-home-action="cloud">☁ Nube</button>
+      <button data-home-action="settings">⚙ Ajustes</button>
+      <button data-home-action="help">? Ayuda</button>
+      <button data-home-target="character" id="homeMobileLevel">Nivel actual: 3</button>
+    </div>
+  </div>
+</section>
+
 <section id="spells" class="panel">
+  <div class="redesign-heading spell-page-heading"><div class="redesign-eyebrow">✦ EL LIBRO DE LOS MIL SOLES</div><h2>Grimorio <em>de Alak Hul</em></h2><p>Tu magia, tus preparaciones y cada espacio de conjuro, reunidos en un solo lugar.</p></div>
 
   <div id="slotsArea" class="slots-area" hidden aria-hidden="true"></div>
 
@@ -39,25 +95,27 @@
     <div class="section-heading compact">
       <p class="eyebrow">ACCESO RÁPIDO</p>
       <h2>Preparados</h2>
-      <p>Marca los trucos y conjuros que quieras tener a la mano. Se organizan por nivel.</p>
+      <p>Marca tus preparados aquí. Los espacios gastados se registran con las bolitas en la hoja de personaje, agrupadas por nivel.</p>
     </div>
     <div id="preparedGroups" class="prepared-groups"></div>
   </section>
 
   <div id="spellSections" class="spell-sections"></div>
-  <div class="expansion-panel"><h3>Añadir conjuro personalizado</h3><p>Guarda conjuros para los niveles 0 a 9. Aparecerán en su sección con descripción y botón para prepararlos.</p><div class="expansion-fields"><label>Nombre <input id="customSpellName" placeholder="Nombre del conjuro"></label><label>Nivel <select id="customSpellLevel"></select></label></div><label>Descripción <textarea id="customSpellDesc" rows="4" placeholder="Efecto, alcance, duración, salvaciones..."></textarea></label><button id="addCustomSpell" type="button">Añadir conjuro</button><p id="customSpellMessage" aria-live="polite"></p></div>
-  <div class="expansion-panel"><h3>Administrar espacios de conjuro</h3><p>Agrega niveles y ajusta cuántos espacios tienes disponibles. Los espacios ya marcados se conservan.</p><div class="expansion-fields"><label>Nivel <select id="newSlotLevel"></select></label><label>Espacios <input id="newSlotCount" type="number" min="0" max="30" value="3"></label><button id="applySlots" type="button">Guardar espacios</button></div><small>Control manual para reglas de tu mesa. No desbloquea conjuros automáticamente.</small></div>
+
 </section>
 
 <section id="channel" class="panel">
+  <div class="redesign-heading"><div class="redesign-eyebrow">☼ DEVOTO DE PELOR</div><h2>El poder <em>de la luz</em></h2><p>Canaliza la energía sagrada para proteger a tus compañeros y expulsar a los muertos vivientes.</p></div>
   <div class="section-heading">
     <p class="eyebrow">RECURSOS SAGRADOS</p>
     <h2>Canalizar Divinidad</h2>
   </div>
   <div id="channelList" class="spell-list wide"></div>
+
 </section>
 
 <section id="combat" class="panel">
+  <div class="redesign-heading"><div class="redesign-eyebrow">⚔ EL DESTINO DE BAROVIA</div><h2>Tablero <em>de combate</em></h2><p>Gestiona iniciativas, daño, curaciones, caídas y retratos sin cambiar de pestaña.</p></div>
   <div class="section-heading combat-heading">
     <div>
       <p class="eyebrow">SEGUIMIENTO RÁPIDO</p>
@@ -67,9 +125,10 @@
     <div class="combat-header-actions"><button id="combatSoundBtn" type="button" class="sound-btn" aria-pressed="true" title="Activar o desactivar sonidos">🔊 Sonidos: activados</button><button id="newCombatBtn" class="danger-btn">Nuevo combate</button></div>
   </div>
 
+
   <div class="combat-layout">
     <aside class="roster-panel">
-      <h3>Participantes</h3>
+      <h3>Participantes</h3><p class="roster-hint">Elige a quienes entran en combate. Puedes añadir retratos tocando su miniatura en la iniciativa.</p>
       <div id="rosterList" class="roster-list"></div>
     </aside>
 
@@ -78,22 +137,20 @@
         <div><p class="eyebrow">ORDEN DE TURNO</p><h3>Iniciativa</h3></div>
       </div>
       <div id="initiativeList" class="initiative-list"></div>
+      <input id="combatPortraitInput" type="file" accept="image/*" hidden aria-label="Seleccionar retrato de personaje">
     </section>
   </div>
 </section>
 
 
-<section id="character" class="panel active">
+<section id="character" class="panel">
   <div class="character-intro">
     <div>
       <p class="eyebrow">FICHA DIGITAL</p>
       <h2>Hoja de personaje</h2>
       <p>Distribución 1:1 basada en la hoja de personaje de D&amp;D 5e, con campos web reales y guardado automático.</p>
     </div>
-    <div class="character-intro-actions">
-      <button id="levelUpBtn" type="button" class="level-up-btn" title="Reproducir sonido de subida de nivel">✨ Subir de nivel</button>
-      <span id="charSaveStatus" class="save-status">Guardado automático</span>
-    </div>
+    <span id="charSaveStatus" class="save-status">Guardado automático</span>
   </div>
 
   <div class="sheet-scroll">
@@ -112,7 +169,7 @@
           </label>
         </div>
         <div class="ds-header-grid">
-          <label><span>Clase y nivel</span><input data-char="classLevel" value="Clérigo N4"></label>
+          <label><span>Clase y nivel</span><input data-char="classLevel" value="Clérigo N3"></label>
           <label><span>Trasfondo</span><input data-char="background" value="Acólito"></label>
           <label><span>Nombre del jugador</span><input data-char="player" value="Roger"></label>
           <label><span>Raza</span><input data-char="race" value="Tiefling (Zariel)"></label>
@@ -126,9 +183,9 @@
         <aside class="dnd-abilities">
           <div class="ability-box"><span>Fuerza</span><input data-char="ability_0" value="11"><input class="ability-mod" data-char="abilitymod_0" value="+0"></div>
           <div class="ability-box"><span>Destreza</span><input data-char="ability_1" value="14"><input class="ability-mod" data-char="abilitymod_1" value="+2"></div>
-          <div class="ability-box"><span>Constitución</span><input data-char="ability_2" value="14"><input class="ability-mod" data-char="abilitymod_2" value="+2"></div>
+          <div class="ability-box"><span>Constitución</span><input data-char="ability_2" value="13"><input class="ability-mod" data-char="abilitymod_2" value="+1"></div>
           <div class="ability-box"><span>Inteligencia</span><input data-char="ability_3" value="8"><input class="ability-mod" data-char="abilitymod_3" value="-1"></div>
-          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4" value="17"><input class="ability-mod" data-char="abilitymod_4" value="+3"></div>
+          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4" value="15"><input class="ability-mod" data-char="abilitymod_4" value="+2"></div>
           <div class="ability-box"><span>Carisma</span><input data-char="ability_5" value="14"><input class="ability-mod" data-char="abilitymod_5" value="+2"></div>
         </aside>
 
@@ -204,8 +261,8 @@ Idiomas
           </div>
 
           <section class="ds-box hp-box">
-            <label><span>Máx. puntos de golpe</span><input data-char="hpMax" value="31"></label>
-            <label class="hp-current"><input data-char="hpCurrent" value="31"><span>Puntos de golpe actuales</span></label>
+            <label><span>Máx. puntos de golpe</span><input data-char="hpMax" value="21"></label>
+            <label class="hp-current"><input data-char="hpCurrent" value="21"><span>Puntos de golpe actuales</span></label>
             <label class="hp-temp"><input data-char="hpTemp" value="0"><span>Puntos de golpe temporales</span></label>
           </section>
 
@@ -323,7 +380,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
       <div class="dnd-page2-grid">
         <section class="ds-box portrait-panel">
           <h3>Apariencia del personaje</h3>
-          <div class="character-portrait"><img id="characterPortrait" src="assets/alak-hul.jpg" alt="Alak Hul"></div>
+          <div class="character-portrait"><img id="characterPortrait" src="assets/alak-portrait.webp" alt="Alak Hul"></div>
           <label class="portrait-upload">Cambiar imagen<input id="portraitUpload" type="file" accept="image/*" hidden></label>
         </section>
 
@@ -361,11 +418,11 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
         </label>
         <label>
           <span>Salvación de conjuro</span>
-          <input data-char="spell_save_dc" value="13">
+          <input data-char="spell_save_dc" value="12">
         </label>
         <label>
           <span>Bonificador de ataque de conjuro</span>
-          <input data-char="spell_attack_bonus" value="+5">
+          <input data-char="spell_attack_bonus" value="+4">
         </label>
       </header>
 
@@ -397,7 +454,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">1</div>
             <div class="spell-level-title">
               <h3>Nivel 1</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Espacios totales</span><input data-char="spell_slots1_total" value="4"></label>
                 <label><span>Gastados</span><input data-char="spell_slots1_spent" value="0"></label>
               </div>
@@ -422,8 +479,8 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">2</div>
             <div class="spell-level-title">
               <h3>Nivel 2</h3>
-              <div class="spell-slots-inline">
-                <label><span>Espacios totales</span><input data-char="spell_slots2_total" value="3"></label>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Espacios totales</span><input data-char="spell_slots2_total" value="2"></label>
                 <label><span>Gastados</span><input data-char="spell_slots2_spent" value="0"></label>
               </div>
             </div>
@@ -447,7 +504,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">3</div>
             <div class="spell-level-title">
               <h3>Nivel 3</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots3_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots3_spent" value="0"></label>
               </div>
@@ -466,7 +523,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">4</div>
             <div class="spell-level-title">
               <h3>Nivel 4</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots4_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots4_spent" value="0"></label>
               </div>
@@ -485,7 +542,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">5</div>
             <div class="spell-level-title">
               <h3>Nivel 5</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots5_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots5_spent" value="0"></label>
               </div>
@@ -504,7 +561,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">6</div>
             <div class="spell-level-title">
               <h3>Nivel 6</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots6_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots6_spent" value="0"></label>
               </div>
@@ -523,7 +580,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">7</div>
             <div class="spell-level-title">
               <h3>Nivel 7</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots7_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots7_spent" value="0"></label>
               </div>
@@ -542,7 +599,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">8</div>
             <div class="spell-level-title">
               <h3>Nivel 8</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots8_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots8_spent" value="0"></label>
               </div>
@@ -561,7 +618,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
             <div class="spell-level-number">9</div>
             <div class="spell-level-title">
               <h3>Nivel 9</h3>
-              <div class="spell-slots-inline">
+              <div class="spell-slots-inline" hidden aria-hidden="true">
                 <label><span>Total</span><input data-char="spell_slots9_total" value="0"></label>
                 <label><span>Gastados</span><input data-char="spell_slots9_spent" value="0"></label>
               </div>
@@ -582,14 +639,117 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
 </section>
 
 
+<section id="settings" class="panel settings-page" aria-label="Configuración de Alak Hul">
+  <div class="redesign-heading"><div class="redesign-eyebrow">⚙ CONTROL DEL SANTUARIO</div>
+  <h2>Configuración <em>del grimorio</em></h2><p>Administra la magia, los poderes y los participantes sin ocupar las pestañas de juego.</p></div>
+  <div class="settings-index" aria-label="Ir a una sección de configuración">
+    <a href="#settings-spell-editor">✦ Añadir conjuro</a>
+    <a href="#settings-manage-spells">▣ Administrar conjuros</a>
+    <a href="#settings-spell-slots">◌ Espacios</a>
+    <a href="#settings-channel-editor">☼ Poderes</a>
+    <a href="#settings-combat-admin">⚔ Participantes</a>
+  </div>
+  <div class="settings-layout">
+    <div id="settings-spell-editor">  <div class="expansion-panel v34-editor"><h3 id="customSpellEditorTitle">✦ Añadir conjuro personalizado</h3><p>Su miniatura usa la escuela elegida; también puedes subir una ilustración. La frase de lanzamiento aparecerá en su ficha.</p>
+    <div class="expansion-fields"><label>Nombre <input id="customSpellName" maxlength="90" placeholder="Nombre del conjuro"></label><label>Nivel <select id="customSpellLevel"></select></label><label>Escuela o afinidad <select id="customSpellSchool"><option>Abjuración</option><option>Adivinación</option><option>Conjuración</option><option>Encantamiento</option><option selected>Evocación</option><option>Ilusión</option><option>Nigromancia</option><option>Transmutación</option><option>Sanación</option><option>Luz</option><option>Fuego</option><option>Protección</option><option>Otro</option></select></label></div>
+    <label>Descripción íntegra <textarea id="customSpellDesc" rows="5" placeholder="Describe el efecto y las mejoras a niveles superiores. Las características del conjuro se añaden en los campos de abajo."></textarea></label>
+
+    <fieldset class="spell-metadata-fieldset"><legend>Detalles del conjuro · etiquetas doradas en el grimorio</legend>
+      <div class="spell-metadata-grid">
+        <label>Origen <input id="customSpellOrigin" placeholder="Reglas básicas" value="Reglas básicas"></label>
+        <label>Componentes <input id="customSpellComponents" placeholder="V, S, M (...)"></label>
+        <label>Tiempo de lanzamiento <input id="customSpellCastingTime" placeholder="1 acción"></label>
+        <label>Alcance <input id="customSpellRange" placeholder="60 pies"></label>
+        <label>Duración <input id="customSpellDuration" placeholder="Instantáneo"></label>
+        <label>Listas de conjuros <input id="customSpellLists" placeholder="Conjuros de clérigo"></label>
+      </div>
+    </fieldset>
+    <label>Frase para lanzar el conjuro <textarea id="customSpellInvocation" rows="2" placeholder="¡Que la luz de Pelor...!"></textarea></label>
+    <label class="v34-file-label">Imagen del conjuro (opcional, JPG/PNG/WebP) <input type="file" id="customSpellImage" accept="image/png,image/jpeg,image/webp"></label>
+    <div class="editor-actions"><button id="addCustomSpell" type="button">✦ Añadir conjuro</button><button id="cancelSpellEdit" type="button" hidden>Cancelar edición</button></div><p id="customSpellMessage" role="status" aria-live="polite"></p></div>
+</div>
+    <div id="settings-manage-spells">  <section class="v34-editor settings-card" aria-labelledby="manageSpellsTitle">
+    <h3 id="manageSpellsTitle">▣ Administrar conjuros personalizados</h3>
+    <p>Edita sus detalles y frases o elimínalos aquí. Los conjuros originales permanecen protegidos.</p>
+    <div id="customSpellAdminList" class="settings-item-list" aria-live="polite"></div>
+  </section></div>
+    <div id="settings-spell-slots">  <div class="expansion-panel v34-editor settings-card"><h3>Administrar espacios de conjuro</h3><p>Agrega niveles y ajusta cuántos espacios tienes disponibles. Los espacios ya marcados se conservan.</p><div class="expansion-fields"><label>Nivel <select id="newSlotLevel"></select></label><label>Espacios <input id="newSlotCount" type="number" min="0" max="30" value="3"></label><button id="applySlots" type="button">Guardar espacios</button></div><small>Control manual para reglas de tu mesa. No desbloquea conjuros automáticamente.</small></div></div>
+    <div id="settings-channel-editor">  <div class="expansion-panel v34-editor channel-editor"><h3>☼ Añadir poder de Canalizar Divinidad</h3>
+    <p>Registra futuros poderes cuando Alak Hul los obtenga. Indicar el nivel no los desbloquea automáticamente.</p>
+    <div class="expansion-fields"><label>Nombre del poder <input id="customChannelName" maxlength="90" placeholder="Nombre del poder"></label><label>Nivel de clérigo requerido <input id="customChannelLevel" type="number" min="1" max="20" value="5"></label><label>Símbolo / tipo <select id="customChannelTheme"><option value="solar">Luz solar</option><option value="ward">Protección</option><option value="heal">Sanación</option><option value="shadow">Sombras</option><option value="arcane">Arcano</option></select></label></div>
+    <label>Descripción completa <textarea id="customChannelDesc" rows="5" placeholder="Describe el efecto, las tiradas, alcance, usos y duración..."></textarea></label>
+    <label>Imagen del poder (opcional) <input id="customChannelImage" type="file" accept="image/png,image/jpeg,image/webp"></label>
+    <button type="button" id="addCustomChannel">☼ Añadir poder</button><p id="customChannelMessage" role="status" aria-live="polite"></p>
+  </div></div>
+    <div id="settings-manage-channels">  <section class="v34-editor settings-card" aria-labelledby="manageChannelsTitle">
+    <h3 id="manageChannelsTitle">☼ Administrar poderes personalizados</h3>
+    <p>Elimina los poderes personalizados que ya no necesites. Los poderes originales de clase se conservan.</p>
+    <div id="customChannelAdminList" class="settings-item-list" aria-live="polite"></div>
+  </section></div>
+    <div id="settings-combat-admin">  <details class="combat-admin v34-editor" id="combatAdmin"><summary>⚙ Configurar participantes — añadir o eliminar nombres</summary>
+    <p>Crea personajes principales, aliados NPC o enemigos. Los retratos, PG y daños que registres se conservarán.</p>
+    <div class="expansion-fields"><label>Nombre <input id="newCombatantName" maxlength="65" placeholder="Nombre del participante"></label><label>Tipo <select id="newCombatantKind"><option value="main">Personaje principal</option><option value="ally">Aliado NPC</option><option value="enemy">Enemigo</option></select></label><button type="button" id="addCombatant">✦ Añadir participante</button></div>
+    <p id="combatAdminMessage" role="status" aria-live="polite"></p><div id="combatAdminList" class="combat-admin-groups"></div>
+  </details></div>
+  </div>
+</section>
 </main>
+
+<dialog id="homeOptionsDialog" class="home-options-dialog" aria-labelledby="homeOptionsTitle">
+  <h2 id="homeOptionsTitle">Ajustes del santuario</h2>
+  <p id="homeOptionsMessage">Personaliza tu experiencia en Barovia.</p>
+  <div id="homeOptionsActions" class="home-options-actions"></div>
+  <button id="closeHomeOptions" type="button" class="home-options-close">Cerrar</button>
+</dialog>
 
 <dialog id="spellDialog">
   <button class="dialog-close" aria-label="Cerrar">×</button>
   <div id="dialogContent"></div>
 </dialog>
 
+<dialog id="cloudDialog" class="cloud-dialog" aria-labelledby="cloudDialogTitle">
+  <button type="button" id="cloudCloseBtn" class="dialog-close" aria-label="Cerrar">×</button>
+  <div class="cloud-body">
+    <p class="eyebrow">GUARDADO ENTRE DISPOSITIVOS</p>
+    <h2 id="cloudDialogTitle">☁ Guardado en la nube</h2>
+    <p id="cloudHelpText">Tu progreso continúa guardándose en este navegador hasta que configures Firebase y entres con Google.</p>
+    <div id="cloudStatus" class="cloud-status" role="status" aria-live="polite">Modo local · Sin conectar</div>
+    <div id="cloudAccount" class="cloud-account" hidden></div>
+    <div class="cloud-buttons">
+      <button id="cloudLoginBtn" type="button" hidden>Iniciar sesión con Google</button>
+      <button id="cloudLogoutBtn" type="button" class="outline-btn" hidden>Cerrar sesión</button>
+      <button id="cloudUploadBtn" type="button" class="outline-btn" hidden>Subir datos de este navegador</button>
+      <button id="cloudDownloadBtn" type="button" class="outline-btn">Descargar copia de seguridad</button>
+      <label class="cloud-import-label">Importar archivo JSON <input type="file" id="cloudImportFile" accept=".json,application/json"></label>
+    </div>
+    <div id="cloudConflict" class="cloud-conflict" hidden>
+      <strong>Hay cambios locales pendientes</strong>
+      <p>La nube ya contiene otro guardado. Elige qué versión conservar. No se sobrescribirá ninguna sin tu decisión.</p>
+      <div class="cloud-buttons">
+        <button id="cloudUseRemoteBtn" type="button">Usar datos de la nube</button>
+        <button id="cloudUseLocalBtn" type="button" class="outline-btn">Subir mis cambios locales</button>
+      </div>
+    </div>
+    <div id="cloudSetupHelp" class="cloud-setup-help">
+      <strong>Configuración inicial (solo una vez)</strong>
+      <p>1. Crea un proyecto gratis en <a target="_blank" rel="noopener noreferrer" href="https://console.firebase.google.com/">Firebase</a>.</p>
+      <p>2. En Authentication, activa <b>Google</b> como proveedor y añade el dominio de Vercel a <b>Dominios autorizados</b>.</p>
+      <p>3. Crea la base <b>Cloud Firestore</b>, copia y publica las reglas incluidas en <code>firestore.rules</code>.</p>
+      <p>4. Registra una aplicación <b>Web</b> y copia sus campos al archivo <code>firebase-config.js</code>. Publica los archivos en GitHub/Vercel.</p>
+      <small>El archivo <b>LEEME-FIREBASE.md</b> contiene instrucciones detalladas. Nunca copies una contraseña o cuenta de servicio en el código.</small>
+    </div>
+  </div>
+</dialog>
+
 <footer>Alak Hul · Grimorio digital</footer>
-<script src="script.js"></script>
+<dialog id="levelUpDialog" class="level-dialog" aria-labelledby="levelUpTitle">
+  <h2 id="levelUpTitle">✦ Subir de nivel</h2>
+  <p class="level-next" id="levelUpNext">Alak Hul: nivel 3 → nivel 4</p>
+  <p>Confirma la subida cuando tu DM te la conceda. Se actualizarán el nivel de clérigo, los dados de golpe y los espacios de conjuro de la tabla oficial. Las mejoras de atributos y los PG se mantienen editables para respetar las reglas especiales de tu mesa.</p>
+  <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
+</dialog>
+<script src="script.js?v=35"></script>
+<script src="firebase-config.js"></script>
+<script type="module" src="cloud-sync.js"></script>
 </body>
 </html>

@@ -1,0 +1,281 @@
+/* ALAK HUL V28 — INTERFAZ SOLAR DE BAROVIA
+ * La hoja de personaje (elementos dentro de .dnd-sheet) no recibe reglas nuevas.
+ * Diseño aplicado exclusivamente a las otras tres pestañas, navegación y ventanas.
+ */
+:root{
+  --bg:#09070e;--panel:#14101c;--panel2:#1a1423;--ink:#f8f1e9;--muted:#ab9bb5;
+  --violet:#ad6aff;--violet2:#d9adff;--violet3:#6928b1;--line:#382a43;
+  --gold:#e6c184;--goldsoft:#fff0c9;--rose:#e68fb8;
+}
+html {background:#09070e}
+body{
+ background:radial-gradient(ellipse 70% 32% at 83% -2%,rgba(91,41,133,.30),transparent 80%),
+ linear-gradient(180deg,#100b19 0%,#09070f 45%,#08060c 100%);
+ color:var(--ink);font-family:Georgia,'Times New Roman',serif;
+ position:relative;isolation:isolate;
+}
+body::before{content:"";position:fixed;right:0;top:110px;width:min(40vw,520px);height:78vh;background:url('assets/pelor-sanctuary.svg') center/cover no-repeat;opacity:.21;filter:saturate(.82);pointer-events:none;mask-image:linear-gradient(to left,black 20%,transparent 100%);z-index:-1}
+button{transition:border-color .18s,box-shadow .18s,background-color .18s,transform .18s}
+button:focus-visible{outline:2px solid #ffdc9b;outline-offset:2px}
+.hero{max-width:1490px;padding:15px 30px 13px;display:flex;align-items:center;gap:20px;min-height:92px}
+.brand-wrap{display:flex;align-items:center;gap:15px}
+.sun-brand{color:var(--gold);font-size:43px;line-height:1;text-shadow:0 0 26px #f1b86e66}
+.brand-copy{display:flex;flex-direction:column;gap:2px}
+.brand-title{font:500 clamp(27px,3vw,39px)/1.06 Georgia,serif;letter-spacing:.07em;color:var(--goldsoft);margin:0}
+.brand-kicker{font:700 9px/1.5 system-ui,sans-serif;letter-spacing:.27em;color:#bd9e70;margin:0}
+.brand-dot{padding:0 5px;color:#f4d19d}
+.top-meta{margin-left:auto;color:#bcadc6;font:500 12px system-ui,sans-serif;white-space:nowrap}
+.meta-glow{color:var(--gold)}
+.hero .reset-btn{background:transparent;border:1px solid #403344;color:#b9a9c4;font:600 11px system-ui,sans-serif;padding:9px 12px;white-space:nowrap}
+.hero .reset-btn:hover{color:#fff;border-color:#9776aa}
+.tabs{max-width:1490px;padding:9px 30px 12px;min-height:63px;display:flex;align-items:center;gap:16px;border-block:1px solid #5a3d5877;
+ position:sticky;top:0;z-index:30;background:rgba(15,11,21,.94);backdrop-filter:blur(16px);
+ box-shadow:0 12px 32px #04020860}
+.nav-primary,.nav-actions{display:flex;align-items:center;gap:7px}
+.nav-primary{flex-wrap:wrap}
+.nav-actions{margin-left:auto;flex-shrink:0}
+.tabs .tab{background:transparent;border:1px solid transparent;border-radius:10px;color:#e2d7e6;
+ font:600 14px Georgia,serif;letter-spacing:.01em;padding:11px 17px;white-space:nowrap}
+.tabs .tab>span{color:var(--gold);font-size:19px;vertical-align:-1px;margin-right:7px}
+.tabs .tab:hover{border-color:#6a4b75;background:#21162c}
+.tabs .tab.active{background:linear-gradient(110deg,#43216b,#251437);border-color:#c28af9;color:#fff4ff;box-shadow:0 0 0 1px #9f63d080,0 0 23px #8e45c288,inset 0 0 10px #c47bdb30}
+.tabs .tab.active>span{color:#f7d7a0}
+.tabs .cloud-open-btn,.tabs .long-rest-btn{border-radius:11px;padding:10px 14px;margin:0;font:700 12px system-ui,sans-serif}
+.tabs .long-rest-btn{border:1px solid #f2bd7b;background:linear-gradient(120deg,#3f2d26,#19131c);color:#ffe6a7;box-shadow:inset 0 0 8px #e7b66539,0 0 13px #efaa6935}
+.tabs .long-rest-btn:hover{background:#503621;box-shadow:0 0 20px #e5ac775e}
+.tabs .cloud-open-btn{background:#1a1425;color:#e6d7f7;border-color:#544362}
+main{max-width:1490px;padding:34px 30px 90px}
+footer{color:#947e9b!important;border-top:1px solid #46354a55;padding:22px;text-align:center}
+#character .character-intro{margin-bottom:12px}
+/* Never alter the character sheet itself. */
+#spells,#channel,#combat{position:relative}
+.redesign-heading{padding:11px 4px 28px;margin-bottom:6px;max-width:900px}
+.redesign-heading .redesign-eyebrow{color:#d5b070;font:700 11px system-ui,sans-serif;letter-spacing:.23em}
+.redesign-heading h2{font:500 clamp(32px,4.4vw,52px)/1.12 Georgia,serif;margin:9px 0;color:#fff2de;letter-spacing:-.035em}
+.redesign-heading h2 em{font-weight:400;font-style:italic;color:#d6a8ef}
+.redesign-heading p{margin:6px 0;color:#b9a7c5;font:14px/1.5 system-ui,sans-serif}
+/* Spell workspace - illustrated cards retain the original full description popup. */
+#spells .prepared-panel,#spells .spell-section,#spells .expansion-panel,#channel .channel-card,
+#combat .roster-panel,#combat .initiative-panel{
+ border:1px solid #795d78aa;background:linear-gradient(150deg,rgba(29,19,39,.98),rgba(14,12,21,.99));
+ border-radius:18px;box-shadow:inset 0 1px #d1a2cf20,0 15px 45px #0004;
+}
+#spells .prepared-panel{padding:22px 24px 25px;margin-bottom:24px;border-color:#9d745f9c;
+ background:linear-gradient(140deg,#1d1429,#110e19 65%,#1c1526)}
+#spells .section-heading h2{color:#ffe3a3;font:500 34px/1.1 Georgia,serif;margin:3px 0 7px}
+#spells .section-heading p:last-child{font:13px/1.4 system-ui,sans-serif;color:#bcadc1}
+#spells .prepared-groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#spells .prepared-box{background:linear-gradient(150deg,#160f20,#100d17);border:1px solid #584061;border-radius:13px;padding:13px 14px;min-height:112px}
+#spells .prepared-box-heading{border-bottom:1px solid #59416188;padding:0 0 10px;min-height:35px;margin-bottom:10px}
+#spells .prepared-box h3{font:600 20px Georgia,serif;color:#f8dca6;margin:0}
+#spells .prepared-list{gap:7px}
+#spells .prepared-chip{border:1px solid #493957;border-radius:10px;padding:6px 9px;min-height:47px;background:linear-gradient(90deg,#20162a,#120f1b);color:#f4e7f5}
+#spells .prepared-chip:hover{border-color:#e9ba83;box-shadow:0 0 17px #bb73df20;transform:translateY(-1px)}
+#spells .themed-spell{display:flex;align-items:center;gap:10px;min-width:0}
+#spells .spell-mini-label{flex:1;font:500 13px/1.2 Georgia,serif;word-break:break-word}
+#spells .spell-mini-star{color:#dbb578;font-size:14px}
+.spell-thumb{width:36px;height:36px;flex:0 0 36px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+ color:#ffe3aa;border:1px solid #d3a15e88;background:radial-gradient(circle at 52% 45%,#694427,#211423 73%);font-size:24px;
+ box-shadow:inset 0 0 12px #f8c36425,0 0 12px #edb26b22}
+.spell-thumb.theme-heal{color:#ffe3a3;background:radial-gradient(circle,#64512f,#26182f 85%)}
+.spell-thumb.theme-fire{color:#ffbb86;background:radial-gradient(circle,#9d4b29,#321621 82%)}
+.spell-thumb.theme-light{color:#ffeabb;background:radial-gradient(circle,#9b752b,#242036 80%)}
+.spell-thumb.theme-shadow{color:#b99fff;background:radial-gradient(circle,#663968,#251629 82%);border-color:#9874b6}
+.spell-thumb.theme-ward{color:#f5dda2;background:radial-gradient(circle,#776438,#181c28 82%)}
+.spell-thumb.theme-nature{color:#92e3cf;background:radial-gradient(circle,#245d56,#151c2c 82%);border-color:#63887e}
+.spell-thumb.theme-sight{color:#d6b8fa;background:radial-gradient(circle,#563573,#171b31 82%)}
+#spells .castigo-chip{padding:5px 7px}
+#spells .castigo-open{display:flex;gap:9px;align-items:center;font:inherit}
+#spells .racial-use-marker{font-size:10px;padding:7px 9px;border-radius:7px;border-color:#ae7f9d;background:#382038}
+#spells .prepared-heading-slots{gap:6px}
+#spells .prepared-heading-slots .slot{width:22px;height:22px;border-color:#aa75db;box-shadow:0 0 7px #9653c844}
+#spells .prepared-heading-slots .slot.used{background:#9a4bea;box-shadow:0 0 9px #a461e8,inset 0 0 0 3px #1a1322}
+#spells .search{width:min(620px,100%);margin:18px 0 19px;padding:13px 19px;border:1px solid #66506e;
+ background:linear-gradient(90deg,#181121,#100d17);box-shadow:inset 0 1px #e0bded0e}
+#spells .search span{color:#e1bc88;font-size:24px}
+#spells .search input{font:14px system-ui,sans-serif}
+#spells .spell-sections{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#spells .spell-section{padding:13px 16px 10px;min-height:132px}
+#spells .section-title{border-color:#5a3f57;margin-bottom:5px}
+#spells .section-title .eyebrow{font-size:9px;color:#a78eb1}
+#spells .section-title h2{font:500 23px Georgia,serif;color:#efcf98;margin-top:2px}
+#spells .spell-row{grid-template-columns:minmax(0,1fr) auto;min-height:55px;padding:8px 0;gap:7px;border-color:#34273c}
+#spells .spell-open{display:flex;align-items:center;gap:8px;min-width:0;font:500 13px/1.25 Georgia,serif;color:#f2e7ef}
+#spells .spell-open span:last-child{overflow-wrap:anywhere}
+#spells .spell-open:hover{color:#ffe0aa}
+#spells .spell-row .spell-thumb{width:34px;height:34px;flex-basis:34px;font-size:21px}
+#spells .prepare-btn{background:#291c37;border:1px solid #6e5083;border-radius:7px;padding:7px 8px;color:#cfb5e7;font:700 10px system-ui,sans-serif}
+#spells .prepare-btn.active{border-color:#caa86e;background:#4e354e;color:#ffe8bc}
+#spells .expansion-panel{margin-top:21px;padding:20px 23px}
+#spells .expansion-panel h3{color:#f5d29c;font:500 24px Georgia,serif}
+#spells .expansion-panel input,#spells .expansion-panel textarea,#spells .expansion-panel select{border:1px solid #695576;background:#181221;color:#f5edf9;border-radius:8px}
+#spells .expansion-panel button{background:linear-gradient(#77419e,#572d76);border:1px solid #bc8fda;border-radius:10px;color:#fff;padding:10px 16px}
+/* Channel divinity is a dedicated page, NOT merged with spells or character. */
+#channel .section-heading{margin:6px 0 22px}
+#channel .section-heading h2{color:#f7d69d}
+#channel #channelList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#channel .channel-card{padding:28px 22px;display:flex;align-items:center;gap:18px;min-height:245px;position:relative;overflow:hidden}
+#channel .channel-card:before{content:'✺';position:absolute;right:-18px;top:-70px;color:#dda95b17;font-size:240px;line-height:1;pointer-events:none}
+.channel-art{width:100px;height:100px;flex:0 0 100px;display:flex;justify-content:center;align-items:center;
+ font:70px Georgia,serif;color:#ffe8ae;text-shadow:0 0 20px #faaf56;
+ background:radial-gradient(circle,#e1a65655,#54376555 65%,transparent 73%);border-radius:50%}
+.channel-copy{flex:1;position:relative}
+.channel-copy .eyebrow{font-size:10px;color:#d7ae7a}
+.channel-copy h3{font:500 27px/1.15 Georgia,serif;color:#ffe1b3;margin:2px 0 9px!important}
+.channel-copy p{font:13px/1.55 system-ui,sans-serif;color:#c2b3c6}
+.channel-open{position:relative;align-self:flex-end;white-space:nowrap;border:1px solid #dcba87;border-radius:9px;color:#ffe4b0;
+ background:linear-gradient(#4c332f,#251a29);padding:11px 13px;font:600 12px system-ui,sans-serif;cursor:pointer}
+.channel-open:hover{box-shadow:0 0 18px #e5ac7866}
+/* Modals: all original detailed spell text remains available */
+#spellDialog{width:min(800px,calc(100vw - 28px));background:linear-gradient(150deg,#22152f,#0f0d17 60%);color:#f1e7f2;
+ border:1px solid #c3978f;border-radius:18px;box-shadow:0 0 0 1px #6f5273,0 30px 90px #000d,0 0 70px #8b4fc33b}
+#spellDialog::backdrop{background:#090610cf;backdrop-filter:blur(7px)}
+#spellDialog .dialog-close{z-index:2;border:1px solid #8c6582;background:#21152a;color:#ffe7ce}
+#spellDialog #dialogContent{padding:30px 37px 35px}
+#spellDialog .spell-modal-banner{min-height:95px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ padding:8px 0 22px 80px;margin:0 0 18px;border-bottom:1px solid #95736066;position:relative;
+ background:radial-gradient(ellipse at 30% 50%,#69417252,transparent 75%)}
+#spellDialog .spell-modal-banner .modal-glyph{position:absolute;left:8px;top:10px}
+#spellDialog .spell-modal-banner .spell-thumb{width:60px;height:60px;font-size:37px;border-radius:14px}
+#spellDialog #dialogContent h2{color:#ffe5ba;font:500 clamp(26px,4vw,36px) Georgia,serif;margin:4px 0}
+#spellDialog .fulltext{font:14px/1.7 system-ui,sans-serif;color:#e2d8e7}
+#spellDialog .spell-formatted p strong{color:#e9c797}
+#spellDialog .spell-formatted .spell-summary{font:italic 15px/1.6 Georgia,serif;color:#f3ddf4}
+#spellDialog .invocation{margin-top:25px;border:1px solid #7d5969;border-radius:12px;background:#2b1b31;padding:17px 19px}
+#spellDialog .invocation span{color:#f0c583}
+#spellDialog .invocation blockquote{color:#ffe6bc}
+/* Combat: one dense row per participant, image and HP bar, all earlier controls retained. */
+#combat .combat-heading{margin:0 0 17px}
+#combat .section-heading h2{font:500 30px Georgia,serif;color:#f3d49d}
+#combat .combat-layout{grid-template-columns:minmax(215px,255px) minmax(0,1fr);gap:16px;align-items:start}
+#combat .roster-panel,#combat .initiative-panel{padding:20px 17px;border-radius:17px}
+#combat .roster-panel h3,#combat .initiative-panel h3{font:500 25px Georgia,serif;color:#ffe0ac}
+#combat .roster-hint{font:12px/1.5 system-ui,sans-serif;color:#aa97b5;margin:9px 0 14px}
+#combat .roster-list{display:flex;flex-direction:column;gap:6px;max-height:650px;overflow:auto;padding-right:4px}
+#combat .roster-btn{display:flex;align-items:center;gap:9px;text-align:left;padding:5px 8px;border:1px solid #3e3049;border-radius:9px;
+ background:#1a1423;color:#e8dfea;font:600 12px system-ui,sans-serif;min-height:43px}
+#combat .roster-btn.selected{border-color:#a474dd;background:linear-gradient(95deg,#563272,#291933);color:#fff}
+#combat .roster-avatar{width:31px;height:31px;object-fit:cover;border-radius:50%;border:1px solid #b89b69}
+#combat .roster-plus{margin-left:auto;color:#eec889;font-size:18px}
+#combat .initiative-panel{min-width:0;overflow-x:auto}
+#combat .initiative-head{border-bottom:1px solid #574256;padding-bottom:13px}
+#combat .initiative-list{gap:8px;margin-top:17px}
+#combat .initiative-row{display:grid!important;grid-template-columns:32px 46px minmax(88px,120px) minmax(128px,1fr) minmax(340px,auto) 26px;
+ align-items:center;min-width:770px;gap:8px;padding:9px 10px;min-height:73px;border:1px solid #4a3558;border-radius:11px;
+ background:linear-gradient(90deg,#26182f,#16121e);box-shadow:inset 0 1px #ffffff0b}
+#combat .initiative-row.ally{border-left:2px solid #946cbd}
+#combat .initiative-row.enemy{border-left:2px solid #b96778}
+#combat .initiative-row:hover{border-color:#ad79cf}
+#combat .initiative-row.dead{opacity:.55}
+#combat .turn-number{width:31px;height:31px;flex:none;border-radius:9px;background:#4b2b64;border:1px solid #a377bf;color:#ffe9b3;font:700 13px Georgia,serif}
+#combat .avatar-button{position:relative;border:1px solid #daa970;border-radius:50%;width:44px;height:44px;padding:0;overflow:hidden;
+ background:#2b1c31;cursor:pointer;box-shadow:0 0 8px #d2a5684a}
+#combat .combat-avatar{width:100%;height:100%;object-fit:cover;display:block}
+#combat .avatar-camera{position:absolute;right:0;bottom:0;width:17px;height:17px;border-radius:50%;font:700 11px system-ui,sans-serif;
+ background:#612f83;color:#fff;border:1px solid #c69ce2}
+#combat .identity{min-width:0}
+#combat .init-name{font:600 14px Georgia,serif;color:#ffecdf;max-width:none;min-width:0;white-space:normal}
+#combat .combat-side{font:800 8px system-ui,sans-serif;letter-spacing:.07em;width:auto;height:auto;padding:3px 6px;min-width:0;min-height:0;margin-top:4px;border-radius:5px}
+#combat .hp-tracker{display:flex;flex-direction:column;gap:5px;min-width:110px;width:100%;border:0;background:transparent;padding:0}
+#combat .hp-top{display:flex;align-items:center;justify-content:space-between;gap:7px;font:600 11px system-ui,sans-serif;color:#c7baca}
+#combat .hp-top strong{font-size:13px;color:#e8fce8}
+#combat .hp-max-label{display:inline-flex!important;flex-direction:row;align-items:center}
+#combat .hp-max-input{width:51px;height:24px;border:1px solid #5e4c69;background:#120e1a;color:#e6dbe9;border-radius:5px;
+ font:700 12px system-ui,sans-serif;text-align:center;padding:1px 3px}
+#combat .hp-percent{color:#c7a27f;font-size:10px;white-space:nowrap}
+#combat .hp-track{width:100%;height:7px;overflow:hidden;border-radius:999px;background:#342a3d;border:1px solid #685071}
+#combat .hp-fill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#40af83,#84dfa1);transition:width .25s ease;box-shadow:0 0 8px #78ffb05c}
+#combat .enemy .hp-fill{background:linear-gradient(90deg,#d65b6f,#f5a27f)}
+#combat .no-hp .hp-fill{background:#963b4f}
+#combat .damage-box{display:flex;align-items:center;gap:4px;margin:0;padding:0;min-width:0;width:auto}
+#combat .damage-label{font:800 9px/1.2 system-ui,sans-serif;color:#bba5c3;white-space:nowrap;display:flex!important;flex-direction:column;align-items:center}
+#combat .damage-count{color:#f2c5db;font:700 16px Georgia,serif}
+#combat .icon-btn{width:25px;height:27px;flex:0 0 25px;border:1px solid #6f4e78;border-radius:7px;background:#170f21;color:#f4dfef}
+#combat .damage-enter{display:flex;flex-wrap:nowrap;gap:4px;align-items:center}
+#combat .damage-amount{width:61px;height:29px;background:#1c1525;border:1px solid #634b70;color:#f7ebff;border-radius:7px;padding:5px;font-size:11px}
+#combat .add-damage,#combat .subtract-damage{font:700 10px system-ui,sans-serif;padding:8px 7px;border-radius:7px;white-space:nowrap}
+#combat .add-damage{border:1px solid #b87bba;background:#6b3799;color:#fff}
+#combat .subtract-damage{border:1px solid #528b7e;background:#24635e;color:#d9fff1}
+#combat .dead-btn.active{background:#6c2838}
+#combat .turn-arrows{display:flex;flex-direction:column;gap:3px;order:unset;align-items:center}
+#combat .turn-arrows .icon-btn{width:24px;height:24px;flex:none;font-size:12px}
+#combat .turn-arrows button:disabled{opacity:.25}
+#combat .no-initiative{padding:22px;color:#cbb7d5}
+#combat .combat-header-actions{gap:9px}
+#combat .sound-btn{border:1px solid #8b667c;border-radius:9px;background:#261a31;color:#f8d9e8}
+#combat .danger-btn{border-radius:9px}
+/* Tablet/mobile: do not widen the whole viewport; scroll only the combat list. */
+@media(max-width:1250px){
+ .top-meta{display:none}
+ #combat .combat-layout{grid-template-columns:210px minmax(0,1fr)}
+ #combat .initiative-row{min-width:770px}
+ #channel .channel-card{flex-wrap:wrap}
+}
+@media(max-width:950px){
+ #spells .prepared-groups,#spells .spell-sections{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #channel #channelList{grid-template-columns:1fr}
+ #combat .combat-layout{grid-template-columns:1fr}
+ #combat .roster-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-height:220px}
+ .tabs{flex-wrap:wrap}
+ .nav-actions{margin-left:0}
+}
+@media(max-width:650px){
+ .hero{padding:15px 14px;gap:7px;min-height:72px}
+ .sun-brand{font-size:30px}.brand-title{font-size:25px}.brand-kicker{font-size:7px;letter-spacing:.15em}
+ .hero .reset-btn{margin:0 0 0 auto;padding:8px;font-size:10px;white-space:normal;max-width:78px}
+ .tabs{padding:8px 12px;gap:7px;position:relative}
+ .nav-primary{width:100%;display:flex;flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px}
+ .tabs .tab{padding:9px 10px;font-size:12px}
+ .tabs .tab>span{font-size:15px;margin-right:2px}
+ .nav-actions{width:100%;justify-content:flex-end}
+ .tabs .cloud-open-btn,.tabs .long-rest-btn{font-size:11px;padding:8px 10px}
+ main{padding:20px 13px 55px}
+ .redesign-heading{padding-bottom:14px}
+ .redesign-heading h2{font-size:32px}
+ #spells .prepared-panel{padding:15px 13px}
+ #spells .prepared-groups,#spells .spell-sections{grid-template-columns:1fr}
+ #spells .prepared-box{min-height:0}
+ #channel .channel-card{padding:20px;gap:12px}
+ .channel-art{width:75px;height:75px;flex-basis:75px;font-size:52px}
+ .channel-open{width:100%}
+ #combat .roster-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #spellDialog #dialogContent{padding:20px 17px}
+ #spellDialog .spell-modal-banner{padding-left:63px}
+ #spellDialog .spell-modal-banner .spell-thumb{width:49px;height:49px;font-size:28px}
+}
+@media(prefers-reduced-motion:reduce){button,.hp-fill{transition:none!important}}
+
+/* V29: exterior del pergamino ligeramente envejecido, sin modificar .dnd-sheet. */
+#character{
+  position:relative;
+  background:
+    radial-gradient(ellipse at 21% 19%,rgba(255,251,227,.72),transparent 56%),
+    radial-gradient(ellipse at 95% 91%,rgba(128,87,48,.16),transparent 55%),
+    repeating-linear-gradient(110deg,rgba(82,49,16,.018) 0 1px,transparent 1px 7px),
+    linear-gradient(145deg,#eadbb8 0%,#e7d8b6 42%,#dcc69b 100%);
+  border:1px solid #c19f68;
+  border-radius:18px;
+  box-shadow:inset 0 0 90px rgba(85,49,21,.18),0 20px 50px #0007;
+  padding:28px 10px;
+}
+#character .character-intro{padding:6px 15px 10px;}
+#character .character-intro .eyebrow{color:#704d34;}
+#character .character-intro h2{color:#3d281e;}
+#character .character-intro p{color:#69533e;}
+#character .save-status{color:#4f523c;background:#ece1c7;border-color:#b99b6e;}
+/* Subir de nivel: mismo estilo premium que la navegación. */
+.tabs .level-up-btn{border:1px solid #bb8fe2;background:linear-gradient(120deg,#4a276b,#241832);color:#fff0ce;
+  box-shadow:inset 0 0 8px #b676dd3d,0 0 13px #8a40aa3b;border-radius:11px;padding:10px 14px;margin:0;
+  font:700 12px system-ui,sans-serif;white-space:nowrap;cursor:pointer;}
+.tabs .level-up-btn:hover{box-shadow:0 0 19px #ae63e38c;}
+.level-dialog{width:min(460px,calc(100vw - 32px));background:linear-gradient(145deg,#271734,#100d17);color:#f9e7ff;
+  border:1px solid #bb8cbe;border-radius:17px;padding:27px 26px;box-shadow:0 30px 70px #000a;}
+.level-dialog::backdrop{background:#08040bd9;backdrop-filter:blur(5px)}
+.level-dialog h2{font:500 31px Georgia,serif;color:#ffe3ab;margin:0 0 8px}
+.level-dialog p{color:#cbb9d2;font:14px/1.55 system-ui,sans-serif}
+.level-dialog .level-next{color:#ffe5a3;font-weight:700}
+.level-dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px;flex-wrap:wrap}
+.level-dialog-actions button{border:1px solid #9876a2;border-radius:9px;padding:10px 15px;background:#261831;
+  color:#f9eaff;font:700 13px system-ui,sans-serif;cursor:pointer}
+.level-dialog-actions .confirm-level{background:linear-gradient(100deg,#7f42a4,#5a2b85);border-color:#c7a1d9}
+@media(max-width:650px){#character{padding:15px 2px}.tabs .level-up-btn{font-size:11px;padding:8px 10px}.nav-actions{flex-wrap:wrap;gap:7px}}

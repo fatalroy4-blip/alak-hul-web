@@ -1,0 +1,60 @@
+/* v34: controles de expansión, conjuros personalizados y sincronización de la ficha.
+   No reemplaza ni modifica el diseño del pergamino original. */
+.v34-editor{
+  background:linear-gradient(150deg,rgba(27,18,36,.97),rgba(15,12,22,.98));
+  border:1px solid #8d6a80;border-radius:16px;box-shadow:inset 0 1px #e1b9801e;
+  color:#f4e8f1;padding:20px;margin:20px 0;
+}
+.v34-editor h3{font:500 26px Georgia,serif;color:#ffdc9b;margin:0 0 10px}
+.v34-editor p{font:13px/1.6 system-ui,sans-serif;color:#c6b2ce;margin:8px 0 12px}
+.v34-editor label{font:700 12px/1.4 system-ui,sans-serif;color:#ecd2a4;display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.v34-editor input,.v34-editor select,.v34-editor textarea{
+  min-width:0;width:100%;border:1px solid #6e516f;background:#17111e;border-radius:9px;
+  color:#f9eefa;padding:11px;font:13px/1.4 system-ui,sans-serif;
+}
+.v34-editor textarea{resize:vertical}
+.v34-editor input:focus-visible,.v34-editor textarea:focus-visible,.v34-editor select:focus-visible{outline:2px solid #c292ef;outline-offset:1px}
+.v34-editor button{
+  border:1px solid #ca9a5d;background:linear-gradient(115deg,#5e354f,#332133);border-radius:9px;
+  color:#ffebb9;font:700 12px system-ui,sans-serif;padding:10px 15px;cursor:pointer;
+}
+.v34-editor button:hover{background:#67446e;box-shadow:0 0 12px #a975cc38}
+.v34-editor .expansion-fields{display:flex;flex-wrap:wrap;align-items:end;gap:12px}
+.v34-editor .expansion-fields>label{flex:1 1 185px;min-width:145px}
+#customSpellMessage,#customChannelMessage,#combatAdminMessage{color:#f6daa5;min-height:18px}
+#spells .spell-thumb.has-image,#spellDialog .spell-thumb.has-image{overflow:hidden;padding:0}
+#spells .spell-thumb img,#spellDialog .spell-thumb img,.channel-art.with-picture img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+#spellDialog .spell-formatted strong,#spellDialog .spell-formatted b{color:#f4c982;font-weight:800}
+#spellDialog .spell-modal-banner h2{color:#ffdc9f;font-weight:700}
+#spellDialog .invocation blockquote{color:#ffde9e}
+.channel-editor{max-width:1080px;margin-top:22px}
+.channel-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.channel-actions .channel-delete{border:1px solid #a45964;border-radius:8px;color:#ffc6cb;background:#3a1a26;padding:10px 13px;cursor:pointer}
+.channel-art.with-picture{overflow:hidden;padding:0;flex-shrink:0}
+.combat-admin{margin:4px 0 20px}
+.combat-admin summary{cursor:pointer;list-style:none;font:600 19px Georgia,serif;color:#ffdeab}
+.combat-admin summary::before{content:'✧';color:#b482ff;margin-right:9px}
+.combat-admin[open] summary{margin-bottom:12px}
+.combat-admin-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.combat-admin-group{background:#120e1b;border:1px solid #47354a;border-radius:10px;min-width:0;padding:11px;max-height:290px;overflow:auto}
+.combat-admin-group h4{font:700 13px system-ui,sans-serif;color:#eac78f;margin:0 0 10px}
+.combat-admin-entry{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid #392a43}
+.combat-admin-entry span{font:12px system-ui,sans-serif;color:#eee3f2;overflow-wrap:anywhere}
+.combat-admin-entry button{font-size:10px;padding:5px 7px;border-color:#8f4d64;color:#ffc9d0;background:transparent}
+/* El marcador redondo representa el uso de cada conjuro; los slots por nivel se comparten. */
+#character .sheet-spell-list label .sheet-spell-use-dot{
+ appearance:none;width:18px;height:18px;min-width:18px;min-height:18px;border:2px solid #77534e!important;
+ border-radius:50%;background:#faf2de!important;cursor:pointer;padding:0;position:relative;
+}
+#character .sheet-spell-list label .sheet-spell-use-dot:checked{
+ background:#7d3f72!important;border-color:#563447!important;box-shadow:inset 0 0 0 3px #f8edd6;
+}
+#character .sheet-spell-list label .sheet-spell-use-dot:focus-visible{outline:2px solid #843da1}
+#character .sheet-spell-list label[hidden]{display:none!important}
+#character .sheet-spell-list input[readonly]{cursor:default;color:#2a241d}
+#character .sheet-spell-list{max-height:310px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#bda079 transparent}
+#character .compact-level .sheet-spell-list{max-height:185px}
+#character .sheet-spell-list label{grid-template-columns:22px minmax(0,1fr) 31px;gap:4px}
+#character .sheet-spell-list .sheet-spell-link{height:24px;min-width:27px;padding:1px 4px}
+#character .spell-level-box{overflow:hidden}
+@media(max-width:780px){.combat-admin-groups{grid-template-columns:1fr}.v34-editor .expansion-fields{align-items:stretch}}

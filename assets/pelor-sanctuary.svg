@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1150" aria-hidden="true">
+<defs>
+ <radialGradient id="halo"><stop offset="0" stop-color="#fff8cb" stop-opacity=".93"/><stop offset=".16" stop-color="#ebbb74" stop-opacity=".58"/><stop offset=".49" stop-color="#9d6cbd" stop-opacity=".28"/><stop offset="1" stop-color="#230f42" stop-opacity="0"/></radialGradient>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#472b65"/><stop offset=".49" stop-color="#292046"/><stop offset="1" stop-color="#0c0c20"/></linearGradient>
+ <linearGradient id="tower" x2="1" y2="0"><stop stop-color="#080e22"/><stop offset=".42" stop-color="#1c1839"/><stop offset="1" stop-color="#070a1b"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+</defs>
+<rect width="1000" height="1150" fill="url(#sky)"/>
+<ellipse cx="560" cy="425" rx="400" ry="330" fill="url(#halo)"/>
+<g fill="none" stroke="#eac17d" opacity=".7" stroke-width="3">
+ <circle cx="560" cy="415" r="155"/><circle cx="560" cy="415" r="177" opacity=".65"/>
+ <path d="M560 215V618M360 415H760M420 275L700 555M700 275L420 555"/>
+</g>
+<circle cx="560" cy="415" r="64" fill="#ffdc89" opacity=".45" filter="url(#blur)"/>
+<circle cx="560" cy="415" r="60" fill="#fff1b0" opacity=".75"/>
+<g fill="url(#tower)" stroke="#5a426c" stroke-width="3">
+ <path d="M170 960V645L225 605L280 645V960Z"/><path d="M198 650V515L225 462L252 515V650Z"/><path d="M194 520L225 462L256 520Z"/>
+ <path d="M370 960V625L560 515L755 625V960Z"/><path d="M412 650L560 555L713 650Z"/>
+ <path d="M420 610V420L446 379L472 420V610Z"/><path d="M652 610V420L678 379L704 420V610Z"/>
+ <path d="M520 555V340L560 282L600 340V555Z"/><path d="M509 348L560 279L611 348Z"/>
+ <path d="M762 960V685L806 651L850 685V960Z"/>
+ <path d="M780 690V555L806 517L832 555V690Z"/>
+</g>
+<g stroke="#ad87a3" fill="#cf9c62" fill-opacity=".3" stroke-width="3">
+ <path d="M538 755V650Q560 608 582 650V755Z"/><path d="M220 788V713Q225 695 230 713V788Z"/><path d="M678 748V689Q687 670 696 689V748Z"/>
+ <path d="M410 815V690Q434 652 458 690V815Z"/><path d="M660 810V690Q690 642 720 690V810Z"/>
+</g>
+<path d="M0 950Q165 810 270 915Q470 785 590 920Q745 825 1000 925V1150H0Z" fill="#0d1125"/>
+<path d="M0 1024Q200 930 352 1000Q530 950 670 1013Q800 954 1000 1021V1150H0Z" fill="#090b19"/>
+<g fill="#ead09b" opacity=".5"><circle cx="80" cy="95" r="2"/><circle cx="208" cy="160" r="1"/><circle cx="831" cy="172" r="3"/><circle cx="774" cy="308" r="2"/><circle cx="884" cy="443" r="2"/><circle cx="306" cy="280" r="2"/></g>
+</svg>
