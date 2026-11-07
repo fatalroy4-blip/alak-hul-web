@@ -279,3 +279,55 @@ footer{color:#947e9b!important;border-top:1px solid #46354a55;padding:22px;text-
   color:#f9eaff;font:700 13px system-ui,sans-serif;cursor:pointer}
 .level-dialog-actions .confirm-level{background:linear-gradient(100deg,#7f42a4,#5a2b85);border-color:#c7a1d9}
 @media(max-width:650px){#character{padding:15px 2px}.tabs .level-up-btn{font-size:11px;padding:8px 10px}.nav-actions{flex-wrap:wrap;gap:7px}}
+
+/* V39: barra superior compacta y navegación flexible en tablet, sin tocar la hoja. */
+.tabs{
+ max-width:1490px;
+ min-height:50px;
+ padding:5px 20px;
+ gap:9px;
+ align-items:center;
+ flex-wrap:nowrap;
+}
+.tabs .nav-primary{
+ display:flex;
+ flex:1 1 auto;
+ min-width:0;
+ flex-wrap:nowrap;
+ gap:3px;
+ overflow-x:auto;
+ scrollbar-width:none;
+ overscroll-behavior-x:contain;
+}
+.tabs .nav-primary::-webkit-scrollbar{display:none}
+.tabs .nav-actions{
+ display:flex;
+ flex:0 0 auto;
+ flex-wrap:nowrap;
+ align-items:center;
+ margin-left:auto;
+ gap:5px;
+}
+.tabs .tab{padding:7px 10px;font-size:12px;border-radius:8px}
+.tabs .tab>span{font-size:15px;margin-right:4px}
+.tabs .level-up-btn,.tabs .cloud-open-btn,.tabs .long-rest-btn{
+ padding:8px 10px;
+ font-size:11px;
+ border-radius:8px;
+ white-space:nowrap;
+}
+@media(max-width:1050px){
+ .tabs{flex-wrap:wrap;gap:4px;padding:5px 12px}
+ .tabs .nav-primary{flex:0 0 100%;width:100%;gap:2px;overflow-x:auto}
+ .tabs .nav-actions{flex:0 0 100%;width:100%;justify-content:flex-end;margin:0;gap:5px}
+}
+@media(max-width:650px){
+ .tabs{position:relative;padding:5px 9px}
+ .tabs .nav-primary{padding-bottom:2px}
+ .tabs .tab{padding:6px 8px;font-size:11px}
+ .tabs .nav-actions{flex-wrap:nowrap;justify-content:flex-end;gap:5px}
+ .tabs .level-up-btn,.tabs .cloud-open-btn,.tabs .long-rest-btn{
+  padding:7px 8px;
+  font-size:10px;
+ }
+}
