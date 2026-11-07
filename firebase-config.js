@@ -2,7 +2,7 @@
    Corresponde a tu aplicación web en el proyecto alak-hul-web.
    NO coloques aquí credenciales de servicio ni contraseñas. */
 window.ALAK_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDLLxh2a4kJUeEjj8JFeZ_Su8l6Xy9IMqM",
+  apiKey: "AIzaSyDLlxh2a4kJUeEjj8JFeZ_Su8l6Xy9IMqM",
   authDomain: "alak-hul-web.firebaseapp.com",
   projectId: "alak-hul-web",
   storageBucket: "alak-hul-web.firebasestorage.app",
