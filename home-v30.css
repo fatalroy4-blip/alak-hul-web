@@ -72,3 +72,9 @@ body.home-active main{width:100%;max-width:none;margin:0;padding:0}
 #character .character-intro p{color:#e1c9e2;}
 #character .save-status{color:#e8ddc7;background:#24192dec;border-color:#80608b;}
 @media(max-width:650px){#character.panel{padding:0;}}
+
+/* Fondos personalizables de Alak Hul. La portada de Inicio conserva su ilustración. */
+body[data-page-theme="solar"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(28,16,12,.76),rgba(24,10,13,.62)),url('assets/theme-santuario-solar.png') center center/cover no-repeat}
+body[data-page-theme="celestial"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(13,11,27,.76),rgba(13,11,24,.58)),url('assets/theme-templo-celestial.png') center center/cover no-repeat}
+body[data-page-theme="arcane"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(19,11,29,.78),rgba(11,7,18,.62)),url('assets/theme-biblioteca-arcana.png') center center/cover no-repeat}
+body[data-page-theme="violetvale"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(19,10,30,.78),rgba(12,8,24,.54)),url('assets/theme-valle-violeta.png') center center/cover no-repeat}

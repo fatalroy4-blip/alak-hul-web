@@ -122,12 +122,60 @@ function buildExpansionControls(){
 }
 function saveState(){localStorage.setItem(stateKey,JSON.stringify(state));window.alakCloud?.onLocalChange?.();}
 
+
+const ALAK_THEME_NAMES={purple:"Morado clásico",solar:"Santuario solar",celestial:"Templo celestial",arcane:"Biblioteca arcana",violetvale:"Valle místico"};
+function applyAlakBackground(){
+  const theme=Object.hasOwn(ALAK_THEME_NAMES,state.pageTheme)?state.pageTheme:"purple";
+  state.pageTheme=theme;
+  document.body.dataset.pageTheme=theme;
+}
+function renderAlakBackgroundChoices(){
+  const host=document.getElementById("backgroundChoiceGrid");
+  if(!host)return;
+  for(const btn of host.querySelectorAll("[data-theme-choice]")){
+    const selected=btn.dataset.themeChoice===state.pageTheme;
+    btn.classList.toggle("active",selected);
+    btn.setAttribute("aria-pressed",String(selected));
+  }
+  const status=document.getElementById("themeSelectionStatus");
+  if(status)status.textContent="Fondo seleccionado: "+ALAK_THEME_NAMES[state.pageTheme]+".";
+}
+function setupAlakBackgroundChoices(){
+  applyAlakBackground();
+  const host=document.getElementById("backgroundChoiceGrid");
+  if(!host)return;
+  for(const btn of host.querySelectorAll("[data-theme-choice]")){
+    const theme=btn.dataset.themeChoice;
+    const preview=btn.querySelector("img");
+    const caption=btn.querySelector("small");
+    if(theme!=="purple"){
+      btn.disabled=true;
+      if(preview){
+        preview.onload=()=>{btn.disabled=false; if(caption)caption.textContent="Disponible"; renderAlakBackgroundChoices();};
+        preview.onerror=()=>{btn.disabled=true;if(caption)caption.textContent="Imagen aún no publicada";};
+        if(preview.complete){
+          if(preview.naturalWidth>0)preview.onload();
+          else preview.onerror();
+        }
+      }
+    }
+    btn.addEventListener("click",()=>{
+      if(btn.disabled)return;
+      state.pageTheme=theme;
+      applyAlakBackground();
+      saveState();
+      renderAlakBackgroundChoices();
+    });
+  }
+  renderAlakBackgroundChoices();
+}
+
 function init(){
  loadState();
  classLine.textContent=DATA.classLine;
  characterName.textContent=DATA.character;
  subtitle.textContent=DATA.subtitle;
- renderPreparedGroups();renderSlots();renderSpellSections();renderChannels();renderRoster();renderInitiative();bind();buildExpansionControls();setupPortraitUpload();updateSoundButton();updateHomeIndicators();renderSheetPreparedSpells();renderCombatAdmin();renderCustomSpellAdmin();renderCustomChannelAdmin();
+ renderPreparedGroups();renderSlots();renderSpellSections();renderChannels();renderRoster();renderInitiative();bind();buildExpansionControls();setupPortraitUpload();updateSoundButton();updateHomeIndicators();renderSheetPreparedSpells();renderCombatAdmin();renderCustomSpellAdmin();renderCustomChannelAdmin();setupAlakBackgroundChoices();
 }
 function openAlakPage(page){
  const section=document.getElementById(page);if(!section)return;
@@ -207,7 +255,7 @@ function bind(){
  document.querySelector('.dialog-close').onclick=()=>spellDialog.close();
  resetBtn.onclick=()=>{
   if(confirm('¿Restablecer preparados, slots, iniciativa y daño?')){
-   localStorage.removeItem(stateKey);state={prepared:{},slots:{},selected:{},selectionOrder:[],combat:{},customSpells:[],customSlots:{},racialUses:{},soundEnabled:true,portraits:state.portraits||{},customChannels:state.customChannels||[],customCombatants:state.customCombatants||[],hiddenCombatants:state.hiddenCombatants||[],spellUses:{}};init();saveState();
+   localStorage.removeItem(stateKey);state={prepared:{},slots:{},selected:{},selectionOrder:[],combat:{},customSpells:[],customSlots:{},racialUses:{},soundEnabled:true,portraits:state.portraits||{},customChannels:state.customChannels||[],customCombatants:state.customCombatants||[],hiddenCombatants:state.hiddenCombatants||[],spellUses:{},pageTheme:state.pageTheme||"purple"};init();saveState();
   }
  };
  newCombatBtn.onclick=()=>{
