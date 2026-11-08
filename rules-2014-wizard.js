@@ -182,6 +182,12 @@ function apply(){
 }
 launch.onclick=()=>{if(initial()&&!dlg.open)dlg.showModal()};
 $("rwClose").onclick=()=>dlg.close();
+const homeLaunch=$("openRulesWizardHome");
+if(homeLaunch)homeLaunch.onclick=()=>{
+ const sheet=document.querySelector('[data-view="sheet"]');
+ if(sheet)sheet.click();
+ launch.click();
+};
 $("rwReview").onclick=review;
 $("rwApply").onclick=apply;
 for(const select of [raceSel,classSel])select.onchange=()=>{dependency();review()};
