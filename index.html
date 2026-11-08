@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="settings-v35.css?v=40">
 <link rel="stylesheet" href="slots-v36.css?v=38">
 <link rel="stylesheet" href="campaign-v42.css?v=42">
+<link rel="stylesheet" href="mesa-compartida.css?v=49">
 <link rel="stylesheet" href="home-v46.css?v=46-centrado">
 
 <style>
@@ -153,6 +154,9 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 
 
 <section id="campaign" class="panel campaign-page" aria-label="Campaña de Dungeons and Dragons">
+<div class="mesa-compartida" data-shared-campaign></div>
+<details class="legacy-campaign"><summary>Herramientas locales de Alak Hul · Combate y ajustes anteriores</summary>
+
   <div class="redesign-heading campaign-hero"><div class="redesign-eyebrow">⚔ AVENTURAS EN BAROVIA</div><h2>Nuestra <em>campaña</em></h2><p>Organiza tu mesa, gestiona encuentros y conserva las memorias de la aventura.</p></div>
   <nav class="campaign-subnav" aria-label="Secciones de campaña" role="tablist">
     <button class="campaign-tab active" type="button" data-campaign-view="table" role="tab" aria-selected="true" aria-controls="campaign-table">♟ Mi mesa</button>
@@ -224,6 +228,7 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <p id="combatAdminMessage" role="status" aria-live="polite"></p><div id="combatAdminList" class="combat-admin-groups"></div>
   </details></div>
   </section>
+</details>
 </section>
 <section id="character" class="panel">
   <div class="character-intro">
