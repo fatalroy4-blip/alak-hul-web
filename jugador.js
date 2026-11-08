@@ -449,6 +449,7 @@ window.alakRuleBridge={
    "paladin":"Todas las armaduras y escudos. Armas simples y marciales.",
    "picaro":"Armadura ligera. Herramientas de ladrón y armas de pícaro."})[choice.classId];
   addSheet("proficiencies",klassProf+(bg?"\nTrasfondo "+choice.background+": "+bg.extra:""));
+    let filledAbilities=0;
     if(Array.isArray(choice.abilities)){
    const attrs=["strength","dexterity","constitution","intelligence","wisdom","charisma"];
    for(let i=0;i<attrs.length;i++){
@@ -461,12 +462,23 @@ window.alakRuleBridge={
       const abilityKey=["str","dex","con","int","wis","cha"][i];
       const racialIncrease=Number(choice.bonuses?.[abilityKey])||0;
       const finalScore=Number(value)+racialIncrease;
-      model.sheet[field]=String(finalScore);model.stats[attrs[i]]=String(finalScore);fieldsAdded++;
+      model.sheet[field]=String(finalScore);model.stats[attrs[i]]=String(finalScore);fieldsAdded++;filledAbilities++;
      }
     }
    }
   }
-  for(let i=0;i<(info.slots||[]).length;i++){
+  if(choice.computeHP&&klass?.die&&!String(model.fields.maxHP||"").trim()&&!String(model.sheet.hpMax||"").trim()){
+   const constitution=Number(model.sheet.ability_2);
+   if(Number.isFinite(constitution)&&constitution>0){
+    const conMod=Math.floor((constitution-10)/2);
+    const n=Math.max(1,Math.min(20,Number(choice.level)||1));
+    const average=Math.floor(klass.die/2)+1;
+    const total=Math.max(n,klass.die+conMod+(n-1)*(average+conMod));
+    add("maxHP",total);addSheet("hpMax",total);
+    add("hp",total);addSheet("hpCurrent",total);
+   }
+  }
+    for(let i=0;i<(info.slots||[]).length;i++){
    const level=i+1,total=info.slots[i];if(!total)continue;
    const previous=model.slots[level];
    if(previous===undefined||choice.updateSlots===true){
@@ -495,7 +507,7 @@ window.alakRuleBridge={
    selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),
    resourceText:info.resource||"",updatedAt:new Date().toISOString()
   };
-  change();renderAll();if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
+  change();renderAll();if(filledAbilities===6){recalculatePlayerSkills();change()}if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
   return {ok:true,added,fieldsAdded,message:"Se añadieron "+added+" rasgos y se completaron "+fieldsAdded+" campos vacíos. Lo existente quedó intacto."};
  }
 };
