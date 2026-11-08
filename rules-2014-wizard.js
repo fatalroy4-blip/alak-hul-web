@@ -32,6 +32,11 @@ if(intro){intro.append(launch)}else{document.body.append(launch)}
 const dlg=document.createElement("dialog");dlg.id="rulesWizard2014";
 dlg.innerHTML='<div class="rw-modal"><div class="rw-top"><div><p class="rw-kicker">MANUAL DEL JUGADOR · D&D 5E 2014</p><h2>Forja tu personaje</h2><p class="rw-note">Asistente guiado. Solo completa huecos y añade rasgos que falten; nunca sustituye datos existentes.</p></div><button id="rwClose" aria-label="Cerrar" type="button">✕</button></div><div class="rw-fields"><label>Raza<select id="rwRace"></select></label><label>Subraza / variante<select id="rwSubrace"></select></label><label>Clase<select id="rwClass"></select></label><label>Subclase / origen / dominio<select id="rwSubclass"></select></label><label>Nivel (1–20)<input id="rwLevel" type="number" min="1" max="20" value="1"></label><label>Trasfondo<select id="rwBackground"></select></label></div><div id="rwReferences" class="rw-reference"></div><section class="rw-stats"><div class="rw-titleline"><h3>Características iniciales</h3><button id="rwStandard" type="button">Usar array estándar</button></div><p>Elige cómo distribuir 15, 14, 13, 12, 10 y 8. Si ya completaste alguna casilla, el asistente no la modificará. Los modificadores raciales se incluyen solo al rellenar casillas vacías.</p><div id="rwAttributes" class="rw-attrs"></div><p id="rwBonuses" class="rw-bonuses"></p></section><section class="rw-feature-section"><h3>Rasgos que corresponde revisar</h3><p>Marca qué rasgos quieres incorporar. Las características ya presentes no se duplican.</p><div id="rwFeatures" class="rw-feature-list"></div></section><section class="rw-feature-section"><h3>Opciones iniciales de conjuros</h3><p>Selección orientativa del capítulo 11; no reemplaza la lista completa del manual. Para ver más conjuros, consulta tu libro.</p><div id="rwSpells" class="rw-feature-list rw-spells"></div></section><div class="rw-options"><label><input id="rwAutoProgress" type="checkbox" checked> Al subir de nivel, añadir los nuevos rasgos automáticamente a mi ficha de jugador</label><label><input id="rwUpdateSlots" type="checkbox"> Recalcular el total de espacios de conjuro (conservando los gastados)</label></div><p class="rw-safety">Alak Hul mantiene su linaje de Zariel y su dominio de la Luz. Zariel procede de material adicional y no se sustituirá por el linaje básico del Manual 2014. Las elecciones que requieren DM quedan pendientes de su aprobación.</p><div class="rw-actions"><button id="rwReview" type="button">Actualizar revisión</button><button id="rwApply" type="button">Añadir sin sobrescribir</button></div><p id="rwResult" role="status" aria-live="polite"></p></div>';
 document.body.append(dlg);
+const specialSection=document.createElement("section");
+specialSection.className="rw-feature-section";
+specialSection.innerHTML='<h3>Elecciones de clase y especialización</h3><p>Elige los estilos, metamagias o pactos que correspondan. Puedes dejar decisiones pendientes para el DM.</p><div id="rwSpecials" class="rw-feature-list"></div>';
+const spellSection=dlg.querySelector(".rw-spells")?.closest(".rw-feature-section");
+if(spellSection)spellSection.before(specialSection);
 const raceSel=$("rwRace"),subSel=$("rwSubrace"),classSel=$("rwClass"),subclassSel=$("rwSubclass"),level=$("rwLevel"),background=$("rwBackground"),featuresHost=$("rwFeatures"),spellsHost=$("rwSpells");
 function option(value,name){const opt=new Option(name,value);return opt}
 function fill(select,items,placeholder){select.replaceChildren(option("",placeholder));for(const [id,label] of items)select.add(option(id,label))}
@@ -93,6 +98,58 @@ function spellExists(spell){
  const data=window.alakRuleBridge?.get?.();
  return (data?.spells||[]).some(x=>norm(x.title)===norm(spell.title)&&Number(x.level)===spell.level)
 }
+const specialLibrary={
+ hechicero:[
+  ["meta-careful","Conjuro cuidadoso","Protege a algunas criaturas de tus áreas de efecto"],
+  ["meta-distant","Conjuro distante","Aumenta el alcance de tus conjuros"],
+  ["meta-empowered","Conjuro potenciado","Repite algunos dados de daño"],
+  ["meta-extended","Conjuro extendido","Prolonga la duración de un conjuro"],
+  ["meta-heightened","Conjuro intensificado","Dificulta una salvación del objetivo"],
+  ["meta-quickened","Conjuro acelerado","Convierte el lanzamiento en acción adicional"],
+  ["meta-subtle","Conjuro sutil","Puede evitar componentes verbales o somáticos"],
+  ["meta-twinned","Conjuro duplicado","Afecta otro objetivo válido con el mismo conjuro"]
+ ],
+ barbaro:[["totem-bear","Tótem del oso","Defensa superior durante Furia"],["totem-eagle","Tótem del águila","Movilidad mejorada durante Furia"],["totem-wolf","Tótem del lobo","Ayuda a aliados en ataques cercanos"]],
+ brujo:[["pact-blade","Pacto de la hoja","Convoca un arma de pacto"],["pact-chain","Pacto de la cadena","Obtiene familiar especial"],["pact-tome","Pacto del tomo","Accede a conjuros adicionales"]],
+ guerrero:[["style-archery","Estilo: A distancia","Bonificación para atacar a distancia"],["style-defense","Estilo: Defensa","Bonificación de CA con armadura"],["style-dueling","Estilo: Duelo","Daño mayor con una sola arma"],["style-great","Estilo: Armas grandes","Mejora daño con arma a dos manos"],["style-two","Estilo: Dos armas","Mejora combate con dos armas"],["style-protect","Estilo: Protección","Reacción defensiva para un aliado"]],
+ paladin:[["style-defense","Estilo: Defensa","Más protección con armadura"],["style-dueling","Estilo: Duelo","Ataque con arma a una mano"],["style-great","Estilo: Armas grandes","Arma a dos manos"],["style-protect","Estilo: Protección","Defiende aliados"]],
+ explorador:[["style-archery","Estilo: A distancia","Ataque a distancia"],["style-defense","Estilo: Defensa","Más CA"],["style-dueling","Estilo: Duelo","Una arma"],["style-two","Estilo: Dos armas","Combate con dos armas"]]
+};
+function possibleSpecials(){
+ const id=classSel.value,n=Number(level.value)||1;
+ if(id==="hechicero"&&n>=3)return {limit:n>=17?4:n>=10?3:2,items:specialLibrary.hechicero};
+ if(id==="barbaro"&&n>=3&&subclassSel.value==="totem")return {limit:1,items:specialLibrary.baro||specialLibrary.barbaro};
+ if(id==="brujo"&&n>=3)return {limit:1,items:specialLibrary.brujo};
+ if(id==="guerrero"&&n>=1)return {limit:1,items:specialLibrary.guerrero};
+ if(id==="paladin"&&n>=2)return {limit:1,items:specialLibrary.paladin};
+ if(id==="explorador"&&n>=2)return {limit:1,items:specialLibrary.explorador};
+ return {limit:0,items:[]};
+}
+function specialExists(id,title){
+ if(owner)return norm(existingOwner().features).includes(norm(title));
+ const data=window.alakRuleBridge?.get?.();
+ return (data?.traits||[]).some(x=>x.rulesId==="special:"+id||norm(x.title)===norm(title));
+}
+function renderSpecials(){
+ const host=$("rwSpecials");if(!host)return;
+ const previous=new Map([...host.querySelectorAll("input[data-special]")].map(x=>[x.dataset.special,x.checked]));
+ const spec=possibleSpecials();host.replaceChildren();
+ if(!spec.items.length){host.append(print("p","rw-muted","No hay decisiones adicionales de este grupo en el nivel seleccionado."));return}
+ const limit=print("p","rw-muted","Selecciona hasta "+spec.limit+" opción(es). Las decisiones restantes podrán agregarse después.");host.append(limit);
+ for(const [id,title,note] of spec.items){
+  const existing=specialExists(id,title),wrap=print("label","rw-check"+(existing?" exists":""));
+  const cb=document.createElement("input");cb.type="checkbox";cb.dataset.special=id;cb.checked=!existing&&previous.get(id)===true;cb.disabled=existing;
+  const content=print("span");content.append(print("strong","",title),print("small","",(existing?"✓ Ya registrado · ":"")+note));wrap.append(cb,content);host.append(wrap);
+ }
+}
+function selectedSpecials(){
+ const lookup=possibleSpecials().items;
+ return [...document.querySelectorAll("#rwSpecials input[data-special]:checked")].map(cb=>{
+  const entry=lookup.find(x=>x[0]===cb.dataset.special);
+  return entry?{id:"special:"+entry[0],title:entry[1],note:entry[2],level:Number(level.value)||1}:null
+ }).filter(Boolean)
+}
+
 function desiredSpells(){
  const id=classSel.value,c=book.classes[id],n=Number(level.value)||1;
  let key=id;
@@ -136,7 +193,8 @@ function review(){
  spellsHost.replaceChildren();
  const spells=desiredSpells();
  if(!spells.length)spellsHost.append(print("p","rw-muted","No hay sugerencias para esta clase y nivel, o no hay subclase lanzadora seleccionada."));
- for(const spell of spells){
+ renderSpecials();
+  for(const spell of spells){
   const exists=spellExists(spell),key=spell.level+"|"+spell.title;
   const wrap=print("label","rw-check"+(exists?" exists":""));const cb=document.createElement("input");cb.type="checkbox";cb.dataset.spell=key;cb.checked=!exists&&(oldSpell.get(key)===true);if(exists){cb.disabled=true;cb.checked=false}
   const line=print("span","","");line.append(print("strong","",spell.title),print("small","",spell.level===0?"Truco":"Nivel "+spell.level));
@@ -150,6 +208,9 @@ function ownerApply(choice){
  const corpus=getInput("features"),extras=getInput("additional");if(!corpus)return {ok:false,message:"No se encontró el campo de rasgos de Alak Hul"};
  const all=book.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
  const remaining=all.filter(f=>choice.selectedFeatureIds.includes(f.id)&&!recordExists(f));
+ const addedSpecials=(choice.specialTraits||[]).filter(f=>!specialExists(f.id.replace(/^special:/,""),f.title));
+ remaining.push(...addedSpecials);
+
  let added=0,addedSpells=0;
  if(remaining.length){
   const suffix=remaining.map(f=>"• "+f.title+" — "+f.note).join("\n");
@@ -171,10 +232,12 @@ function apply(){
  if(!Number.isInteger(n)||n<1||n>20){$("rwResult").textContent="El nivel debe estar entre 1 y 20.";return}
  const klass=book.classes[classId];
  if(klass?.subLevel<=n&&!subclassId){$("rwResult").textContent="Elige primero la subclase / origen / dominio para este nivel.";return}
+ const specials=selectedSpecials(),maximum=possibleSpecials().limit;
+ if(specials.length>maximum){$("rwResult").textContent="Seleccionaste más opciones de clase de las permitidas para este nivel ("+maximum+").";return}
  const abilities=inputs.map(x=>x.value===""?null:Number(x.value)),selected=abilities.filter(v=>v!==null);
  if(selected.length&&selected.length!==6){$("rwResult").textContent="Asigna las seis características, o deja todas sin completar.";return}
  if(selected.length&&[...selected].sort((a,b)=>a-b).join(",")!=="8,10,12,13,14,15"){$("rwResult").textContent="El array estándar debe contener exactamente 8, 10, 12, 13, 14 y 15 una sola vez.";return}
- const choice={edition:"2014",raceId,subraceId,classId,subclassId,level:n,background:background.value,abilities,bonuses:bonuses(),selectedFeatureIds:selectedFeatures(),selectedSpells:selectedSpells(),updateSlots:$("rwUpdateSlots").checked,autoProgress:$("rwAutoProgress").checked};
+ const choice={edition:"2014",raceId,subraceId,classId,subclassId,level:n,background:background.value,abilities,bonuses:bonuses(),selectedFeatureIds:selectedFeatures(),selectedSpells:selectedSpells(),specialTraits:specials,updateSlots:$("rwUpdateSlots").checked,autoProgress:$("rwAutoProgress").checked};
  if(owner&&!confirm("¿Agregar únicamente rasgos y conjuros que faltan a Alak Hul? Sus valores actuales no se reemplazarán."))return;
  if(!owner&&!confirm("¿Agregar las opciones elegidas a tu propia hoja sin sobrescribir campos existentes?"))return;
  const result=owner?ownerApply(choice):window.alakRuleBridge?.apply?.(choice);
