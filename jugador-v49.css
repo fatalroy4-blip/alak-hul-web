@@ -43,3 +43,8 @@
 #campaignView>.section-head h2{margin-bottom:0}
 #campaignView>.section-head p:last-child{margin-top:3px}
 @media(max-width:1000px){#sheetView #character .sheet-scroll{padding:6px 4px 45px}#sheetView #character .dnd-sheet{margin-left:0}.spell-catalog{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
+
+/* Restablecer márgenes del formulario genérico para preservar la distribución 1:1 del pergamino D&D. */
+#sheetView #character .dnd-sheet label{margin-bottom:0!important}
+#sheetView #character .dnd-sheet input,#sheetView #character .dnd-sheet textarea{margin-top:0!important}
+#sheetView #character .dnd-sheet button{font-family:Georgia,serif}
