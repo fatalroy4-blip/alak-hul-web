@@ -1,0 +1,65 @@
+
+/* V42 · Campaña: tablero existente, participantes y diario. */
+#campaign{max-width:1450px;margin:0 auto;color:#f3e6f6}
+#campaign .campaign-hero{margin-bottom:22px}
+#campaign .campaign-subnav{display:flex;gap:9px;flex-wrap:wrap;border-bottom:1px solid #80618a;padding-bottom:14px;margin-bottom:25px}
+#campaign .campaign-tab{color:#eddbf0;border:1px solid #705578;background:#1c1425;border-radius:11px;padding:11px 15px;font:700 13px system-ui,sans-serif;cursor:pointer}
+#campaign .campaign-tab:hover,#campaign .campaign-tab:focus-visible{border-color:#efc68d;background:#3b2447}
+#campaign .campaign-tab.active{background:linear-gradient(120deg,#6c397e,#472754);border-color:#edc995;color:#fff0d0;box-shadow:0 3px 20px #0006}
+#campaign .campaign-view{display:none}
+#campaign .campaign-view.active{display:block}
+#campaign .campaign-view[hidden]{display:none!important}
+#campaign .campaign-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+#campaign .campaign-section-head h3{font:500 clamp(27px,4vw,39px) Georgia,serif;color:#ffe3ae;margin:3px 0 6px}
+#campaign .campaign-section-head p{color:#d6c5df;margin:0}
+#campaign .campaign-notice,#campaign .campaign-note{border-left:3px solid #bb8cce;padding:9px 14px;background:#291b32b8;color:#e7d4e9;font:13px/1.6 system-ui,sans-serif;border-radius:0 10px 10px 0}
+#campaign .campaign-accent-btn,#campaign .campaign-tool-actions button,#campaign .campaign-diary-actions button{padding:10px 14px;border:1px solid #d2aa79;background:#56345e;color:#fff0d0;border-radius:9px;cursor:pointer;font:700 12px system-ui,sans-serif}
+#campaign .campaign-table-summary{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
+#campaign .campaign-table-summary span{background:#261a31;border:1px solid #785879;padding:8px 13px;border-radius:99px;font:700 12px system-ui,sans-serif}
+#campaign .campaign-table-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:13px}
+#campaign .campaign-table-person{border:1px solid #705375;background:linear-gradient(135deg,#26192e,#110d17);padding:12px;border-radius:15px;display:flex;align-items:center;gap:10px;min-width:0}
+#campaign .campaign-table-person img{width:54px;height:54px;object-fit:cover;border-radius:13px;border:1px solid #bc92a8;flex:none}
+#campaign .campaign-table-person>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+#campaign .campaign-table-person strong{color:#f7deb6;font:700 14px Georgia,serif;overflow-wrap:anywhere}
+#campaign .campaign-table-person small{color:#cebbd0;font:11px system-ui,sans-serif}
+#campaign .campaign-diary-grid{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(280px,1.2fr);gap:16px;align-items:start}
+#campaign .campaign-surface{border:1px solid #6a4b74;background:linear-gradient(160deg,#21172de8,#100c1be9);border-radius:14px;padding:18px;box-shadow:0 12px 30px #0004}
+#campaign .campaign-surface h4{color:#f6dda4;font:500 22px Georgia,serif;margin:0 0 12px}
+#campaign .campaign-surface>p{color:#dccae2;font:13px/1.6 system-ui,sans-serif}
+#campaign #campaignDiaryForm label{display:block;color:#edceaa;font:700 12px system-ui,sans-serif;margin:11px 0}
+#campaign #campaignDiaryForm input,#campaign #campaignDiaryForm textarea{display:block;box-sizing:border-box;width:100%;border-radius:8px;padding:10px;margin-top:6px;background:#110f18;border:1px solid #7c638b;color:#f6eafa;font:14px system-ui,sans-serif}
+#campaign .campaign-diary-actions,#campaign .campaign-tool-actions{display:flex;flex-wrap:wrap;gap:10px}
+#campaign .campaign-diary-actions button[hidden]{display:none}
+#campaign .campaign-diary-entry{border:1px solid #604b72;padding:13px;border-radius:10px;margin:11px 0;background:#211629}
+#campaign .campaign-diary-entry h5{color:#f9e0ad;margin:4px 0 8px;font:600 17px Georgia,serif}
+#campaign .campaign-diary-entry time{font:700 11px system-ui,sans-serif;color:#d5baca}
+#campaign .campaign-diary-entry p{white-space:pre-wrap;color:#eee1ef;font:13px/1.55 system-ui,sans-serif;overflow-wrap:anywhere}
+#campaign .campaign-diary-entry button{margin:3px 7px 0 0;cursor:pointer;background:#362443;border:1px solid #856393;color:#f7dfd4;padding:6px 10px;border-radius:7px}
+#campaign .campaign-admin-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:18px}
+#campaign .campaign-soon{color:#f2d18f;font:700 12px system-ui,sans-serif}
+#campaign #campaign-participants{margin-top:24px}
+#campaign #combatAdmin{margin:0;border:1px solid #795882;padding:18px;border-radius:14px;background:linear-gradient(145deg,#21172c,#110d19)}
+#campaign #combatAdmin summary{font:600 23px Georgia,serif;color:#fbe3b1}
+#campaign #combatAdminList{margin-top:16px}
+#campaign .combat-admin-groups{grid-template-columns:repeat(3,minmax(0,1fr))}
+#campaign .combat-admin-entry{flex-wrap:wrap;justify-content:flex-start;gap:8px}
+#campaign .combat-admin-entry .campaign-admin-avatar{width:44px;height:44px;object-fit:cover;border-radius:10px;border:1px solid #b18eac}
+#campaign .combat-admin-entry .campaign-admin-name{flex:1 1 90px;font-weight:700}
+#campaign .combat-admin-entry .campaign-admin-actions{display:flex;flex-wrap:wrap;gap:5px;width:100%}
+#campaign .combat-admin-entry select{background:#1e1829;color:#f2e8f3;border:1px solid #805e83;border-radius:8px;padding:5px;max-width:100%;font:11px system-ui,sans-serif}
+#campaign .combat-admin-entry button{padding:7px 9px;border-radius:7px;cursor:pointer}
+#campaign .combat-admin-entry .campaign-photo-btn{color:#ffe1ae;border-color:#b887ab}
+#campaign .expansion-fields{align-items:end}
+.campaign-portrait-dialog{box-sizing:border-box;width:min(450px,calc(100vw - 28px));padding:19px;background:#18101e;color:#f4e5f3;border:1px solid #bb90ce;border-radius:17px;box-shadow:0 35px 100px #000c}
+.campaign-portrait-dialog::backdrop{background:#08040be8;backdrop-filter:blur(4px)}
+.campaign-portrait-dialog h2{margin:0 0 8px;font:500 28px Georgia,serif;color:#f9dca5}
+.campaign-portrait-dialog p{font:13px/1.5 system-ui,sans-serif;color:#e2d1e7}
+.campaign-portrait-dialog canvas{display:block;touch-action:none;cursor:grab;width:min(100%,320px);aspect-ratio:1;background:#080609;border:2px solid #c19bc7;border-radius:12px;margin:12px auto}
+.campaign-portrait-dialog canvas:active{cursor:grabbing}
+.campaign-portrait-dialog .campaign-zoom-label{display:block;color:#f5d49f;font:700 13px system-ui,sans-serif}
+.campaign-portrait-dialog input[type=range]{display:block;width:100%;margin:14px 0;accent-color:#c187d9}
+.campaign-portrait-dialog .campaign-portrait-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:12px}
+.campaign-portrait-dialog button{border:1px solid #9b72a3;background:#40284e;color:#fff0d5;border-radius:9px;padding:9px 12px;cursor:pointer;font:700 12px system-ui,sans-serif}
+.campaign-portrait-dialog #campaignPortraitSave{background:#66428a;border-color:#e5bd85}
+@media(max-width:900px){#campaign .campaign-admin-overview{grid-template-columns:1fr 1fr}#campaign .campaign-diary-grid{grid-template-columns:1fr}#campaign .combat-admin-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#campaign .campaign-subnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}#campaign .campaign-tab{padding:10px 7px;font-size:12px}#campaign .campaign-admin-overview{grid-template-columns:1fr}#campaign .combat-admin-groups{grid-template-columns:1fr}#campaign .campaign-table-list{grid-template-columns:repeat(2,minmax(0,1fr))}#campaign .campaign-table-person{flex-direction:column;text-align:center}}

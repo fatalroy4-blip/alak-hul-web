@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="features-v34.css?v=35">
 <link rel="stylesheet" href="settings-v35.css?v=40">
 <link rel="stylesheet" href="slots-v36.css?v=38">
+<link rel="stylesheet" href="campaign-v42.css?v=42">
 </head>
 <body>
 <header class="hero">
@@ -28,7 +29,7 @@
     <button class="tab active" data-tab="character"><span aria-hidden="true">♟</span> Personaje</button>
     <button class="tab" data-tab="spells"><span aria-hidden="true">▣</span> Conjuros</button>
     <button class="tab" data-tab="channel"><span aria-hidden="true">☼</span> Canalizar Divinidad</button>
-    <button class="tab" data-tab="combat"><span aria-hidden="true">⚔</span> Combate</button>
+    <button class="tab" data-tab="campaign"><span aria-hidden="true">⚔</span> Campaña</button>
     <button class="tab" data-tab="settings"><span aria-hidden="true">⚙</span> Configuración</button>
   </div>
   <div class="nav-actions">
@@ -114,7 +115,24 @@
 
 </section>
 
-<section id="combat" class="panel">
+
+<section id="campaign" class="panel campaign-page" aria-label="Campaña de Dungeons and Dragons">
+  <div class="redesign-heading campaign-hero"><div class="redesign-eyebrow">⚔ AVENTURAS EN BAROVIA</div><h2>Nuestra <em>campaña</em></h2><p>Organiza tu mesa, gestiona encuentros y conserva las memorias de la aventura.</p></div>
+  <nav class="campaign-subnav" aria-label="Secciones de campaña" role="tablist">
+    <button class="campaign-tab active" type="button" data-campaign-view="table" role="tab" aria-selected="true" aria-controls="campaign-table">♟ Mi mesa</button>
+    <button class="campaign-tab" type="button" data-campaign-view="combat" role="tab" aria-selected="false" aria-controls="campaign-combat">⚔ Combate</button>
+    <button class="campaign-tab" type="button" data-campaign-view="diary" role="tab" aria-selected="false" aria-controls="campaign-diary">✒ Diario de aventura</button>
+    <button class="campaign-tab" type="button" data-campaign-view="admin" role="tab" aria-selected="false" aria-controls="campaign-admin">⚙ Administración</button>
+  </nav>
+  <section id="campaign-table" class="campaign-view active" role="tabpanel">
+    <div class="campaign-section-head"><div><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h3>Mi mesa</h3><p>Personajes registrados en tu tablero actual.</p></div><button type="button" id="campaignGoAdmin" class="campaign-accent-btn">Administrar mesa</button></div>
+    <p class="campaign-notice">La organización de esta mesa funciona actualmente con tu guardado personal. Las invitaciones de Google y el combate compartido en tiempo real se habilitarán cuando estén listas las reglas de seguridad.</p>
+    <div id="campaignTableSummary" class="campaign-table-summary" aria-live="polite"></div>
+    <div id="campaignTableList" class="campaign-table-list" aria-live="polite"></div>
+  </section>
+  <section id="campaign-combat" class="campaign-view" role="tabpanel" hidden>
+    <div id="combat" class="campaign-combat-board">
+
   <div class="redesign-heading"><div class="redesign-eyebrow">⚔ EL DESTINO DE BAROVIA</div><h2>Tablero <em>de combate</em></h2><p>Gestiona iniciativas, daño, curaciones, caídas y retratos sin cambiar de pestaña.</p></div>
   <div class="section-heading combat-heading">
     <div>
@@ -140,10 +158,37 @@
       <input id="combatPortraitInput" type="file" accept="image/*" hidden aria-label="Seleccionar retrato de personaje">
     </section>
   </div>
+    </div>
+  </section>
+  <section id="campaign-diary" class="campaign-view" role="tabpanel" hidden>
+    <div class="campaign-section-head"><div><p class="eyebrow">HISTORIAS DE BAROVIA</p><h3>Diario de aventura</h3><p>Conserva lo ocurrido en cada sesión.</p></div></div>
+    <div class="campaign-diary-grid">
+      <form id="campaignDiaryForm" class="campaign-surface" autocomplete="off">
+        <h4>✒ Registrar una sesión</h4>
+        <label>Fecha <input id="campaignDiaryDate" type="date" required></label>
+        <label>Título <input id="campaignDiaryTitle" type="text" maxlength="90" placeholder="Ej. La noche de los cuervos" required></label>
+        <label>Notas <textarea id="campaignDiaryText" rows="5" maxlength="12000" placeholder="¿Qué ocurrió durante la aventura?" required></textarea></label>
+        <div class="campaign-diary-actions"><button id="campaignDiarySave" type="submit">Guardar entrada</button><button id="campaignDiaryCancel" type="button" hidden>Cancelar edición</button></div>
+        <p id="campaignDiaryMessage" role="status" aria-live="polite"></p>
+      </form>
+      <div class="campaign-surface"><h4>✦ Crónica de la aventura</h4><div id="campaignDiaryEntries" class="campaign-diary-entries"></div></div>
+    </div>
+  </section>
+  <section id="campaign-admin" class="campaign-view" role="tabpanel" hidden>
+    <div class="campaign-section-head"><div><p class="eyebrow">EL CONSEJO DE LA MESA</p><h3>Administración</h3><p>Personajes, enemigos, aliados y herramientas de dirección.</p></div></div>
+    <div class="campaign-admin-overview">
+      <article class="campaign-surface"><h4>♟ Gestión de la mesa</h4><p>Añade o quita participantes, asígnales un tipo y cambia sus imágenes. Los retratos pueden recortarse y centrarse antes de guardarlos.</p><p class="campaign-note">Estos participantes pertenecen a tu tablero actual. Las cuentas individuales de Google se agregarán en una fase posterior.</p></article>
+      <article class="campaign-surface"><h4>☼ Permisos del Dungeon Master</h4><p>Propietario, Dungeon Master y jugadores con hojas privadas: este control se habilitará tras publicar las reglas de Firebase y probar los accesos.</p><span class="campaign-soon">Próxima etapa · Multijugador seguro</span></article>
+      <article class="campaign-surface"><h4>⚔ Herramientas de dirección</h4><div class="campaign-tool-actions"><button type="button" id="campaignOpenCombat">Ver combate</button><button type="button" id="campaignNewCombat">Nuevo combate</button><button type="button" id="campaignOpenCloud">Guardado y respaldo</button></div></article>
+    </div>
+    <div id="campaign-participants">  <details class="combat-admin v34-editor" id="combatAdmin" open><summary>⚙ Participantes · personajes, aliados NPC y enemigos</summary>
+    <p>Crea personajes principales, aliados NPC o enemigos. Asigna nombres y tipos, cambia retratos y conserva la información de combate.</p>
+    <div class="expansion-fields"><label>Nombre <input id="newCombatantName" maxlength="65" placeholder="Nombre del participante"></label><label>Tipo <select id="newCombatantKind"><option value="main">Personaje principal</option><option value="ally">Aliado NPC</option><option value="enemy">Enemigo</option></select></label><button type="button" id="addCombatant">✦ Añadir participante</button></div>
+    <p id="combatAdminMessage" role="status" aria-live="polite"></p><div id="combatAdminList" class="combat-admin-groups"></div>
+  </details></div>
+  </section>
 </section>
-
-
-<section id="character" class="panel">
+ class="panel">
   <div class="character-intro">
     <div>
       <p class="eyebrow">FICHA DIGITAL</p>
@@ -641,14 +686,13 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
 
 <section id="settings" class="panel settings-page" aria-label="Configuración de Alak Hul">
   <div class="redesign-heading"><div class="redesign-eyebrow">⚙ CONTROL DEL SANTUARIO</div>
-  <h2>Configuración <em>del grimorio</em></h2><p>Administra la magia, los poderes y los participantes sin ocupar las pestañas de juego.</p></div>
+  <h2>Configuración <em>del grimorio</em></h2><p>Administra tus fondos, conjuros y poderes. Los participantes se gestionan ahora en Campaña.</p></div>
   <div class="settings-index" aria-label="Ir a una sección de configuración">
     <a href="#settings-backgrounds">🖼 Fondos</a>
     <a href="#settings-spell-editor">✦ Añadir conjuro</a>
     <a href="#settings-manage-spells">▣ Administrar conjuros</a>
     <a href="#settings-spell-slots">◌ Espacios</a>
     <a href="#settings-channel-editor">☼ Poderes</a>
-    <a href="#settings-combat-admin">⚔ Participantes</a>
   </div>
   <div class="settings-layout">
     <div id="settings-backgrounds">
@@ -716,14 +760,20 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
     <p>Elimina los poderes personalizados que ya no necesites. Los poderes originales de clase se conservan.</p>
     <div id="customChannelAdminList" class="settings-item-list" aria-live="polite"></div>
   </section></div>
-    <div id="settings-combat-admin">  <details class="combat-admin v34-editor" id="combatAdmin"><summary>⚙ Configurar participantes — añadir o eliminar nombres</summary>
-    <p>Crea personajes principales, aliados NPC o enemigos. Los retratos, PG y daños que registres se conservarán.</p>
-    <div class="expansion-fields"><label>Nombre <input id="newCombatantName" maxlength="65" placeholder="Nombre del participante"></label><label>Tipo <select id="newCombatantKind"><option value="main">Personaje principal</option><option value="ally">Aliado NPC</option><option value="enemy">Enemigo</option></select></label><button type="button" id="addCombatant">✦ Añadir participante</button></div>
-    <p id="combatAdminMessage" role="status" aria-live="polite"></p><div id="combatAdminList" class="combat-admin-groups"></div>
-  </details></div>
+    
   </div>
 </section>
 </main>
+
+
+<dialog id="campaignPortraitDialog" class="campaign-portrait-dialog" aria-labelledby="campaignPortraitTitle">
+  <h2 id="campaignPortraitTitle">Ajustar retrato</h2>
+  <p>Arrastra la imagen para centrar la cara. Usa el control de zoom para acercarla o alejarla.</p>
+  <canvas id="campaignPortraitCanvas" width="320" height="320" aria-label="Vista previa del recorte cuadrado"></canvas>
+  <label class="campaign-zoom-label">Acercar imagen <input id="campaignPortraitZoom" type="range" min="1" max="3" step=".01" value="1"></label>
+  <p id="campaignPortraitMessage" role="status" aria-live="polite"></p>
+  <div class="campaign-portrait-actions"><button id="campaignPortraitCenter" type="button">Centrar</button><button id="campaignPortraitCancel" type="button">Cancelar</button><button id="campaignPortraitSave" type="button">Guardar retrato</button></div>
+</dialog>
 
 <dialog id="homeOptionsDialog" class="home-options-dialog" aria-labelledby="homeOptionsTitle">
   <h2 id="homeOptionsTitle">Ajustes del santuario</h2>
@@ -778,9 +828,10 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <p>Confirma la subida cuando tu DM te la conceda. Se actualizarán el nivel de clérigo, los dados de golpe y los espacios de conjuro de la tabla oficial. Las mejoras de atributos y los PG se mantienen editables para respetar las reglas especiales de tu mesa.</p>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
-<script src="script.js?v=41"></script>
+<script src="script.js?v=42"></script>
+<script src="campaign-v42.js?v=42"></script>
 <script src="background-upload.js?v=41"></script>
 <script src="firebase-config.js"></script>
-<script type="module" src="cloud-sync.js?v=41"></script>
+<script type="module" src="cloud-sync.js?v=42"></script>
 </body>
 </html>
