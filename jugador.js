@@ -82,6 +82,7 @@ function renderSheet(){
 function syncSheetField(el){
  const key=el.dataset.char;if(!key||!model)return;
  model.sheet[key]=el.type==="checkbox"?el.checked:el.value;
+ if(/^spell\d+_\d+$/.test(key))delete model.sheet[key+"__auto"];
  if(key==="name"||key==="name2"){
   model.fields.name=el.value;
   const other=$("character").querySelector('[data-char="'+(key==="name"?"name2":"name")+'"]');
@@ -92,6 +93,12 @@ function syncSheetField(el){
   const level=raw.match(/(?:nivel|n)\s*(\d+)/i);if(level)model.fields.level=level[1];
  }else if(legacyFieldMap[key])model.fields[legacyFieldMap[key]]=el.value;
  else if(/^ability_\d$/.test(key)){const ability=["strength","dexterity","constitution","intelligence","wisdom","charisma"][Number(key.slice(-1))];model.stats[ability]=el.value}
+ if(/^spell_slots(\d+)_(total|spent)$/.test(key)){
+  const match=key.match(/^spell_slots(\d+)_(total|spent)$/),level=Number(match[1]),kind=match[2];
+  model.slots[level]=model.slots[level]||{total:0,used:0};
+  model.slots[level][kind==="total"?"total":"used"]=Math.max(0,Number(el.value)||0);
+  renderSpellSlots();
+ }
  change();if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
 }
 function populateSelectedSpellsOnSheet(){
@@ -103,7 +110,7 @@ function populateSelectedSpellsOnSheet(){
   sheetFields.forEach((el,i)=>{
    const item=items[i];const key=el.dataset.char;
    if(item){
-    model.sheet[key]=item.title;
+    model.sheet[key]=item.title;model.sheet[key+"__auto"]=true;
     const prep=scope.querySelector('[data-char="spell'+level+'prep_'+(i+1)+'"]');
     if(prep)model.sheet[prep.dataset.char]=item.prepared===true;
    }else if(key in model.sheet && model.sheet[key+"__auto"]){
@@ -194,10 +201,12 @@ function renderDesign(){
   const title=document.createElement("strong");title.textContent=item.name;
   const label=document.createElement("label");label.textContent="Imagen del botón";
   const input=document.createElement("input");input.type="file";input.accept="image/png,image/jpeg,image/webp";
-  input.onchange=async()=>{const file=input.files?.[0];input.value="";if(file)await changeImage(file,value=>model.tileImages[item.id]=value,true)};
+  input.disabled=item.id==="sheet"&&!canChangePortrait();
+  input.onchange=async()=>{const file=input.files?.[0];input.value="";if(!file||item.id==="sheet"&&!canChangePortrait())return;await changeImage(file,value=>model.tileImages[item.id]=value,true)};
   label.append(input);
   const clear=document.createElement("button");clear.type="button";clear.className="ghost";clear.textContent="Quitar imagen";
-  clear.onclick=()=>{delete model.tileImages[item.id];change();renderHome()};
+  clear.disabled=item.id==="sheet"&&!canChangePortrait();
+  clear.onclick=()=>{if(item.id==="sheet"&&!canChangePortrait())return;delete model.tileImages[item.id];change();renderHome()};
   wrapper.append(title,label,clear);host.append(wrapper);
  }
  const extraHost=$("extraEditors");extraHost.replaceChildren();
@@ -235,7 +244,11 @@ async function changeImage(file,callback,refresh=false){
  status("Preparando imagen…");
  try{callback(await optimize(file));change();renderHome();renderSheet();if(refresh)renderDesign()}catch(e){status("Error de imagen: "+e.message)}
 }
-function renderAll(){if(!model)return;renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog()}
+function renderAll(){if(!model)return;
+ const newLabel=model.traitsButtonName||"Rasgos";
+ const tab=document.querySelector('[data-view="traits"]');if(tab)tab.textContent="✦ "+newLabel;
+ const heading=document.querySelector("#traitsView h2");if(heading)heading.textContent=newLabel;
+ renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog()}
 async function activate(account){
  user=account;const requested=new URLSearchParams(location.search).get("uid");
  currentRole=await role(account.uid);
