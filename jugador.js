@@ -404,7 +404,22 @@ window.alakRuleBridge={
     added++;
    }
   }
-  const previousResource=model.traits.find(x=>x.rulesId==="resources:"+choice.classId);
+  for(const special of choice.specialTraits||[]){
+   if(!model.traits.some(x=>x.rulesId===special.id||String(x.title).toLowerCase()===special.title.toLowerCase())){
+    model.traits.push({id:genId(),title:special.title,description:special.note,type:"Elección de clase · Manual 2014",level:special.level,rulesId:special.id});added++;
+   }
+  }
+  const classShortcuts={
+   barbaro:[1,"Furia"],hechicero:[3,"Metamagia"],guerrero:[1,"Recursos de guerrero"],
+   clerigo:[2,"Canalizar divinidad"],druida:[2,"Forma salvaje"],
+   monje:[2,"Ki"],paladin:[1,"Imposición de manos"],brujo:[2,"Invocaciones"],
+   picaro:[1,"Ataque furtivo"],bardo:[1,"Inspiración bárdica"]
+  };
+  const shortcut=classShortcuts[choice.classId];
+  if(shortcut&&Number(choice.level)>=shortcut[0]&&model.extras.length<10&&!model.extras.some(x=>String(x.name).toLowerCase()===shortcut[1].toLowerCase())){
+   model.extras.push({id:genId(),name:shortcut[1],description:"Recurso de "+klass.name+" · Manual 2014",notes:"Consulta los rasgos y recursos de tu hoja."});
+  }
+    const previousResource=model.traits.find(x=>x.rulesId==="resources:"+choice.classId);
   if(previousResource&&info.resource&&previousResource.description===model.ruleBuild?.resourceText)previousResource.description=info.resource;
     if(info.resource&&!model.traits.some(x=>x.rulesId==="resources:"+choice.classId)){
    model.traits.push({id:genId(),title:"Recursos de clase",description:info.resource,type:"Progresión",rulesId:"resources:"+choice.classId});
