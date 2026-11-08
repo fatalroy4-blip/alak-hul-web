@@ -45,6 +45,7 @@ async function startApp() {
   await insertScript("mesa-compartida.js?v=49", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
+  await insertScript("rules-2014-backgrounds.js?v=50");
   await insertScript("rules-2014-spells.js?v=50");
   await insertScript("rules-2014-wizard.js?v=50");
  } catch (err) {
