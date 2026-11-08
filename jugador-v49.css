@@ -1,0 +1,45 @@
+/* V49 – reproduce la ficha de D&D de Alak Hul para cada jugador, sin precargar sus datos. */
+#workspace .screen:not(.active){display:none!important}
+#workspace .screen.active{display:block!important}
+#sheetView{max-width:none}
+#sheetView #character.panel{display:block!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:5px 0!important}
+#sheetView #character .sheet-scroll{max-width:100%;overflow-x:auto;scrollbar-color:#c09e79 #29172e}
+#sheetView #character .character-intro{max-width:1180px}
+#sheetView #character .dnd-sheet{max-width:none}
+#sheetView #character .portrait-upload{cursor:pointer}
+#sheetView #character .portrait-upload.portrait-forbidden{opacity:.55;cursor:not-allowed;pointer-events:none}
+#sheetView #character .dnd-sheet label{font-family:Georgia,"Times New Roman",serif}
+#sheetView #character .dnd-sheet input,#sheetView #character .dnd-sheet textarea{color:#261b14!important;box-shadow:none!important}
+#sheetView #character .dnd-sheet input[type="checkbox"]{accent-color:#662532}
+#sheetView #character .dnd-sheet input[type="number"]{appearance:textfield}
+#sheetView #character .ds-box h3{color:#241d16;font:700 11px Georgia,serif}
+#sheetView .section-head{max-width:1180px;margin:auto}
+#sheetView #character .character-portrait{overflow:hidden}
+#sheetView #character .character-portrait img{object-fit:cover}
+#sheetView #character .sheet-scroll .dnd-sheet{margin-bottom:40px}
+#spellsView .player-library{margin-bottom:15px}
+#spellsView .player-library>h3{font:500 26px Georgia,serif;color:#f7d3a0;margin:0 0 11px}
+#spellsView .player-library>p{color:#c7b2d3}
+.library-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:12px 0}
+.library-filters label{flex:1 1 160px}
+.spell-catalog{max-height:590px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:5px}
+.spell-choice{border:1px solid #8e7197;background:linear-gradient(145deg,#341e42,#160e25);border-radius:12px;padding:15px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 15px #0004}
+.spell-choice strong{color:#f6d9b4;font:500 21px Georgia,serif}
+.spell-choice small{font:700 11px system-ui;color:#f3b983;text-transform:uppercase;letter-spacing:.04em}
+.spell-choice p{color:#d4c6de;font-size:12px;line-height:1.5;white-space:pre-wrap;flex:1;overflow-wrap:anywhere}
+.spell-choice button{border-radius:9px;border:1px solid #dbb183;background:#623b76;color:#fff0d1;padding:9px 12px}
+.spell-choice button:disabled{opacity:.7;border-color:#6b5769;background:#2a2132}
+.player-slot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px}
+.player-slot{padding:12px;border:1px solid #805f8d;background:#2c1c38;border-radius:10px}
+.player-slot h4{color:#ffe5b4;margin:0 0 9px;font:500 19px Georgia,serif}
+.player-slot label{display:block;margin:0 0 8px;color:#dac3df;font-size:11px}
+.player-slot input{height:36px;text-align:center}
+#spellList .entry>button{margin-right:6px;margin-top:6px}
+.tile .miniature-portrait{display:block;width:76px;height:76px;border-radius:12px;border:2px solid #ebc688;object-fit:cover;box-shadow:0 5px 14px #0008}
+.tile .tile-icon:has(.miniature-portrait){margin-bottom:9px}
+#traitsButtonName{max-width:360px}
+#campaignView .mesa-compartida{margin:18px 0 0}
+#campaignView>.section-head{padding-bottom:0}
+#campaignView>.section-head h2{margin-bottom:0}
+#campaignView>.section-head p:last-child{margin-top:3px}
+@media(max-width:1000px){#sheetView #character .sheet-scroll{padding:6px 4px 45px}#sheetView #character .dnd-sheet{margin-left:0}.spell-catalog{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
