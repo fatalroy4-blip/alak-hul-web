@@ -695,6 +695,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="redesign-heading"><div class="redesign-eyebrow">⚙ CONTROL DEL SANTUARIO</div>
   <h2>Configuración <em>del grimorio</em></h2><p>Administra tus fondos, conjuros y poderes. Los participantes se gestionan ahora en Campaña.</p></div>
   <div class="settings-index" aria-label="Ir a una sección de configuración">
+    <a href="#settings-players">♟ Panel de jugadores</a>
     <a href="#settings-backgrounds">🖼 Fondos</a>
     <a href="#settings-spell-editor">✦ Añadir conjuro</a>
     <a href="#settings-manage-spells">▣ Administrar conjuros</a>
@@ -702,6 +703,17 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
     <a href="#settings-channel-editor">☼ Poderes</a>
   </div>
   <div class="settings-layout">
+    <div id="settings-players">
+      <section class="v34-editor settings-card" aria-labelledby="settingsPlayersTitle">
+        <h3 id="settingsPlayersTitle">♟ Administración de jugadores</h3>
+        <p>Desde aquí podrás consultar las hojas de los demás jugadores, revisar sus avances, ver imágenes de personaje, conjuros y rasgos, y asignar permisos al Dungeon Master. Cada jugador conservará su hoja privada de Google.</p>
+        <div class="expansion-fields">
+          <a href="admin-jugadores.html" class="player-page-link" style="display:inline-block;padding:12px 17px;border-radius:10px;background:#593770;color:#fbe4bf;border:1px solid #caa376;text-decoration:none;font:700 13px system-ui">♟ Abrir panel de jugadores</a>
+          <a href="jugador.html" class="player-page-link" style="display:inline-block;padding:12px 17px;border-radius:10px;background:#261932;color:#fbe4bf;border:1px solid #9e78aa;text-decoration:none;font:700 13px system-ui">✦ Portal de hojas nuevas</a>
+        </div>
+        <p style="font-size:12px;color:#d6c2dd">La activación de permisos de propietario y DM requiere publicar las reglas de seguridad de Firebase antes de invitar a otros jugadores. La hoja original de Alak Hul permanece independiente.</p>
+      </section>
+    </div>
     <div id="settings-backgrounds">
       <section class="v34-editor settings-card background-settings" aria-labelledby="backgroundSettingsTitle">
         <h3 id="backgroundSettingsTitle">🖼 Personalizar fondo</h3>
