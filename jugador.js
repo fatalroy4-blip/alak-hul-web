@@ -355,6 +355,9 @@ window.alakRuleBridge={
   const cat=window.ALAK_RULES_2014;if(!cat)return {ok:false,message:"Catálogo sin cargar"};
   const race=cat.races[choice.raceId],klass=cat.classes[choice.classId];
   const features=cat.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
+  const bg=window.ALAK_RULE_BACKGROUNDS?.[choice.background];
+  if(bg)features.push({id:"background:"+choice.background,level:1,kind:"trasfondo",title:bg.feature,note:bg.note,source:choice.background});
+
   const info=cat.levelInfo(choice.classId,choice.level);
   let added=0,fieldsAdded=0;
   const add=(key,val)=>{
@@ -395,7 +398,10 @@ window.alakRuleBridge={
    }
   }
   const saves={str:"str",dex:"dex",con:"con",int:"int",wis:"wis",cha:"cha"};
-  for(const key of klass?.saves||[]){
+  for(const index of bg?.skills||[]){
+   if(model.sheet["skillprof_"+index]===undefined)model.sheet["skillprof_"+index]=true;
+  }
+    for(const key of klass?.saves||[]){
    if(model.sheet["saveprof_"+saves[key]]===undefined)model.sheet["saveprof_"+saves[key]]=true;
   }
   for(const f of features.filter(x=>!choice.selectedFeatureIds||choice.selectedFeatureIds.includes(x.id))){
@@ -442,7 +448,7 @@ window.alakRuleBridge={
    "monje":"Sin armaduras iniciales. Armas simples y espada corta.",
    "paladin":"Todas las armaduras y escudos. Armas simples y marciales.",
    "picaro":"Armadura ligera. Herramientas de ladrón y armas de pícaro."})[choice.classId];
-  addSheet("proficiencies",klassProf);
+  addSheet("proficiencies",klassProf+(bg?"\nTrasfondo "+choice.background+": "+bg.extra:""));
     if(Array.isArray(choice.abilities)){
    const attrs=["strength","dexterity","constitution","intelligence","wisdom","charisma"];
    for(let i=0;i<attrs.length;i++){
