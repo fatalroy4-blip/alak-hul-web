@@ -30,9 +30,19 @@ $("campaignGoAdmin")?.addEventListener("click",()=>show("admin"));
 $("campaignOpenCombat")?.addEventListener("click",()=>show("combat"));
 $("campaignNewCombat")?.addEventListener("click",()=>{$("newCombatBtn")?.click();show("combat");});
 $("campaignOpenCloud")?.addEventListener("click",()=>$("cloudOpenBtn")?.click());
+$("campaignSaveName")?.addEventListener("click",()=>{
+ const input=$("campaignNameInput"),status=$("campaignNameStatus");
+ const newName=input?.value.trim();
+ if(!newName){if(status)status.textContent="Escribe el nombre de la campaña.";return;}
+ state.campaignName=newName;saveState();
+ if(status)status.textContent="✓ Nombre guardado en tu perfil. Se compartirá cuando se active el multijugador.";
+});
 const kindLabel={main:"Personaje jugador",ally:"Aliado NPC",enemy:"Enemigo"};
 function renderTable(){
  const host=$("campaignTableList"),stats=$("campaignTableSummary");if(!host||!stats)return;
+ const campaignName=String(state.campaignName||"Las nieblas de Barovia");
+ const nameTag=$("campaignCurrentName");if(nameTag)nameTag.textContent="· "+campaignName;
+ const nameInput=$("campaignNameInput");if(nameInput && document.activeElement!==nameInput)nameInput.value=campaignName;
  host.replaceChildren();
  const visible=combatantNames();
  const counts={main:0,ally:0,enemy:0};

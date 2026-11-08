@@ -63,3 +63,8 @@
 .campaign-portrait-dialog #campaignPortraitSave{background:#66428a;border-color:#e5bd85}
 @media(max-width:900px){#campaign .campaign-admin-overview{grid-template-columns:1fr 1fr}#campaign .campaign-diary-grid{grid-template-columns:1fr}#campaign .combat-admin-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){#campaign .campaign-subnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}#campaign .campaign-tab{padding:10px 7px;font-size:12px}#campaign .campaign-admin-overview{grid-template-columns:1fr}#campaign .combat-admin-groups{grid-template-columns:1fr}#campaign .campaign-table-list{grid-template-columns:repeat(2,minmax(0,1fr))}#campaign .campaign-table-person{flex-direction:column;text-align:center}}
+
+#campaign .campaign-setup-card label{display:block;color:#f5d9ab;font:700 12px system-ui,sans-serif;margin:13px 0 6px}
+#campaign .campaign-setup-card input{width:100%;box-sizing:border-box;background:#120d1a;border:1px solid #876591;border-radius:8px;padding:11px;color:#f8eafa;font:13px system-ui,sans-serif}
+#campaign .campaign-setup-card button{display:block;background:#5f3975;border:1px solid #e2b681;padding:10px 12px;margin-top:11px;color:#f8e8c8;border-radius:8px;cursor:pointer;font:700 12px system-ui,sans-serif}
+#campaign #campaignCurrentName{color:#f5d9ab}

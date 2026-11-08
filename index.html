@@ -125,7 +125,7 @@
     <button class="campaign-tab" type="button" data-campaign-view="admin" role="tab" aria-selected="false" aria-controls="campaign-admin">⚙ Administración</button>
   </nav>
   <section id="campaign-table" class="campaign-view active" role="tabpanel">
-    <div class="campaign-section-head"><div><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h3>Mi mesa</h3><p>Personajes registrados en tu tablero actual.</p></div><button type="button" id="campaignGoAdmin" class="campaign-accent-btn">Administrar mesa</button></div>
+    <div class="campaign-section-head"><div><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h3>Mi mesa</h3><p>Personajes registrados en tu tablero actual. <span id="campaignCurrentName"></span></p></div><button type="button" id="campaignGoAdmin" class="campaign-accent-btn">Administrar mesa</button></div>
     <p class="campaign-notice">La organización de esta mesa funciona actualmente con tu guardado personal. Las invitaciones de Google y el combate compartido en tiempo real se habilitarán cuando estén listas las reglas de seguridad.</p>
     <div id="campaignTableSummary" class="campaign-table-summary" aria-live="polite"></div>
     <div id="campaignTableList" class="campaign-table-list" aria-live="polite"></div>
@@ -178,6 +178,7 @@
     <div class="campaign-section-head"><div><p class="eyebrow">EL CONSEJO DE LA MESA</p><h3>Administración</h3><p>Personajes, enemigos, aliados y herramientas de dirección.</p></div></div>
     <div class="campaign-admin-overview">
       <article class="campaign-surface"><h4>♟ Gestión de la mesa</h4><p>Añade o quita participantes, asígnales un tipo y cambia sus imágenes. Los retratos pueden recortarse y centrarse antes de guardarlos.</p><p class="campaign-note">Estos participantes pertenecen a tu tablero actual. Las cuentas individuales de Google se agregarán en una fase posterior.</p></article>
+      <article class="campaign-surface campaign-setup-card"><h4>⚙ Configuración de campaña</h4><label for="campaignNameInput">Nombre de la campaña</label><input id="campaignNameInput" maxlength="80" placeholder="Ej. Las nieblas de Barovia"><button id="campaignSaveName" type="button">Guardar nombre</button><p id="campaignNameStatus" role="status" aria-live="polite"></p></article>
       <article class="campaign-surface"><h4>☼ Permisos del Dungeon Master</h4><p>Propietario, Dungeon Master y jugadores con hojas privadas: este control se habilitará tras publicar las reglas de Firebase y probar los accesos.</p><span class="campaign-soon">Próxima etapa · Multijugador seguro</span></article>
       <article class="campaign-surface"><h4>⚔ Herramientas de dirección</h4><div class="campaign-tool-actions"><button type="button" id="campaignOpenCombat">Ver combate</button><button type="button" id="campaignNewCombat">Nuevo combate</button><button type="button" id="campaignOpenCloud">Guardado y respaldo</button></div></article>
     </div>
