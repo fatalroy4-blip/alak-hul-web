@@ -12,7 +12,33 @@ function loadState(){
   DATA.spells.forEach(sp=>{if(sp.defaultPrepared) state.prepared[sp.name]=true;});
  }
 }
-function spellsAll(){return [...DATA.spells,...(state.customSpells||[])];}
+function spellsAll(){return [...DATA.spells,...CLERIC_GRIMOIRE_2014.filter(s=>!DATA.spells.some(old=>normalizeSpellName(old.name)===normalizeSpellName(s.name))),...(state.customSpells||[])];}
+
+// Preparación PHB 2014. Los preparados heredados se conservan sin migraciones destructivas.
+function grimoireLevel(){return Math.max(1,Math.min(20,Number(String(hpInput('classLevel')?.value||'').match(/\d+/)?.[0])||3));}
+function grimoireMaxLevel(){return Math.min(9,Math.ceil(grimoireLevel()/2));}
+function domainUnlock(s){
+ const n=normalizeSpellName(s.name);
+ const groups=[['manos ardientes','fuego feerico'],['esfera flamingera','rayo abrasador'],['bola de fuego','luz del dia'],['guardian de la fe','muro de fuego'],['golpe flamigero','escudrinar']];
+ const i=groups.findIndex(g=>g.includes(n));return i<0?0:1+2*i;
+}
+function grimoireRacial(s){return normalizeSpellName(s.name).startsWith('castigo abrasador');}
+function grimoireAvailable(s){return grimoireRacial(s)||s.level<=grimoireMaxLevel();}
+function isSpellPrepared(s){return domainUnlock(s)?grimoireLevel()>=domainUnlock(s):!!state.prepared[s.name]&&grimoireAvailable(s);}
+function grimoireLimit(){const score=Number(hpInput('ability_4')?.value)||10;return Math.max(1,grimoireLevel()+Math.floor((score-10)/2));}
+function grimoirePreparedCount(){return spellsAll().filter(s=>s.level>0&&!domainUnlock(s)&&!grimoireRacial(s)&&isSpellPrepared(s)).length;}
+function grimoireKnownLimit(){return grimoireLevel()>=10?5:grimoireLevel()>=4?4:3;}
+function grimoireBonusCantrip(s){return s.level===0&&['luz','taumaturgia'].includes(normalizeSpellName(s.name));}
+function grimoireToggle(s){
+ if(domainUnlock(s)||!grimoireAvailable(s))return;
+ if(!state.prepared[s.name]&&s.level===0&&!grimoireBonusCantrip(s)&&spellsAll().filter(x=>x.level===0&&!grimoireBonusCantrip(x)&&isSpellPrepared(x)).length>=grimoireKnownLimit()){alert('Has alcanzado el número de trucos de clérigo conocidos para tu nivel. Luz y Taumaturgia no cuentan para este límite.');return;}
+ if(!state.prepared[s.name]&&s.level>0&&!grimoireRacial(s)&&grimoirePreparedCount()>=grimoireLimit()){alert('Has alcanzado el límite de preparados: nivel de clérigo + modificador de Sabiduría. Desmarca otro conjuro primero.');return;}
+ state.prepared[s.name]=!state.prepared[s.name];saveState();renderPreparedGroups();renderSpellSections();renderSheetPreparedSpells();
+}
+function grimoireMatches(s,q,level,kind){
+ return (level===''||s.level===Number(level))&&(!q||normalizeSpellName(s.name+' '+s.description).includes(q))&&(!kind||(kind==='prepared'&&isSpellPrepared(s))||(kind==='domain'&&!!domainUnlock(s))||(kind==='available'&&grimoireAvailable(s)));
+}
+
 function allLevels(){return Array.from({length:10},(_,i)=>i);}
 function slotCounts(){return {...DATA.spellSlots,...(state.customSlots||{})};}
 let editingCustomSpell=-1;
@@ -276,6 +302,7 @@ function bind(){
   playLongRestDawn();
  };
  searchInput.addEventListener('input',renderSpellSections);
+ ['grimoireLevelFilter','grimoireKindFilter'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderSpellSections));
  document.querySelector('.dialog-close').onclick=()=>spellDialog.close();
  resetBtn.onclick=()=>{
   if(confirm('¿Restablecer preparados, slots, iniciativa y daño?')){
@@ -368,6 +395,7 @@ function removeAllSpellUses(spell){
  delete state.spellUses[spell.name];
 }
 function applySpellUse(spell,operation){
+ if(operation==='add'&&(!grimoireAvailable(spell)||!isSpellPrepared(spell))){alert('El conjuro debe estar disponible y seleccionado para registrar un uso.');return;}
  state.spellUses=state.spellUses||{};
  if(spell.name.toLowerCase().startsWith('castigo abrasador')){
   state.racialUses=state.racialUses||{};
@@ -426,7 +454,7 @@ function renderPreparedGroups(){
   }
   box.appendChild(heading);
   const listHost=document.createElement('div');listHost.className='prepared-list';box.appendChild(listHost);
-  const list=spellsAll().filter(s=>s.level===level && state.prepared[s.name]);
+  const list=spellsAll().filter(s=>s.level===level && isSpellPrepared(s));
   if(!list.length){listHost.innerHTML='<div class="empty-note">Nada preparado.</div>';}
 
 list.sort((a,b)=>a.name.localeCompare(b.name,'es')).forEach(s=>{
@@ -470,24 +498,31 @@ function renderSlots(){
  });
 }
 function renderSpellSections(){
- const q=searchInput.value.trim().toLowerCase();
+ const q=normalizeSpellName(searchInput.value.trim());
+ const levelFilter=document.getElementById('grimoireLevelFilter')?.value||'';
+ const kind=document.getElementById('grimoireKindFilter')?.value||'';
+ const summary=document.getElementById('grimoirePreparationSummary');
+ if(summary)summary.textContent=`Preparados de clérigo: ${grimoirePreparedCount()} / ${grimoireLimit()}. Dominio: siempre preparados al alcanzar el nivel requerido y no cuentan para el límite. Trucos: selección de conocidos, sin preparación diaria; Luz es adicional por el Dominio y Taumaturgia por el linaje. Las selecciones anteriores se conservan.`;
  const host=spellSections;host.innerHTML='';
  allLevels().forEach(level=>{
-  const list=spellsAll().filter(s=>s.level===level && (!q||(s.name+' '+s.description).toLowerCase().includes(q)));
+  const list=spellsAll().filter(s=>s.level===level && grimoireMatches(s,q,levelFilter,kind));
+  if(!list.length&&(q||levelFilter!==''||kind))return;
   const sec=document.createElement('section');sec.className='spell-section';
   sec.innerHTML=`<div class="section-title"><p class="eyebrow">${level===0?'TRUCOS':'CONJUROS'}</p><h2>${level===0?'Trucos':`Nivel ${level}`}</h2></div><div class="spell-list"></div>`;
   const lh=sec.querySelector('.spell-list');
   if(!list.length){lh.innerHTML='<div class="empty-note">Sin resultados.</div>';}
   list.forEach(s=>{
    const row=document.createElement('div');row.className='spell-row';
-   const prep=`<button class="prepare-btn ${state.prepared[s.name]?'active':''}">${state.prepared[s.name]?'✓ Preparado':'Preparar'}</button>`;
-   row.innerHTML=`<button class="spell-open">${glyphHtml(s)}<span>${esc(s.name)}</span></button>${prep}`;
+   const domain=domainUnlock(s),available=grimoireAvailable(s),prepared=isSpellPrepared(s);
+   const text=!available?'Disponible en nivel '+(domain||Math.max(1,s.level*2-1)):domain?'✓ Dominio · siempre preparado':s.level===0?(prepared?'✓ Conocido':'Elegir truco'):grimoireRacial(s)?(prepared?'✓ Linaje':'Mostrar linaje'):(prepared?'✓ Preparado':'Preparar');
+   row.innerHTML=`<button class="spell-open">${glyphHtml(s)}<span>${esc(s.name)}</span></button><button type="button" class="prepare-btn ${prepared?'active':''}" aria-pressed="${prepared}" ${domain||!available?'disabled':''}>${esc(text)}</button>`;
    row.querySelector('.spell-open').onclick=()=>openSpell(s);
-   row.querySelector('.prepare-btn').onclick=()=>{state.prepared[s.name]=!state.prepared[s.name];saveState();renderPreparedGroups();renderSpellSections();renderSheetPreparedSpells();};
+   row.querySelector('.prepare-btn').onclick=()=>grimoireToggle(s);
    lh.appendChild(row);
   });
   host.appendChild(sec);
  });
+ if(!host.children.length)host.innerHTML='<p class="empty-note" role="status">Sin resultados para estos filtros.</p>';
 }
 function formatSpellDescription(s){
  const raw=String(s.description||'Sin descripción disponible.');
@@ -904,7 +939,7 @@ function renderSheetPreparedSpells(){
   const box=[...document.querySelectorAll('.page-three .spell-level-box')].find(e=>Number(e.querySelector('.spell-level-number')?.textContent)===level);
   if(!box)continue;
   const listHost=box.querySelector('.sheet-spell-list');if(!listHost)continue;
-  const prepared=spellsAll().filter(s=>Number(s.level)===level && state.prepared[s.name]).sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const prepared=spellsAll().filter(s=>Number(s.level)===level && isSpellPrepared(s)).sort((a,b)=>a.name.localeCompare(b.name,'es'));
   const baseLabels=[...listHost.querySelectorAll('label')];
   for(let i=0;i<Math.max(baseLabels.length,prepared.length);i++){
    let row=baseLabels[i];

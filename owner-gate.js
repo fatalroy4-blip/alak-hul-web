@@ -38,7 +38,8 @@ async function startApp() {
  try {
   // El código y los controles de la ficha antigua solo se inicializan después
   // de comprobar que la sesión autenticada es la propietaria.
-  await insertScript("script.js?v=48");
+  await insertScript("cleric-grimoire-2014.js?v=51");
+  await insertScript("script.js?v=51");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
   await insertScript("cloud-sync.js?v=48", true);

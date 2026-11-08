@@ -1,0 +1,17 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const s=fs.readFileSync(__dirname+'/script.js','utf8');
+const storage=new Map(),fields={classLevel:{value:'Clérigo N3'},ability_4:{value:'15'}};
+const c={window:{},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},hpInput:k=>fields[k],alert:()=>{},renderPreparedGroups:()=>{},renderSpellSections:()=>{},renderSheetPreparedSpells:()=>{}};
+vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/cleric-grimoire-2014.js','utf8')+'\n'+s.slice(0,s.indexOf('let editingCustomSpell'))+'\n'+s.split('\n').find(l=>l.startsWith('function normalizeSpellName'))+'\n'+s.match(/function saveState\(\)\{[^\n]+/)[0],c);
+const run=code=>vm.runInContext(code,c),ok=code=>assert.ok(run(code),code);
+ok('spellsAll().length===113');ok('new Set(spellsAll().map(s=>normalizeSpellName(s.name))).size===113');
+ok('JSON.stringify(allLevels().map(l=>spellsAll().filter(s=>s.level===l).length))===JSON.stringify([7,18,19,21,9,13,10,8,4,4])');
+ok('spellsAll().filter(s=>domainUnlock(s)).length===10');ok('spellsAll().filter(s=>domainUnlock(s)&&isSpellPrepared(s)).length===4');ok('grimoireLimit()===5');ok('grimoireKnownLimit()===3');
+run('loadState()');ok('state.prepared["Curar Heridas"]');
+run('state.combat={hp:17};state.customSpells=[{name:"Personalizado",level:1,image:"data:image/png;base64,AA"}];grimoireToggle(spellsAll().find(s=>s.name==="Reparar"))');ok('!state.prepared["Reparar"]');
+run('state.prepared={"Curar Heridas":true,"Escudo de Fe":true,"Saeta Guiada":true,"Santuario":true,"Bendición":true};grimoireToggle(spellsAll().find(s=>s.name==="Perdición"))');ok('!state.prepared["Perdición"]');
+run('grimoireToggle(spellsAll().find(s=>s.name==="Santuario"));grimoireToggle(spellsAll().find(s=>s.name==="Perdición"));saveState();state.prepared={};loadState()');ok('state.prepared["Perdición"]&&!state.prepared["Santuario"]');ok('state.combat.hp===17&&state.customSpells[0].image==="data:image/png;base64,AA"');
+ok('grimoireMatches(spellsAll().find(s=>s.name==="Bendición"),"bendicion","","")');ok('spellsAll().filter(s=>grimoireMatches(s,"","1","domain")).length===2');ok('!grimoireAvailable(spellsAll().find(s=>s.name==="Disipar magia"))');
+fields.classLevel.value='Clérigo N9';ok('isSpellPrepared(spellsAll().find(s=>s.name==="Escudriñar"))');ok('domainUnlock(spellsAll().find(s=>s.name==="Plaga de insectos"))===0');
+fields.classLevel.value='Clérigo N17';ok('grimoireAvailable(spellsAll().find(s=>s.name==="Resurrección verdadera"))');
+new vm.Script(s);new vm.Script(fs.readFileSync(__dirname+'/cleric-grimoire-2014.js','utf8'));console.log('Grimorio: catálogo, reglas, filtros y persistencia verificados.');
