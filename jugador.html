@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="jugador.css?v=47">
 </head><body>
 <div class="rotate"><div class="rotate-card"><span class="rotate-glyph">↻</span><h2>Gira tu dispositivo</h2><p>Tu hoja de aventurero está diseñada para usarse en horizontal.</p></div></div>
-<header class="topbar"><a class="mark" href="index.html">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></a><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="combat">⚔ Combate</button><button type="button" data-view="design">⚙ Personalizar</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
+<header class="topbar"><span class="mark">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></span><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="combat">⚔ Combate</button><button type="button" data-view="design">⚙ Personalizar</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
 <main>
 <section id="authWall" class="auth-wall"><div class="auth-orb">✺</div><p class="eyebrow">TU HISTORIA EMPIEZA AQUÍ</p><h1>Elige tu destino</h1><p>Inicia sesión con Google para crear una hoja de personaje vacía y conservar tus datos personales en la nube, sin mezclarlos con los de otros jugadores.</p><button id="loginBtn" class="primary">Entrar con Google</button><p class="status" id="loginStatus" role="status"></p></section>
 <div id="workspace" hidden>
@@ -27,6 +27,6 @@
 <section class="panel"><h3>Crear un botón adicional</h3><p class="hint">Por ejemplo: Metamagia, Inspiración bárdica, Forma salvaje o Canalizar Divinidad.</p><form id="extraForm"><label>Nombre del botón<input name="name" maxlength="30" placeholder="Metamagia" required></label><label>Descripción<input name="description" maxlength="75" placeholder="Mis puntos de hechicería"></label><button class="primary" type="submit">+ Agregar botón</button></form><div id="extraEditors"></div></section></div></section>
 <section id="extrasView" class="screen"><div class="section-head"><p class="eyebrow">SECCIÓN PERSONALIZADA</p><h2 id="extrasTitle">Mis habilidades</h2><p>Registra tus notas y recursos especiales.</p></div><section class="panel"><label>Notas de este rasgo<textarea id="extraNotes" rows="10" placeholder="Descripción, usos, recursos disponibles..."></textarea></label></section></section>
 </div></main>
-<footer><span>☀ GRIMORIO DE AVENTUREROS</span><span id="identityLine"></span><a href="index.html">Volver a Alak Hul</a></footer>
+<footer><span>☀ GRIMORIO DE AVENTUREROS</span><span id="identityLine"></span><span>Tu hoja personal y privada</span></footer>
 <script src="firebase-config.js"></script><script type="module" src="jugador.js?v=47"></script>
 </body></html>
