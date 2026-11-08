@@ -31,6 +31,9 @@ function status(msg, tone='') {
     btn.dataset.cloudState = tone === 'ok' ? 'online' : tone === 'warn' ? 'pending' : '';
     el('cloudBtnText').textContent = tone === 'ok' ? 'Sincronizado' : 'Nube';
   }
+  window.alakHomeCloudStatus = account && ready && tone === 'ok' ? 'Guardado en nube'
+    : tone === 'warn' && account ? 'Guardando…' : 'Guardado local';
+  window.dispatchEvent(new CustomEvent('alak-home-cloud-status'));
 }
 function setHelp(message) { el('cloudHelpText').textContent = message; }
 function refreshAccountUI() {
@@ -81,6 +84,7 @@ function repaintLocal() {
   if (typeof renderInitiative === 'function') renderInitiative();
   if (typeof renderDeathSaves === 'function') renderDeathSaves();
   if (typeof updateSoundButton === 'function') updateSoundButton();
+  if (typeof updateHomeIndicators === 'function') updateHomeIndicators();
   if (typeof window.alakBgRefresh === "function") window.alakBgRefresh();
   if (typeof window.alakCampaignRefresh === 'function') window.alakCampaignRefresh();
 }
