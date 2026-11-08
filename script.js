@@ -175,7 +175,7 @@ function init(){
  classLine.textContent=DATA.classLine;
  characterName.textContent=DATA.character;
  subtitle.textContent=DATA.subtitle;
- renderPreparedGroups();renderSlots();renderSpellSections();renderChannels();renderRoster();renderInitiative();bind();buildExpansionControls();setupPortraitUpload();updateSoundButton();updateHomeIndicators();renderSheetPreparedSpells();renderCombatAdmin();renderCustomSpellAdmin();renderCustomChannelAdmin();setupAlakBackgroundChoices();
+ renderPreparedGroups();renderSlots();renderSpellSections();renderChannels();renderRoster();renderInitiative();bind();buildExpansionControls();setupPortraitUpload();updateSoundButton();setupHomeCloudIndicator();updateHomeIndicators();renderSheetPreparedSpells();renderCombatAdmin();renderCustomSpellAdmin();renderCustomChannelAdmin();setupAlakBackgroundChoices();
 }
 function openAlakPage(page){
  const legacyCombat=page==='combat';
@@ -188,15 +188,36 @@ function openAlakPage(page){
  window.scrollTo({top:0,behavior:'instant'});
  updateHomeIndicators();
 }
-function updateHomeIndicators(){
- const lv=Math.max(1,Math.min(20,Number(String(document.querySelector('[data-char="classLevel"]')?.value||'').match(/\d+/)?.[0])||3));
- const level=document.getElementById('homeLevelOverlay');
- if(level){level.hidden=lv===3;level.textContent=`Nivel Actual: ${lv}`;}
- const mobileLevel=document.getElementById('homeMobileLevel');if(mobileLevel)mobileLevel.textContent=`Nivel actual: ${lv}`;
- const isOn=state.soundEnabled!==false;
- const sound=document.getElementById('homeSoundOverlay');if(sound){sound.hidden=isOn;sound.textContent='Sonidos: OFF';}
- const mobileSound=document.getElementById('homeMobileSound');if(mobileSound)mobileSound.textContent=`${isOn?'🔊':'🔇'} Sonidos: ${isOn?'ON':'OFF'}`;
+
+function getHomeCloudLabel(){
+ const explicit=window.alakHomeCloudStatus;
+ if(typeof explicit==="string" && explicit)return explicit;
+ const text=(document.getElementById("cloudStatus")?.textContent||"").toLowerCase();
+ if(/guardando|buscando tu hoja|preparando firebase/.test(text))return "Guardando…";
+ return "Guardado local";
 }
+function paintHomeCloudLabel(){
+ const el=document.getElementById("homeCloudOverlay");
+ if(el){el.textContent=getHomeCloudLabel();el.hidden=false;}
+}
+function setupHomeCloudIndicator(){
+ window.addEventListener("alak-home-cloud-status",paintHomeCloudLabel);
+ paintHomeCloudLabel();
+}
+function updateHomeIndicators(){
+ const lv=Math.max(1,Math.min(20,Number(String(document.querySelector('[data-char="classLevel"]')?.value||"").match(/\d+/)?.[0])||3));
+ const level=document.getElementById("homeLevelOverlay");
+ if(level){level.textContent="Nivel Actual: "+lv;level.hidden=false;}
+ const mobileLevel=document.getElementById("homeMobileLevel");
+ if(mobileLevel)mobileLevel.textContent="Nivel actual: "+lv;
+ const isOn=state.soundEnabled!==false;
+ const sound=document.getElementById("homeSoundOverlay");
+ if(sound){sound.textContent="Sonidos: "+(isOn?"ON":"OFF");sound.hidden=false;}
+ const mobileSound=document.getElementById("homeMobileSound");
+ if(mobileSound)mobileSound.textContent=(isOn?"🔊":"🔇")+" Sonidos: "+(isOn?"ON":"OFF");
+ paintHomeCloudLabel();
+}
+
 function toggleAlakSounds(){state.soundEnabled=state.soundEnabled===false;saveState();updateSoundButton();updateHomeIndicators();}
 function openHomeOptions(mode){
  const dialog=document.getElementById('homeOptionsDialog'),title=document.getElementById('homeOptionsTitle'),msg=document.getElementById('homeOptionsMessage'),actions=document.getElementById('homeOptionsActions');
