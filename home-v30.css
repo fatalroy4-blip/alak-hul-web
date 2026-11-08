@@ -80,31 +80,52 @@ body[data-page-theme="arcane"]:not(.home-active)::before{background:linear-gradi
 body[data-page-theme="violetvale"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(19,10,30,.78),rgba(12,8,24,.54)),url('assets/theme-valle-violeta.png') center center/cover no-repeat}
 
 
-/* V43: rótulo del acceso a Campaña sobre la ilustración del Santuario.
-   Se respeta la ilustración y sus espadas; el texto original está integrado
-   en el PNG y se cubre solamente en la zona del rótulo. */
-.home-stage .home-combat{isolation:isolate}
-.home-stage .home-campaign-relabel{
- position:absolute;left:7%;right:7%;top:66.5%;height:26.5%;
- display:block;pointer-events:none;color:#ffedce;z-index:1;
- font-family:Georgia,"Times New Roman",serif;text-align:center;
+
+/* V45: la imagen ya tiene las tres placas sin texto; el texto es dinámico. */
+.home-stage .home-live-label{
+ position:absolute;z-index:3;pointer-events:none;display:flex;
+ align-items:center;justify-content:center;padding:0;margin:0;
+ border:0;border-radius:0;background:none;box-shadow:none;
+ font-family:Georgia,"Times New Roman",serif;font-weight:600;
+ line-height:1.05;color:#f9ead7;text-align:center;white-space:nowrap;
+ text-shadow:0 1px 1px #2d0c20,0 2px 4px #090611,0 0 6px #160a21;
 }
-.home-stage .home-campaign-relabel::before{
- content:"";position:absolute;inset:-1% 0;
- background:linear-gradient(160deg,#3e224f 0%,#24112f 100%);
- border:1px solid #b88d63cc;border-radius:10px;
- box-shadow:0 0 12px #160b24a0,inset 0 1px #f8d3a842;
- z-index:-1;
+.home-stage .home-live-label[hidden]{display:none!important}
+.home-stage .home-live-cloud{
+ left:4.1%;top:.9%;width:8.5%;height:3.8%;justify-content:flex-start;
+ font-size:clamp(7px,.96vw,16px);
 }
-.home-stage .home-campaign-title{
- position:absolute;top:7%;left:0;width:100%;display:block;
- font-size:clamp(13px,1.87vw,32px);line-height:1.12;
- font-weight:500;letter-spacing:-.035em;
- color:#fff0d4;text-shadow:0 2px 3px #170a1c,0 0 3px #fff8ce70;
+.home-stage .home-live-sound{
+ left:65.25%;top:83.7%;width:7.6%;height:3.6%;font-size:clamp(9px,1.13vw,19px);
 }
-.home-stage .home-campaign-subtitle{
- position:absolute;top:61%;left:0;width:100%;display:block;
- font-size:clamp(8px,1.02vw,17px);line-height:1.15;
- font-weight:600;white-space:nowrap;
- color:#f9e7c9;text-shadow:0 2px 3px #15091b;
+.home-stage .home-live-level{
+ left:76.1%;top:83.7%;width:11.4%;height:3.6%;font-size:clamp(9px,1.12vw,19px);
+}
+/* Portada ilustrada también en móvil horizontal, sin cambiar los menús. */
+@media(max-width:830px){
+ .home-stage{display:block!important}
+ .home-mobile{display:none!important}
+}
+/* En vertical: no girar por software; solicitar orientación horizontal. */
+.portrait-turn-notice{display:none}
+@media(orientation:portrait) and (max-width:1280px){
+ html,body.landscape-only{overflow:hidden!important}
+ body.landscape-only > :not(.portrait-turn-notice){visibility:hidden!important;pointer-events:none!important}
+ body.landscape-only .portrait-turn-notice{
+  display:flex!important;position:fixed;inset:0;z-index:2147483647;
+  justify-content:center;align-items:center;box-sizing:border-box;
+  padding:20px;overflow:auto;visibility:visible!important;pointer-events:auto!important;
+  color:#f7e9d5;text-align:center;
+  background:linear-gradient(150deg,rgba(14,7,23,.97),rgba(34,13,49,.95)),url('assets/barovia-purple.png') center/cover no-repeat;
+ }
+ .portrait-turn-card{box-sizing:border-box;width:min(100%,450px);padding:24px;
+  background:linear-gradient(150deg,#311b3d,#100b1c);
+  border:1px solid #c6a06e;border-radius:20px;
+  box-shadow:0 18px 65px #0009,inset 0 1px 0 #ffe3b048}
+ .portrait-turn-icon{display:grid;place-items:center;margin:0 auto 14px;
+  width:76px;height:76px;border-radius:50%;border:1px solid #dbb47d;
+  font:500 45px Georgia,serif;color:#ffe0a0;
+  background:radial-gradient(circle,#6f4989,#21122d)}
+ .portrait-turn-card h2{font:500 29px Georgia,serif;color:#ffe4b5;margin:5px 0 10px}
+ .portrait-turn-card p{font:14px/1.55 system-ui,sans-serif;color:#e8d7eb;margin:0}
 }
