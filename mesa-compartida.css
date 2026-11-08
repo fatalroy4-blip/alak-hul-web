@@ -1,0 +1,44 @@
+/* Campaña compartida v49: el mismo componente visual se usa en jugador, propietario y DM. */
+.mesa-compartida{font-family:system-ui,sans-serif;color:#f4e5ef;margin:18px auto 26px;max-width:1380px}
+.mesa-compartida .mc-header{padding:24px 28px;position:relative;overflow:hidden;border-radius:18px;border:1px solid #a385ae;background:linear-gradient(140deg,#44264fe8,#251532ee),url('assets/barovia-purple.png') center/cover}
+.mesa-compartida .mc-header::before{content:"✺";position:absolute;right:34px;top:-16px;font-size:160px;color:#dbb0ef1f;pointer-events:none}
+.mesa-compartida .mc-eyebrow{font:700 11px system-ui;letter-spacing:.18em;color:#f2bd90}
+.mesa-compartida h2{margin:3px 0;font:500 42px Georgia,serif;color:#f9d69f}
+.mesa-compartida .mc-subtitle{font:italic 16px Georgia;color:#dcc3ea;margin:2px 0 16px}
+.mesa-compartida .mc-sync{display:inline-flex;align-items:center;gap:6px;background:#22122d;border:1px solid #795f81;border-radius:40px;padding:6px 10px;font-size:12px;color:#e7c8dd}
+.mesa-compartida .mc-nav{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.mesa-compartida .mc-nav button{border:1px solid #9879ab;color:#ebcfea;background:#251730;border-radius:10px;padding:10px 16px;font-weight:700}
+.mesa-compartida .mc-nav button[aria-pressed="true"]{background:#704087;color:#fff2dc;border-color:#d8af77}
+.mesa-compartida .mc-pane{display:none}.mesa-compartida .mc-pane.active{display:block}
+.mesa-compartida .mc-surface{background:linear-gradient(135deg,#291b35f4,#120e1df2);border:1px solid #765987;border-radius:15px;padding:20px;margin:11px 0;box-shadow:0 14px 34px #0003}
+.mesa-compartida .mc-surface h3{color:#f8d5a5;font:500 26px Georgia,serif;margin:0 0 11px}
+.mesa-compartida .mc-surface h4{color:#f4d6a2;font:500 20px Georgia,serif;margin:0 0 9px}
+.mesa-compartida .mc-info{color:#dfc9e5;font-size:13px}
+.mesa-compartida .mc-summary{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.mesa-compartida .mc-stat{border:1px solid #86659a;background:#382343;padding:12px 18px;min-width:125px;text-align:center;border-radius:12px}
+.mesa-compartida .mc-stat small{display:block;color:#ddc3e7}.mesa-compartida .mc-stat strong{font:500 27px Georgia;color:#fce3b4}
+.mesa-compartida .mc-roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:12px}
+.mesa-compartida .mc-figure{position:relative;border:1px solid #8c6d99;background:#21142d;border-radius:14px;padding:14px}
+.mesa-compartida .mc-figure.is-active{border-color:#e6bc6e;box-shadow:0 0 0 2px #d8b66e66,inset 0 0 15px #e7bc8020}
+.mesa-compartida .mc-figure .mc-type{font-size:10px;text-transform:uppercase;color:#cca4c9;letter-spacing:.1em}
+.mesa-compartida .mc-figure strong{display:block;margin:4px 0;color:#ffe4bd;font:500 21px Georgia,serif;overflow-wrap:anywhere}
+.mesa-compartida .mc-figure small{color:#d0b9d8}
+.mesa-compartida .mc-figure .mc-hp{margin:11px 0 8px;border:1px solid #6f496c;background:#321f39;border-radius:9px;padding:9px 10px;color:#ffe8d0}
+.mesa-compartida .mc-actions{display:flex;flex-wrap:wrap;gap:8px;margin:11px 0 0}
+.mesa-compartida button,.mesa-compartida select,.mesa-compartida input,.mesa-compartida textarea{font:inherit}
+.mesa-compartida .mc-actions button,.mesa-compartida .mc-form button{border:1px solid #cbaa86;background:#603976;color:#ffebd5;border-radius:9px;padding:8px 12px;cursor:pointer}
+.mesa-compartida .mc-actions button:hover,.mesa-compartida .mc-form button:hover{background:#774688}
+.mesa-compartida .mc-form{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.mesa-compartida .mc-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:#efd4b9;flex:1 1 140px}
+.mesa-compartida .mc-form input,.mesa-compartida .mc-form select,.mesa-compartida .mc-form textarea{width:100%;box-sizing:border-box;border:1px solid #805a91;border-radius:8px;background:#150e23;color:#f5e5ef;padding:9px 11px}
+.mesa-compartida .mc-form button{align-self:end;white-space:nowrap;padding:10px 15px}
+.mesa-compartida .mc-diary-item{border-bottom:1px solid #725778;padding:12px 0}
+.mesa-compartida .mc-diary-item:last-child{border:0}
+.mesa-compartida .mc-diary-item h4{margin:0 0 5px}
+.mesa-compartida .mc-diary-item p{white-space:pre-wrap;color:#e1cde7}
+.mesa-compartida .mc-empty{border:1px dashed #825d91;background:#24172f;border-radius:12px;padding:20px;color:#dbc5df}
+.mesa-compartida [hidden]{display:none!important}
+#campaign .mesa-compartida{max-width:none;margin:0 0 26px}
+#campaign .legacy-campaign{margin:24px 0;border:1px solid #84688a;border-radius:14px;padding:15px;background:#150f23}
+#campaign .legacy-campaign summary{cursor:pointer;font:500 20px Georgia;color:#eacda1}
+@media(max-width:900px){.mesa-compartida .mc-header{padding:16px}.mesa-compartida h2{font-size:32px}.mesa-compartida .mc-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.mesa-compartida .mc-form button{grid-column:1/-1}}
