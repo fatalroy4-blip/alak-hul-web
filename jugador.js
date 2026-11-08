@@ -164,6 +164,7 @@ function populateSelectedSpellsOnSheet(){
     if(prep)model.sheet[prep.dataset.char]=item.prepared===true;
    }else if(key in model.sheet && model.sheet[key+"__auto"]){
     model.sheet[key]="";delete model.sheet[key+"__auto"];
+    model.sheet["spell"+level+"prep_"+(i+1)]=false;
    }
   });
  }
