@@ -81,6 +81,7 @@ function repaintLocal() {
   if (typeof renderInitiative === 'function') renderInitiative();
   if (typeof renderDeathSaves === 'function') renderDeathSaves();
   if (typeof updateSoundButton === 'function') updateSoundButton();
+  if (typeof window.alakBgRefresh === "function") window.alakBgRefresh();
 }
 function useRemote(data, doBackup=true) {
   if (!data || !data.state || !data.character || typeof data.state !== 'object' || typeof data.character !== 'object') {

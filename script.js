@@ -255,7 +255,7 @@ function bind(){
  document.querySelector('.dialog-close').onclick=()=>spellDialog.close();
  resetBtn.onclick=()=>{
   if(confirm('¿Restablecer preparados, slots, iniciativa y daño?')){
-   localStorage.removeItem(stateKey);state={prepared:{},slots:{},selected:{},selectionOrder:[],combat:{},customSpells:[],customSlots:{},racialUses:{},soundEnabled:true,portraits:state.portraits||{},customChannels:state.customChannels||[],customCombatants:state.customCombatants||[],hiddenCombatants:state.hiddenCombatants||[],spellUses:{},pageTheme:state.pageTheme||"purple"};init();saveState();
+   localStorage.removeItem(stateKey);state={prepared:{},slots:{},selected:{},selectionOrder:[],combat:{},customSpells:[],customSlots:{},racialUses:{},soundEnabled:true,portraits:state.portraits||{},customChannels:state.customChannels||[],customCombatants:state.customCombatants||[],hiddenCombatants:state.hiddenCombatants||[],spellUses:{},pageTheme:state.pageTheme||"purple",customBackgrounds:state.customBackgrounds||{}};init();saveState();
   }
  };
  newCombatBtn.onclick=()=>{
