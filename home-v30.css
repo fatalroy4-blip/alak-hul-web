@@ -78,3 +78,33 @@ body[data-page-theme="solar"]:not(.home-active)::before{background:linear-gradie
 body[data-page-theme="celestial"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(13,11,27,.76),rgba(13,11,24,.58)),url('assets/theme-templo-celestial.png') center center/cover no-repeat}
 body[data-page-theme="arcane"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(19,11,29,.78),rgba(11,7,18,.62)),url('assets/theme-biblioteca-arcana.png') center center/cover no-repeat}
 body[data-page-theme="violetvale"]:not(.home-active)::before{background:linear-gradient(90deg,rgba(19,10,30,.78),rgba(12,8,24,.54)),url('assets/theme-valle-violeta.png') center center/cover no-repeat}
+
+
+/* V43: rótulo del acceso a Campaña sobre la ilustración del Santuario.
+   Se respeta la ilustración y sus espadas; el texto original está integrado
+   en el PNG y se cubre solamente en la zona del rótulo. */
+.home-stage .home-combat{isolation:isolate}
+.home-stage .home-campaign-relabel{
+ position:absolute;left:1%;right:1%;top:62.8%;height:34.2%;
+ display:block;pointer-events:none;color:#ffedce;z-index:1;
+ font-family:Georgia,"Times New Roman",serif;text-align:center;
+}
+.home-stage .home-campaign-relabel::before{
+ content:"";position:absolute;inset:-1% 0;
+ background:linear-gradient(180deg,#3a2050 0%,#341a40 58%,#311939 100%);
+ -webkit-mask-image:radial-gradient(ellipse 71% 70% at 50% 49%,#000 68%,transparent 100%);
+ mask-image:radial-gradient(ellipse 71% 70% at 50% 49%,#000 68%,transparent 100%);
+ z-index:-1;
+}
+.home-stage .home-campaign-title{
+ position:absolute;top:14%;left:0;width:100%;display:block;
+ font-size:clamp(13px,1.87vw,32px);line-height:1.12;
+ font-weight:500;letter-spacing:-.035em;
+ color:#fff0d4;text-shadow:0 2px 3px #170a1c,0 0 3px #fff8ce70;
+}
+.home-stage .home-campaign-subtitle{
+ position:absolute;top:63%;left:0;width:100%;display:block;
+ font-size:clamp(8px,1.02vw,17px);line-height:1.15;
+ font-weight:600;white-space:nowrap;
+ color:#f9e7c9;text-shadow:0 2px 3px #15091b;
+}
