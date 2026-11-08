@@ -268,7 +268,8 @@ async function activate(account){
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
    const data=snap.data();
-   if(data.updatedBy!==user.uid){model=normalize(data);renderAll();status("✓ Hoja actualizada por otro usuario")}
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos"});
+   if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
  }catch(e){$("workspace").hidden=true;$("authWall").hidden=false;$("loginStatus").textContent="No pude cargar la hoja: "+(e.code||e.message)+". Revisa las reglas de Firebase."}
