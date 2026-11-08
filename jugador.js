@@ -360,6 +360,7 @@ window.alakRuleBridge={
 
   const info=cat.levelInfo(choice.classId,choice.level);
   let added=0,fieldsAdded=0;
+  const newDescriptions=[];
   const add=(key,val)=>{
    if(val===undefined||val===null||String(val).trim()==="")return;
    if(model.fields[key]===undefined||String(model.fields[key]).trim()===""){model.fields[key]=String(val);fieldsAdded++}
@@ -407,15 +408,22 @@ window.alakRuleBridge={
   for(const f of features.filter(x=>!choice.selectedFeatureIds||choice.selectedFeatureIds.includes(x.id))){
    if(!model.traits.some(x=>x.rulesId===f.id||(x.title||"").toLowerCase().trim()===f.title.toLowerCase().trim())){
     model.traits.push({id:genId(),title:f.title,description:f.note,type:"Manual 2014 · "+f.kind,level:f.level,rulesId:f.id});
+    newDescriptions.push(f.title+" — "+f.note);
     added++;
    }
   }
   for(const special of choice.specialTraits||[]){
    if(!model.traits.some(x=>x.rulesId===special.id||String(x.title).toLowerCase()===special.title.toLowerCase())){
-    model.traits.push({id:genId(),title:special.title,description:special.note,type:"Elección de clase · Manual 2014",level:special.level,rulesId:special.id});added++;
+    model.traits.push({id:genId(),title:special.title,description:special.note,type:"Elección de clase · Manual 2014",level:special.level,rulesId:special.id});newDescriptions.push(special.title+" — "+special.note);added++;
    }
   }
-  const classShortcuts={
+  if(newDescriptions.length){
+   const existing=String(model.sheet.features||"");
+   const unique=newDescriptions.filter(x=>!existing.toLowerCase().includes(x.split(" — ")[0].toLowerCase()));
+   if(unique.length)model.sheet.features=(existing.trim()?existing.trimEnd()+"\n\n":"")+
+     "[Manual del Jugador 2014 · rasgos incorporados]\n"+unique.map(x=>"• "+x).join("\n");
+  }
+    const classShortcuts={
    barbaro:[1,"Furia"],hechicero:[3,"Metamagia"],guerrero:[1,"Recursos de guerrero"],
    clerigo:[2,"Canalizar divinidad"],druida:[2,"Forma salvaje"],
    monje:[2,"Ki"],paladin:[1,"Imposición de manos"],brujo:[2,"Invocaciones"],
