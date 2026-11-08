@@ -188,7 +188,8 @@ function review(){
  const lines=[];
  if(race)lines.push("Raza: p. "+race.page);
  if(klass)lines.push("Clase: p. "+klass.page);
- if(klass)lines.push("Dados de golpe: "+info.hitDice);
+ if(background.value)lines.push("Trasfondo: capítulo 4, p. 163 y siguientes");
+  if(klass)lines.push("Dados de golpe: "+info.hitDice);
  if(klass)lines.push("Competencia: +"+info.proficiency);
  if(klass&&klass.casting!=="none")lines.push("Espacios por nivel: "+info.slots.map((v,i)=>v?"N"+(i+1)+": "+v:"").filter(Boolean).join(" · "));
  if(info.resource)lines.push(info.resource);
@@ -201,6 +202,8 @@ function review(){
  const oldChecked=new Map([...featuresHost.querySelectorAll('input[data-feature]')].map(x=>[x.dataset.feature,x.checked]));
  featuresHost.replaceChildren();
  const fs=book.featuresFor(raceSel.value,subSel.value,classSel.value,subclassSel.value,n);
+ const backgroundInfo=window.ALAK_RULE_BACKGROUNDS?.[background.value];
+ if(backgroundInfo)fs.push({id:"background:"+background.value,level:1,kind:"trasfondo",title:backgroundInfo.feature,note:backgroundInfo.note,source:background.value});
  for(const f of fs){const exists=recordExists(f);featuresHost.append(previewFeature(f,!exists&&(oldChecked.has(f.id)?oldChecked.get(f.id):true),f.kind,exists))}
  if(!fs.length)featuresHost.append(print("p","rw-muted","Elige al menos una raza o clase."));
  const oldSpell=new Map([...spellsHost.querySelectorAll('input[data-spell]')].map(x=>[x.dataset.spell,x.checked]));
@@ -221,6 +224,8 @@ function selectedSpells(){return [...spellsHost.querySelectorAll('input[data-spe
 function ownerApply(choice){
  const corpus=getInput("features"),extras=getInput("additional");if(!corpus)return {ok:false,message:"No se encontró el campo de rasgos de Alak Hul"};
  const all=book.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
+ const chosenBackground=window.ALAK_RULE_BACKGROUNDS?.[choice.background];
+ if(chosenBackground)all.push({id:"background:"+choice.background,level:1,kind:"trasfondo",title:chosenBackground.feature,note:chosenBackground.note,source:choice.background});
  const remaining=all.filter(f=>choice.selectedFeatureIds.includes(f.id)&&!recordExists(f));
  const addedSpecials=(choice.specialTraits||[]).filter(f=>!specialExists(f.id.replace(/^special:/,""),f.title));
  remaining.push(...addedSpecials);
