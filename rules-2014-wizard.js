@@ -70,7 +70,21 @@ function initial(){
  level.value=Number(build?.level||rawLevel||1);
  background.value=build?.background||data?.fields?.background||data?.background||"";
  inputs.forEach(x=>x.value="");
- $("rwAutoProgress").checked=build?.autoProgress!==false;
+ if(owner){
+  // En la hoja histórica Alak Hul se revisa LO QUE YA EXISTE, nunca se redefine
+  // su raza, clase, nivel ni linaje. Solo se permiten adiciones confirmadas.
+  raceSel.disabled=Boolean(raceId);
+  classSel.disabled=Boolean(classId);
+  level.disabled=Boolean(rawLevel);
+  background.disabled=Boolean(data.background);
+  if(classId==="clerigo"&&subclassSel.value==="light")subclassSel.disabled=true;
+  const isZariel=/zariel/i.test(data.raceText);
+  if(isZariel){subSel.value="";subSel.disabled=true}
+ }else{
+  raceSel.disabled=false;classSel.disabled=false;level.disabled=false;
+  background.disabled=false;subclassSel.disabled=false;subSel.disabled=false;
+ }
+  $("rwAutoProgress").checked=build?.autoProgress!==false;
  $("rwResult").textContent="";
  review();
  return true
