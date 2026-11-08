@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="owner-locked">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,8 +13,38 @@
 <link rel="stylesheet" href="slots-v36.css?v=38">
 <link rel="stylesheet" href="campaign-v42.css?v=42">
 <link rel="stylesheet" href="home-v46.css?v=46-centrado">
+
+<style>
+/* V48: la portada y la hoja antiguas no se muestran hasta confirmar el rol owner. */
+html.owner-locked body > :not(#ownerAccessGate){display:none!important}
+html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visible!important;pointer-events:auto!important}
+#ownerAccessGate{position:fixed;inset:0;z-index:2147483647;align-items:center;justify-content:center;box-sizing:border-box;padding:20px;overflow:auto;background:radial-gradient(ellipse at 50% 25%,#513468,#100a1b 68%);color:#f5e8dc;text-align:center}
+#ownerAccessGate[hidden],#ownerAccessGate [hidden]{display:none!important}
+#ownerAccessGate .owner-box{max-width:580px;width:100%;background:linear-gradient(155deg,#33203f,#171020);border:1px solid #c5a474;border-radius:20px;box-shadow:0 22px 80px #000b;padding:clamp(22px,4vw,45px)}
+#ownerAccessGate .owner-emblem{font:500 54px Georgia,serif;color:#f6ca86;text-shadow:0 0 30px #f4bb76}
+#ownerAccessGate h1{font:500 clamp(28px,4vw,40px) Georgia,serif;color:#ffe2a9;margin:6px 0 14px}
+#ownerAccessGate p{font:14px/1.55 system-ui,sans-serif;color:#ddc9e4}
+#ownerAccessGate .owner-gate-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:11px;margin-top:20px}
+#ownerAccessGate button,#ownerAccessGate a.owner-gate-player{color:#ffe4c0;border:1px solid #c6a173;background:#533067;border-radius:11px;padding:12px 17px;font:700 13px system-ui,sans-serif;text-decoration:none;cursor:pointer}
+#ownerAccessGate a.owner-gate-player{background:#271b36;border-color:#896593}
+#ownerAccessGate .owner-gate-status{min-height:3em;margin:20px 0 0;color:#f4cfa4}
+</style>
 </head>
 <body class="landscape-only">
+<section id="ownerAccessGate" role="region" aria-label="Acceso privado de Alak Hul">
+  <div class="owner-box">
+    <div class="owner-emblem" aria-hidden="true">☀</div>
+    <h1>Santuario privado de Alak Hul</h1>
+    <p>Esta hoja de personaje pertenece a la cuenta propietaria. Los jugadores tienen un espacio independiente para crear y editar sus propias fichas.</p>
+    <div class="owner-gate-actions">
+      <button id="ownerGateLogin" type="button">Entrar como propietario</button>
+      <button id="ownerGateSwitch" type="button" hidden>Cambiar cuenta de Google</button>
+      <a class="owner-gate-player" href="jugador.html">Abrir mi hoja de jugador</a>
+    </div>
+    <p id="ownerGateStatus" class="owner-gate-status" role="status" aria-live="polite">Comprobando sesión de Google…</p>
+  </div>
+</section>
+
 <div class="portrait-turn-notice" role="status" aria-live="polite">
  <div class="portrait-turn-card">
   <span class="portrait-turn-icon" aria-hidden="true">↻</span>
@@ -847,10 +877,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <p>Confirma la subida cuando tu DM te la conceda. Se actualizarán el nivel de clérigo, los dados de golpe y los espacios de conjuro de la tabla oficial. Las mejoras de atributos y los PG se mantienen editables para respetar las reglas especiales de tu mesa.</p>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
-<script src="script.js?v=45"></script>
-<script src="campaign-v42.js?v=42"></script>
-<script src="background-upload.js?v=41"></script>
 <script src="firebase-config.js"></script>
-<script type="module" src="cloud-sync.js?v=45"></script>
+<script type="module" src="owner-gate.js?v=48"></script>
 </body>
 </html>
