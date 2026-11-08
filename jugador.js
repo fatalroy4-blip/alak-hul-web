@@ -376,7 +376,25 @@ window.alakRuleBridge={
    model.traits.push({id:genId(),title:"Recursos de clase",description:info.resource,type:"Progresión",rulesId:"resources:"+choice.classId});
    added++;
   }
-  if(Array.isArray(choice.abilities)){
+  for(const spell of choice.selectedSpells||[]){
+   if(!model.spells.some(x=>String(x.title||"").toLowerCase()===String(spell.title||"").toLowerCase()&&Number(x.level)===Number(spell.level))){
+    model.spells.push({id:genId(),title:spell.title,level:String(spell.level),description:"Conjuro elegido con Manual del Jugador 2014. Consulta el capítulo 11 para su descripción completa.",prepared:false,source:"Manual 2014"});
+   }
+  }
+  const klassProf=({"barbaro":"Armadura ligera y media; escudos. Armas simples y marciales.",
+   "bardo":"Armadura ligera. Instrumentos musicales. Competencias de bardo.",
+   "brujo":"Armadura ligera. Armas simples.",
+   "clerigo":"Armadura ligera y media; escudos. Armas simples.",
+   "druida":"Armadura ligera y media; escudos no metálicos. Equipo druídico.",
+   "explorador":"Armadura ligera y media; escudos. Armas simples y marciales.",
+   "guerrero":"Todas las armaduras y escudos. Armas simples y marciales.",
+   "hechicero":"Sin armaduras iniciales. Competencias sencillas de clase.",
+   "mago":"Sin armaduras iniciales. Competencias sencillas de clase.",
+   "monje":"Sin armaduras iniciales. Armas simples y espada corta.",
+   "paladin":"Todas las armaduras y escudos. Armas simples y marciales.",
+   "picaro":"Armadura ligera. Herramientas de ladrón y armas de pícaro."})[choice.classId];
+  addSheet("proficiencies",klassProf);
+    if(Array.isArray(choice.abilities)){
    const attrs=["strength","dexterity","constitution","intelligence","wisdom","charisma"];
    for(let i=0;i<attrs.length;i++){
     const value=choice.abilities[i];
@@ -385,7 +403,10 @@ window.alakRuleBridge={
      if(model.sheet[field]===undefined||String(model.sheet[field]).trim()===""){
       // El usuario asigna las puntuaciones base. Los bonificadores raciales se muestran
       // por separado para evitar aumentarlos dos veces en una hoja existente.
-      model.sheet[field]=String(value);model.stats[attrs[i]]=String(value);fieldsAdded++;
+      const abilityKey=["str","dex","con","int","wis","cha"][i];
+      const racialIncrease=Number(choice.bonuses?.[abilityKey])||0;
+      const finalScore=Number(value)+racialIncrease;
+      model.sheet[field]=String(finalScore);model.stats[attrs[i]]=String(finalScore);fieldsAdded++;
      }
     }
    }
@@ -402,14 +423,24 @@ window.alakRuleBridge={
     }
    }
   }
-  model.ruleBuild={
+  if(klass?.casting!=="none"&&klass?.casting){
+   const castAbility=({bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
+   const scoreKey=({str:"strength",dex:"dexterity",con:"constitution",int:"intelligence",wis:"wisdom",cha:"charisma"})[castAbility];
+   const score=Number(model.stats?.[scoreKey]);
+   if(Number.isFinite(score)&&score>0){
+    const modifier=Math.floor((score-10)/2);
+    addSheet("spell_save_dc",8+info.proficiency+modifier);
+    addSheet("spell_attack_bonus",(info.proficiency+modifier>=0?"+":"")+(info.proficiency+modifier));
+   }
+  }
+    model.ruleBuild={
    edition:"2014",raceId:choice.raceId,subraceId:choice.subraceId||"",
    classId:choice.classId,subclassId:choice.subclassId||"",level:Number(choice.level),
    background:choice.background||"",autoProgress:choice.autoProgress!==false,
    selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),
    updatedAt:new Date().toISOString()
   };
-  change();renderAll();
+  change();renderAll();if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
   return {ok:true,added,fieldsAdded,message:"Se añadieron "+added+" rasgos y se completaron "+fieldsAdded+" campos vacíos. Lo existente quedó intacto."};
  }
 };
@@ -419,7 +450,10 @@ window.addEventListener("alak:player-level-changed",()=>{
  const n=Math.min(20,Math.max(1,Number(raw)||0));
  if(!n||n<=Number(model.ruleBuild.level||0))return;
  const build=model.ruleBuild;
- window.alakRuleBridge.apply({...build,level:n,updateSlots:true});
+ const catalog=window.ALAK_RULES_2014;
+ const fresh=catalog.featuresFor(build.raceId,build.subraceId,build.classId,build.subclassId,n).filter(x=>x.level>Number(build.level||0)).map(x=>x.id);
+ const selected=[...new Set([...(build.selectedFeatureIds||[]),...fresh])];
+ window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
 function bind(){
  const grid=$("statsGrid");for(const [key,title] of Object.entries(stats)){
