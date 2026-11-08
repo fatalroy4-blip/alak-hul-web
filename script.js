@@ -213,7 +213,8 @@ function openHomeOptions(mode){
   button('Probar sonido de subida de nivel',()=>playReliableAudio('levelup'));
   button('Probar sonido de muerte',()=>playReliableAudio('death'));
   button('Abrir nube y respaldo',()=>document.getElementById('cloudOpenBtn')?.click());
-  button('Gestionar conjuros, poderes y participantes',()=>openAlakPage('settings'));
+  button('Gestionar conjuros y poderes',()=>openAlakPage('settings'));
+  button('Administrar mesa y retratos',()=>{openAlakPage('campaign');window.alakShowCampaignView?.('admin');});
   button('Restablecer controles (confirmación)',()=>document.getElementById('resetBtn')?.click());
  }
  dialog.showModal();
