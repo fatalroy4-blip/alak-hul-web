@@ -42,6 +42,7 @@ async function startApp() {
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
   await insertScript("cloud-sync.js?v=48", true);
+  await insertScript("mesa-compartida.js?v=49", true);
  } catch (err) {
   lock();
   message("No se pudo iniciar la hoja de Alak Hul: " + err.message);
