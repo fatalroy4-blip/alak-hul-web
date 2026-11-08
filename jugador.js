@@ -155,18 +155,40 @@ function populateSelectedSpellsOnSheet(){
  const scope=$("character");if(!scope)return;
  for(let level=0;level<=9;level++){
   const items=model.spells.filter(x=>Number(x.level)===level);
-  const sheetFields=[...scope.querySelectorAll('input[data-char^="spell'+level+'_"]')];
-  sheetFields.forEach((el,i)=>{
-   const item=items[i];const key=el.dataset.char;
+  const inputs=[...scope.querySelectorAll('input[data-char^="spell'+level+'_"]')];
+  const used=new Set();
+  // Mantener intactas las casillas que el usuario escribió por su cuenta.
+  for(const el of inputs){
+   const key=el.dataset.char,existing=String(model.sheet[key]||"").trim();
+   if(!existing||model.sheet[key+"__auto"])continue;
+   const item=items.find(x=>!used.has(x.id)&&String(x.title).toLowerCase()===existing.toLowerCase());
+   if(item)used.add(item.id);
+  }
+  // Actualizar solo las casillas administradas anteriormente por la lista automática.
+  for(const el of inputs){
+   const key=el.dataset.char;
+   if(!model.sheet[key+"__auto"])continue;
+   const existing=String(model.sheet[key]||"").trim();
+   const item=items.find(x=>!used.has(x.id)&&String(x.title).toLowerCase()===existing.toLowerCase());
+   const index=Number((key.match(/_(\d+)$/)||[])[1])||1;
    if(item){
-    model.sheet[key]=item.title;model.sheet[key+"__auto"]=true;
-    const prep=scope.querySelector('[data-char="spell'+level+'prep_'+(i+1)+'"]');
-    if(prep)model.sheet[prep.dataset.char]=item.prepared===true;
-   }else if(key in model.sheet && model.sheet[key+"__auto"]){
+    used.add(item.id);
+    model.sheet["spell"+level+"prep_"+index]=item.prepared===true;
+   }else{
     model.sheet[key]="";delete model.sheet[key+"__auto"];
-    model.sheet["spell"+level+"prep_"+(i+1)]=false;
+    model.sheet["spell"+level+"prep_"+index]=false;
    }
-  });
+  }
+  // Añadir nuevos conjuros solo a espacios realmente vacíos.
+  for(const item of items){
+   if(used.has(item.id))continue;
+   const el=inputs.find(x=>!String(model.sheet[x.dataset.char]||"").trim());
+   if(!el)break;
+   const key=el.dataset.char,index=Number((key.match(/_(\d+)$/)||[])[1])||1;
+   model.sheet[key]=item.title;model.sheet[key+"__auto"]=true;
+   model.sheet["spell"+level+"prep_"+index]=item.prepared===true;
+   used.add(item.id);
+  }
  }
  renderSheet();
 }
@@ -346,6 +368,16 @@ window.alakRuleBridge={
   add("race",race?race.name+(race.sub?.[choice.subraceId]?" · "+race.sub[choice.subraceId].name:""):"");
   add("className",klass?.name);
   add("level",choice.level);
+  // Una subida de nivel confirmada en el asistente sí puede actualizar el nivel
+  // previo si es el mismo personaje y la misma clase, sin tocar otros valores.
+  const oldLevel=Number(model.fields.level)||0;
+  if(model.ruleBuild?.classId===choice.classId&&oldLevel>0&&Number(choice.level)>oldLevel){
+   model.fields.level=String(choice.level);
+   const classLevel=String(model.sheet.classLevel||"");
+   if(/(?:nivel|n)s*d+$/i.test(classLevel)){
+    model.sheet.classLevel=classLevel.replace(/(?:nivel|n)s*d+$/i,"N"+choice.level);
+   }
+  }
   add("background",choice.background);
   add("speed",race?.sub?.[choice.subraceId]?.speed||race?.speed);
   add("proficiency",info.proficiency);
@@ -372,7 +404,9 @@ window.alakRuleBridge={
     added++;
    }
   }
-  if(info.resource&&!model.traits.some(x=>x.rulesId==="resources:"+choice.classId)){
+  const previousResource=model.traits.find(x=>x.rulesId==="resources:"+choice.classId);
+  if(previousResource&&info.resource&&previousResource.description===model.ruleBuild?.resourceText)previousResource.description=info.resource;
+    if(info.resource&&!model.traits.some(x=>x.rulesId==="resources:"+choice.classId)){
    model.traits.push({id:genId(),title:"Recursos de clase",description:info.resource,type:"Progresión",rulesId:"resources:"+choice.classId});
    added++;
   }
@@ -438,7 +472,7 @@ window.alakRuleBridge={
    classId:choice.classId,subclassId:choice.subclassId||"",level:Number(choice.level),
    background:choice.background||"",autoProgress:choice.autoProgress!==false,
    selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),
-   updatedAt:new Date().toISOString()
+   resourceText:info.resource||"",updatedAt:new Date().toISOString()
   };
   change();renderAll();if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
   return {ok:true,added,fieldsAdded,message:"Se añadieron "+added+" rasgos y se completaron "+fieldsAdded+" campos vacíos. Lo existente quedó intacto."};
