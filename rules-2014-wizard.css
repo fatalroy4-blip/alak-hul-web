@@ -1,0 +1,38 @@
+/* Alak Hul: creador de personajes del Manual 2014 — interfaz aditiva. */
+.rw-launch{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:1px solid #d7ad74;border-radius:10px;background:linear-gradient(115deg,#49305d,#271e34);color:#ffe4b4;padding:12px 16px;font:700 13px system-ui,sans-serif;min-height:42px;white-space:normal}
+.rw-launch:hover{background:linear-gradient(115deg,#663f7b,#362143);box-shadow:0 0 16px #c3a3dc77}
+#rulesWizard2014{width:min(1080px,96vw);max-width:none;max-height:91vh;box-sizing:border-box;overflow:auto;padding:0;border-radius:16px;border:2px solid #d1af82;color:#f7eddd;background:linear-gradient(150deg,#271831,#150e20);box-shadow:0 20px 90px #000c}
+#rulesWizard2014::backdrop{background:#050309dc;backdrop-filter:blur(7px)}
+#rulesWizard2014 .rw-modal{padding:clamp(14px,3vw,30px)}
+#rulesWizard2014 .rw-top{display:flex;gap:15px;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #7e5680;padding-bottom:16px}
+#rulesWizard2014 .rw-top h2{font:500 clamp(27px,4vw,42px)/1.1 Georgia,serif;color:#ffe0a2;margin:3px 0}
+#rulesWizard2014 .rw-kicker{font:700 10px system-ui;color:#d9aa72;letter-spacing:.17em;margin:0}
+#rulesWizard2014 .rw-note,#rulesWizard2014 .rw-modal p{font:13px/1.5 system-ui;color:#d9cadf;margin:7px 0}
+#rulesWizard2014 #rwClose{border:1px solid #84638f;border-radius:50%;color:#ffe3c5;background:#442f4f;cursor:pointer;width:37px;height:37px;flex-shrink:0}
+#rulesWizard2014 .rw-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:16px 0}
+#rulesWizard2014 label{display:flex;flex-direction:column;gap:5px;font:700 12px system-ui;color:#e9d6e9;min-width:0}
+#rulesWizard2014 select,#rulesWizard2014 input[type=number]{box-sizing:border-box;width:100%;min-width:0;min-height:40px;border:1px solid #9b77a4;border-radius:8px;background:#1b1227;color:#f5e8df;padding:8px;font:500 13px system-ui}
+#rulesWizard2014 select:focus-visible,#rulesWizard2014 input:focus-visible{outline:2px solid #f5c58c}
+#rulesWizard2014 .rw-reference{border:1px solid #79628c;background:#362242;border-radius:9px;padding:11px 15px;color:#f4d8ab;font:12px/1.5 system-ui}
+#rulesWizard2014 .rw-stats,#rulesWizard2014 .rw-feature-section{padding:18px 0 12px;border-bottom:1px solid #6a4a70}
+#rulesWizard2014 h3{font:500 24px Georgia,serif;color:#f4dab5;margin:0 0 7px}
+#rulesWizard2014 .rw-titleline{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#rulesWizard2014 .rw-attrs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:12px 0}
+#rulesWizard2014 .rw-bonuses{color:#f5d4a1!important}
+#rulesWizard2014 .rw-feature-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:11px 0;max-height:380px;overflow:auto}
+#rulesWizard2014 .rw-check{flex-direction:row;align-items:flex-start;gap:11px;border:1px solid #6d4f77;border-radius:9px;background:#291a34;padding:10px;cursor:pointer}
+#rulesWizard2014 .rw-check:hover{border-color:#aa8db5}
+#rulesWizard2014 .rw-check.exists{opacity:.65;cursor:default}
+#rulesWizard2014 .rw-check input{flex-shrink:0;margin-top:3px;accent-color:#cb9be7}
+#rulesWizard2014 .rw-check span{display:flex;flex-direction:column;min-width:0;gap:3px}
+#rulesWizard2014 .rw-check strong{font:600 14px Georgia;color:#ffddb2}
+#rulesWizard2014 .rw-check small{font:11px/1.45 system-ui;color:#d5c1de}
+#rulesWizard2014 .rw-options{display:flex;flex-direction:column;gap:9px;padding:15px 0}
+#rulesWizard2014 .rw-options label{flex-direction:row;align-items:center;font-weight:500}
+#rulesWizard2014 .rw-options input{accent-color:#cf93e0}
+#rulesWizard2014 .rw-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+#rulesWizard2014 .rw-actions button,#rulesWizard2014 #rwStandard{font:700 13px system-ui;color:#ffe9cf;cursor:pointer;border-radius:10px;border:1px solid #be9c7f;background:#5c3970;padding:11px 16px}
+#rulesWizard2014 #rwApply{background:#694475;border-color:#e7bf8b}
+#rulesWizard2014 #rwResult{border-radius:9px;color:#f4d6a2;min-height:20px}
+#rulesWizard2014 .rw-safety{border-left:3px solid #e1b77d;background:#382640;padding:12px 14px}
+@media(max-width:880px){#rulesWizard2014 .rw-fields{grid-template-columns:repeat(2,minmax(0,1fr))}#rulesWizard2014 .rw-attrs{grid-template-columns:repeat(3,minmax(0,1fr))}#rulesWizard2014 .rw-feature-list{grid-template-columns:1fr}}
