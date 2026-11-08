@@ -1,44 +1,86 @@
-// Reglas V47 propuestas. Revisar y combinar con las reglas actuales antes de publicar.
-// Crear primero appRoles/{UID_PROP} con campo role: "owner" desde Firebase Console.
+// V49 · Alak Hul — usuarios, propietario, DM y mesa multijugador.
+// Publicar en Firebase Console → Firestore → Reglas, después de revisar la versión activa.
+// La hoja histórica de Alak Hul permanece privada bajo users/{uid}/characters/alak-hul.
 rules_version = '2';
+
 service cloud.firestore {
- match /databases/{database}/documents {
-  function authenticated() {return request.auth != null;}
-  function me(uid) {return authenticated() && request.auth.uid == uid;}
-  function hasRole(name) {
-   return authenticated()
-     && exists(/databases/$(database)/documents/appRoles/$(request.auth.uid))
-     && get(/databases/$(database)/documents/appRoles/$(request.auth.uid)).data.role == name;
+  match /databases/{database}/documents {
+
+    function esUsuario(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function tieneRol(rol) {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/appRoles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/appRoles/$(request.auth.uid)).data.role == rol;
+    }
+
+    function esPropietario() {
+      return tieneRol('owner');
+    }
+
+    function esAdministrador() {
+      return esPropietario() || tieneRol('dm');
+    }
+
+    function usuarioAutorizado() {
+      return tieneRol('owner') || tieneRol('dm') || tieneRol('player');
+    }
+
+    // Hoja original de Alak Hul: nunca lectura cruzada.
+    match /users/{userId}/characters/{characterId} {
+      allow read, write: if esUsuario(userId) && characterId == 'alak-hul';
+    }
+
+    // Fichas personales independientes por UID.
+    match /players/{userId} {
+      allow get: if esUsuario(userId) || esAdministrador();
+      allow list: if esAdministrador();
+
+      allow create: if esUsuario(userId)
+        && request.resource.data.ownerUid == userId;
+
+      // El DM puede corregir otros datos, pero NO la imagen de personaje
+      // ni la miniatura del botón Personaje. El dueño y owner sí pueden.
+      allow update: if (esUsuario(userId) || esAdministrador())
+        && resource.data.ownerUid == userId
+        && request.resource.data.ownerUid == userId
+        && (
+          esUsuario(userId)
+          || esPropietario()
+          || (
+            request.resource.data.get('portrait', '') == resource.data.get('portrait', '')
+            && request.resource.data.get('tileImages', {}).get('sheet', '') ==
+               resource.data.get('tileImages', {}).get('sheet', '')
+          )
+        );
+
+      allow delete: if esPropietario();
+    }
+
+    // Mesa única compartida, sincronizada con los participantes.
+    // Todos los usuarios que ya tienen un rol pueden verla.
+    // Solo DM y owner pueden editar la iniciativa, rondas, PG y crónica.
+    match /campaigns/{campaignId} {
+      allow get: if campaignId == 'main' && usuarioAutorizado();
+      allow list: if false;
+      allow create, update: if campaignId == 'main' && esAdministrador();
+      allow delete: if campaignId == 'main' && esPropietario();
+    }
+
+    // La primera cuenta owner se registró manualmente desde Firebase Console.
+    match /appRoles/{userId} {
+      allow get: if esUsuario(userId) || esPropietario();
+      allow list: if esPropietario();
+
+      allow create, update: if esPropietario()
+        && userId != request.auth.uid
+        && request.resource.data.keys().hasOnly(['role'])
+        && request.resource.data.role in ['dm','player'];
+
+      allow delete: if esPropietario()
+        && userId != request.auth.uid;
+    }
   }
-  function owner() {return hasRole("owner");}
-  function admin() {return owner() || hasRole("dm");}
-  function validFields() {
-   return request.resource.data.keys().hasOnly([
-    "ownerUid","accountName","accountEmail","updatedBy","updatedAt",
-    "fields","stats","spells","traits","combatNotes",
-    "coverTheme","coverImage","portrait","tileImages","extras"
-   ]);
-  }
-  match /users/{uid}/characters/{characterId} {
-   allow get, list, create, update, delete: if me(uid);
-  }
-  match /players/{uid} {
-   allow get: if me(uid) || admin();
-   allow list: if admin();
-   allow create: if me(uid) && validFields()
-      && request.resource.data.ownerUid == uid;
-   allow update: if (me(uid) || admin()) && validFields()
-      && resource.data.ownerUid == uid
-      && request.resource.data.ownerUid == uid;
-   allow delete: if owner();
-  }
-  match /appRoles/{uid} {
-   allow get: if me(uid) || owner();
-   allow list: if owner();
-   allow create, update: if owner() && uid != request.auth.uid
-      && request.resource.data.keys().hasOnly(["role"])
-      && request.resource.data.role in ["player","dm"];
-   allow delete: if owner() && uid != request.auth.uid;
-  }
- }
 }
