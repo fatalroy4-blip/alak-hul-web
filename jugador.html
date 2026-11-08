@@ -1,10 +1,17 @@
 <!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171022">
 <title>Mi aventurero · Alak Hul Multijugador</title>
+<link rel="stylesheet" href="styles.css?v=49">
+<link rel="stylesheet" href="design-v29.css?v=49">
+<link rel="stylesheet" href="home-v30.css?v=49">
+<link rel="stylesheet" href="slots-v36.css?v=49">
 <link rel="stylesheet" href="jugador.css?v=47">
+<link rel="stylesheet" href="campaign-v42.css?v=49">
+<link rel="stylesheet" href="mesa-compartida.css?v=49">
+<link rel="stylesheet" href="jugador-v49.css?v=49">
 </head><body>
 <div class="rotate"><div class="rotate-card"><span class="rotate-glyph">↻</span><h2>Gira tu dispositivo</h2><p>Tu hoja de aventurero está diseñada para usarse en horizontal.</p></div></div>
-<header class="topbar"><span class="mark">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></span><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="combat">⚔ Combate</button><button type="button" data-view="design">⚙ Personalizar</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
+<header class="topbar"><span class="mark">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></span><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="campaign">⚔ Campaña</button><button type="button" data-view="design">⚙ Personalizar</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
 <main>
 <section id="authWall" class="auth-wall"><div class="auth-orb">✺</div><p class="eyebrow">TU HISTORIA EMPIEZA AQUÍ</p><h1>Elige tu destino</h1><p>Inicia sesión con Google para crear una hoja de personaje vacía y conservar tus datos personales en la nube, sin mezclarlos con los de otros jugadores.</p><button id="loginBtn" class="primary">Entrar con Google</button><p class="status" id="loginStatus" role="status"></p></section>
 <div id="workspace" hidden>
@@ -12,21 +19,474 @@
 <div class="home-glow"></div><div class="home-title"><p class="eyebrow">EL GRIMORIO DE MI AVENTURA</p><h1 id="heroName">Mi personaje</h1><p id="heroSubtitle">Tu historia aún está por escribirse</p></div>
 <div class="tiles" id="homeTiles"></div><div class="home-foot"><span id="homeProgress">Hoja por comenzar</span><button type="button" id="homeEdit">✎ Personalizar portada</button></div>
 </div></section>
-<section id="sheetView" class="screen"><div class="section-head"><p class="eyebrow">COMIENZA DESDE CERO</p><h2>Hoja de personaje</h2><p>Los campos se encuentran en blanco. Tú decides cómo completar tu aventurero.</p></div>
-<div class="sheet-layout"><section class="panel"><div class="portrait-field"><img id="sheetPortrait" alt="Retrato del personaje"><div><h3>Retrato de tu personaje</h3><p>Podrás cargarlo desde Personalizar.</p><button type="button" data-open-design>Elegir imagen</button></div></div><div class="form-grid">
-<label>Nombre<input data-field="name" maxlength="80" placeholder="Nombre del personaje"></label><label>Raza / linaje<input data-field="race" maxlength="70"></label><label>Clase<input data-field="className" maxlength="70"></label><label>Nivel<input data-field="level" type="number" min="1" max="20" placeholder="—"></label><label>Trasfondo<input data-field="background" maxlength="100"></label><label>Alineamiento<input data-field="alignment" maxlength="80"></label><label>Experiencia<input data-field="xp" type="number" min="0"></label><label>Bonificador competencia<input data-field="proficiency" type="number"></label></div></section>
-<section class="panel"><h3>Combate y movimiento</h3><div class="form-grid thirds"><label>Puntos de golpe máximos<input type="number" data-field="maxHP" min="0"></label><label>Puntos de golpe actuales<input type="number" data-field="hp" min="0"></label><label>Puntos temporales<input type="number" data-field="tempHP" min="0"></label><label>Clase de armadura<input data-field="ac" type="number"></label><label>Iniciativa<input data-field="initiative" type="number"></label><label>Velocidad<input data-field="speed" placeholder="30 pies"></label></div><h3>Atributos</h3><div class="stats" id="statsGrid"></div></section></div>
-<section class="panel margin-top"><h3>Historia y detalles</h3><div class="form-grid"><label>Personalidad<textarea data-field="personality" rows="3"></textarea></label><label>Ideales y vínculos<textarea data-field="ideals" rows="3"></textarea></label><label>Equipo<textarea data-field="equipment" rows="4"></textarea></label><label>Historia<textarea data-field="story" rows="5"></textarea></label></div></section></section>
-<section id="spellsView" class="screen"><div class="section-head"><p class="eyebrow">ARCANA Y MAGIA</p><h2>Trucos y conjuros</h2><p>Agrega tantos conjuros como necesite tu personaje.</p></div><form id="spellForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Nivel<select name="level"><option value="0">Truco</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label></div><label>Descripción<textarea name="description" rows="3"></textarea></label><button type="submit" class="primary">✧ Añadir conjuro</button></form><div id="spellList" class="entries"></div></section>
+<section id="sheetView" class="screen">
+ <div class="section-head"><p class="eyebrow">FICHA OFICIAL · D&D 5e</p><h2>Hoja de personaje</h2><p>El mismo diseño digital de Alak Hul, pero totalmente vacío y separado para tu cuenta.</p></div>
+ <div id="statsGrid" hidden></div><img id="sheetPortrait" alt="" hidden>
+ <section id="character" class="panel active">
+  <div class="character-intro">
+    <div>
+      <p class="eyebrow">FICHA DIGITAL</p>
+      <h2>Hoja de personaje</h2>
+      <p>Distribución 1:1 basada en la hoja de personaje de D&amp;D 5e, con campos web reales y guardado automático.</p>
+    </div>
+    <span id="charSaveStatus" class="save-status">Guardado automático</span>
+  </div>
+
+  <div class="sheet-scroll">
+    <!-- PÁGINA 1 -->
+    <article class="digital-sheet dnd-sheet page-one">
+      <div class="dnd-sheet-brand">
+        <div class="brand-mark">D&amp;D</div>
+        <div class="brand-sub">FICHA DE PERSONAJE</div>
+      </div>
+
+      <header class="ds-header dnd-header">
+        <div class="ds-name">
+          <label>
+            <span>Nombre del personaje</span>
+            <input data-char="name">
+          </label>
+        </div>
+        <div class="ds-header-grid">
+          <label><span>Clase y nivel</span><input data-char="classLevel"></label>
+          <label><span>Trasfondo</span><input data-char="background"></label>
+          <label><span>Nombre del jugador</span><input data-char="player"></label>
+          <label><span>Raza</span><input data-char="race"></label>
+          <label><span>Alineamiento</span><input data-char="alignment"></label>
+          <label><span>Puntos de experiencia</span><input data-char="xp"></label>
+        </div>
+      </header>
+
+      <div class="dnd-page1-grid">
+        <!-- Columna extrema izquierda: atributos -->
+        <aside class="dnd-abilities">
+          <div class="ability-box"><span>Fuerza</span><input data-char="ability_0"><input class="ability-mod" data-char="abilitymod_0"></div>
+          <div class="ability-box"><span>Destreza</span><input data-char="ability_1"><input class="ability-mod" data-char="abilitymod_1"></div>
+          <div class="ability-box"><span>Constitución</span><input data-char="ability_2"><input class="ability-mod" data-char="abilitymod_2"></div>
+          <div class="ability-box"><span>Inteligencia</span><input data-char="ability_3"><input class="ability-mod" data-char="abilitymod_3"></div>
+          <div class="ability-box"><span>Sabiduría</span><input data-char="ability_4"><input class="ability-mod" data-char="abilitymod_4"></div>
+          <div class="ability-box"><span>Carisma</span><input data-char="ability_5"><input class="ability-mod" data-char="abilitymod_5"></div>
+        </aside>
+
+        <!-- Columna izquierda interior: inspiración, competencia, salvaciones, habilidades -->
+        <div class="dnd-left-info">
+          <div class="dnd-pill-row">
+            <label class="dnd-pill"><input data-char="inspiration"><span>Inspiración</span></label>
+            <label class="dnd-pill"><input data-char="profBonus"><span>Bonif. competencia</span></label>
+          </div>
+
+          <section class="ds-box saving">
+            <h3>Tiradas de salvación</h3>
+            <div class="save-grid">
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_str"><input data-char="save_str"><span>Fuerza</span></label>
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_dex"><input data-char="save_dex"><span>Destreza</span></label>
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_con"><input data-char="save_con"><span>Constitución</span></label>
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_int"><input data-char="save_int"><span>Inteligencia</span></label>
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_wis"><input data-char="save_wis"><span>Sabiduría</span></label>
+              <label><input class="prof-dot" type="checkbox" data-char="saveprof_cha"><input data-char="save_cha"><span>Carisma</span></label>
+            </div>
+          </section>
+
+          <section class="ds-box skills">
+            <h3>Habilidades</h3>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_0"><input data-char="skill_0"><span>Acrobacias (Des)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_1"><input data-char="skill_1"><span>Trato con Animales (Sab)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_2"><input data-char="skill_2"><span>Arcanos (Int)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_3"><input data-char="skill_3"><span>Atletismo (Fue)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_4"><input data-char="skill_4"><span>Engaño (Car)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_5"><input data-char="skill_5"><span>Historia (Int)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_6"><input data-char="skill_6"><span>Perspicacia (Sab)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_7"><input data-char="skill_7"><span>Intimidación (Car)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_8"><input data-char="skill_8"><span>Investigación (Int)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_9"><input data-char="skill_9"><span>Medicina (Sab)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_10"><input data-char="skill_10"><span>Naturaleza (Int)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_11"><input data-char="skill_11"><span>Percepción (Sab)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_12"><input data-char="skill_12"><span>Interpretación (Car)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_13"><input data-char="skill_13"><span>Persuasión (Car)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_14"><input data-char="skill_14"><span>Religión (Int)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_15"><input data-char="skill_15"><span>Juego de Manos (Des)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_16"><input data-char="skill_16"><span>Sigilo (Des)</span></label>
+            <label class="skill-line"><input class="prof-dot" type="checkbox" data-char="skillprof_17"><input data-char="skill_17"><span>Supervivencia (Sab)</span></label>
+          </section>
+
+          <section class="passive-box">
+            <label><input data-char="passive"><span>Sabiduría pasiva (Percepción)</span></label>
+          </section>
+
+          <section class="ds-box proficiencies-box">
+            <h3>Otras competencias e idiomas</h3>
+            <textarea data-char="proficiencies"></textarea>
+          </section>
+        </div>
+
+        <!-- Columna central -->
+        <div class="dnd-center">
+          <div class="combat-top">
+            <label class="shield-field"><input data-char="ac"><span>Clase de armadura</span></label>
+            <label><input data-char="initiative"><span>Iniciativa</span></label>
+            <label><input data-char="speed"><span>Velocidad</span></label>
+          </div>
+
+          <section class="ds-box hp-box">
+            <label><span>Máx. puntos de golpe</span><input data-char="hpMax"></label>
+            <label class="hp-current"><input data-char="hpCurrent"><span>Puntos de golpe actuales</span></label>
+            <label class="hp-temp"><input data-char="hpTemp"><span>Puntos de golpe temporales</span></label>
+          </section>
+
+          <div class="hitdeath-grid">
+            <section class="ds-box">
+              <h3>Dados de golpe</h3>
+              <label><span>Total</span><input data-char="hitDice"></label>
+            </section>
+            <section class="ds-box death-box">
+              <h3>Salv. contra muerte</h3>
+              <div class="death-track"><span>Éxitos</span><input type="hidden" data-char="deathSuccess"><div class="death-circles" data-death="deathSuccess"></div></div>
+              <div class="death-track"><span>Fallos</span><input type="hidden" data-char="deathFail"><div class="death-circles" data-death="deathFail"></div></div>
+            </section>
+          </div>
+
+          <section class="ds-box attacks">
+            <h3>Ataques y conjuros</h3>
+            <div class="attack-head"><span>Nombre</span><span>Bonif.</span><span>Daño / tipo</span></div>
+            <div class="attack-row"><input data-char="atk1_name"><input data-char="atk1_bonus"><input data-char="atk1_damage"></div>
+            <div class="attack-row"><input data-char="atk2_name"><input data-char="atk2_bonus"><input data-char="atk2_damage"></div>
+            <div class="attack-row"><input data-char="atk3_name"><input data-char="atk3_bonus"><input data-char="atk3_damage"></div>
+            <textarea data-char="attackNotes"></textarea>
+          </section>
+
+          <section class="ds-box equipment-box">
+            <h3>Equipo</h3>
+            <div class="equipment-layout">
+              <div class="coin-rail">
+                <label>CP<input data-char="coin_cp"></label>
+                <label>PP<input data-char="coin_pp"></label>
+                <label>PE<input data-char="coin_pe"></label>
+                <label>PO<input data-char="coin_po"></label>
+                <label>PT<input data-char="coin_pt"></label>
+              </div>
+              <textarea data-char="equipment"></textarea>
+            </div>
+          </section>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="dnd-right">
+          <section class="ds-box personality-box"><h3>Rasgos de personalidad</h3><textarea data-char="personality"></textarea></section>
+          <section class="ds-box personality-box"><h3>Ideales</h3><textarea data-char="ideals"></textarea></section>
+          <section class="ds-box personality-box"><h3>Vínculos</h3><textarea data-char="bonds"></textarea></section>
+          <section class="ds-box personality-box"><h3>Defectos</h3><textarea data-char="flaws"></textarea></section>
+          <section class="ds-box features-box">
+            <h3>Rasgos y características</h3>
+            <textarea data-char="features"></textarea>
+          </section>
+        </div>
+      </div>
+    </article>
+
+    <!-- PÁGINA 2 -->
+    <article class="digital-sheet dnd-sheet page-two">
+      <div class="dnd-sheet-brand small-brand"><div class="brand-mark">D&amp;D</div><div class="brand-sub">DETALLES DEL PERSONAJE</div></div>
+
+      <header class="ds-header second-header">
+        <div class="ds-name"><label><span>Nombre del personaje</span><input data-char="name2"></label></div>
+        <div class="physical-grid">
+          <label><span>Edad</span><input data-char="age"></label>
+          <label><span>Altura</span><input data-char="height"></label>
+          <label><span>Peso</span><input data-char="weight"></label>
+          <label><span>Ojos</span><input data-char="eyes"></label>
+          <label><span>Piel</span><input data-char="skin"></label>
+          <label><span>Cabello</span><input data-char="hair"></label>
+        </div>
+      </header>
+
+      <div class="dnd-page2-grid">
+        <section class="ds-box portrait-panel">
+          <h3>Apariencia del personaje</h3>
+          <div class="character-portrait"><img id="characterPortrait" src="assets/hero.svg" alt="Tu aventurero"></div>
+          <label class="portrait-upload">Cambiar imagen<input id="playerReplicaPortraitUpload" type="file" accept="image/*" hidden></label>
+        </section>
+
+        <section class="ds-box allies-panel">
+          <h3>Aliados y organizaciones</h3>
+          <textarea data-char="allies"></textarea>
+          <div class="symbol-card"><div class="sun-symbol">☀</div><span>Símbolo personal</span></div>
+        </section>
+
+        <section class="ds-box backstory-panel">
+          <h3>Historia del personaje</h3>
+          <textarea data-char="backstory"></textarea>
+        </section>
+
+        <section class="ds-box additional-panel"><h3>Rasgos y características adicionales</h3><textarea data-char="additional"></textarea></section>
+        <section class="ds-box treasure-panel"><h3>Tesoro</h3><textarea data-char="treasure"></textarea></section>
+      </div>
+    </article>
+
+    <!-- PÁGINA 3 -->
+    <article class="digital-sheet dnd-sheet page-three">
+      <div class="dnd-sheet-brand small-brand">
+        <div class="brand-mark">D&amp;D</div>
+        <div class="brand-sub">HOJA DE CONJUROS</div>
+      </div>
+
+      <header class="spell-sheet-header">
+        <label>
+          <span>Clase lanzadora de conjuros</span>
+          <input data-char="spell_class">
+        </label>
+        <label>
+          <span>Característica de lanzamiento</span>
+          <input data-char="spell_ability">
+        </label>
+        <label>
+          <span>Salvación de conjuro</span>
+          <input data-char="spell_save_dc">
+        </label>
+        <label>
+          <span>Bonificador de ataque de conjuro</span>
+          <input data-char="spell_attack_bonus">
+        </label>
+      </header>
+
+      <div class="spell-page-grid">
+
+        <section class="spell-level-box cantrip-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">0</div>
+            <div>
+              <h3>Trucos</h3>
+              <span>Conjuros conocidos</span>
+            </div>
+          </div>
+
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell0prep_1"><input data-char="spell0_1"></label>
+            <label><input type="checkbox" data-char="spell0prep_2"><input data-char="spell0_2"></label>
+            <label><input type="checkbox" data-char="spell0prep_3"><input data-char="spell0_3"></label>
+            <label><input type="checkbox" data-char="spell0prep_4"><input data-char="spell0_4"></label>
+            <label><input type="checkbox" data-char="spell0prep_5"><input data-char="spell0_5"></label>
+            <label><input type="checkbox" data-char="spell0prep_6"><input data-char="spell0_6"></label>
+            <label><input type="checkbox" data-char="spell0prep_7"><input data-char="spell0_7"></label>
+            <label><input type="checkbox" data-char="spell0prep_8"><input data-char="spell0_8"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">1</div>
+            <div class="spell-level-title">
+              <h3>Nivel 1</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Espacios totales</span><input data-char="spell_slots1_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots1_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell1prep_1"><input data-char="spell1_1"></label>
+            <label><input type="checkbox" data-char="spell1prep_2"><input data-char="spell1_2"></label>
+            <label><input type="checkbox" data-char="spell1prep_3"><input data-char="spell1_3"></label>
+            <label><input type="checkbox" data-char="spell1prep_4"><input data-char="spell1_4"></label>
+            <label><input type="checkbox" data-char="spell1prep_5"><input data-char="spell1_5"></label>
+            <label><input type="checkbox" data-char="spell1prep_6"><input data-char="spell1_6"></label>
+            <label><input type="checkbox" data-char="spell1prep_7"><input data-char="spell1_7"></label>
+            <label><input type="checkbox" data-char="spell1prep_8"><input data-char="spell1_8"></label>
+            <label><input type="checkbox" data-char="spell1prep_9"><input data-char="spell1_9"></label>
+            <label><input type="checkbox" data-char="spell1prep_10"><input data-char="spell1_10"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">2</div>
+            <div class="spell-level-title">
+              <h3>Nivel 2</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Espacios totales</span><input data-char="spell_slots2_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots2_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list">
+            <label><input type="checkbox" data-char="spell2prep_1"><input data-char="spell2_1"></label>
+            <label><input type="checkbox" data-char="spell2prep_2"><input data-char="spell2_2"></label>
+            <label><input type="checkbox" data-char="spell2prep_3"><input data-char="spell2_3"></label>
+            <label><input type="checkbox" data-char="spell2prep_4"><input data-char="spell2_4"></label>
+            <label><input type="checkbox" data-char="spell2prep_5"><input data-char="spell2_5"></label>
+            <label><input type="checkbox" data-char="spell2prep_6"><input data-char="spell2_6"></label>
+            <label><input type="checkbox" data-char="spell2prep_7"><input data-char="spell2_7"></label>
+            <label><input type="checkbox" data-char="spell2prep_8"><input data-char="spell2_8"></label>
+            <label><input type="checkbox" data-char="spell2prep_9"><input data-char="spell2_9"></label>
+            <label><input type="checkbox" data-char="spell2prep_10"><input data-char="spell2_10"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">3</div>
+            <div class="spell-level-title">
+              <h3>Nivel 3</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots3_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots3_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell3prep_1"><input data-char="spell3_1"></label>
+            <label><input type="checkbox" data-char="spell3prep_2"><input data-char="spell3_2"></label>
+            <label><input type="checkbox" data-char="spell3prep_3"><input data-char="spell3_3"></label>
+            <label><input type="checkbox" data-char="spell3prep_4"><input data-char="spell3_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">4</div>
+            <div class="spell-level-title">
+              <h3>Nivel 4</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots4_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots4_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell4prep_1"><input data-char="spell4_1"></label>
+            <label><input type="checkbox" data-char="spell4prep_2"><input data-char="spell4_2"></label>
+            <label><input type="checkbox" data-char="spell4prep_3"><input data-char="spell4_3"></label>
+            <label><input type="checkbox" data-char="spell4prep_4"><input data-char="spell4_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">5</div>
+            <div class="spell-level-title">
+              <h3>Nivel 5</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots5_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots5_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell5prep_1"><input data-char="spell5_1"></label>
+            <label><input type="checkbox" data-char="spell5prep_2"><input data-char="spell5_2"></label>
+            <label><input type="checkbox" data-char="spell5prep_3"><input data-char="spell5_3"></label>
+            <label><input type="checkbox" data-char="spell5prep_4"><input data-char="spell5_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">6</div>
+            <div class="spell-level-title">
+              <h3>Nivel 6</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots6_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots6_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell6prep_1"><input data-char="spell6_1"></label>
+            <label><input type="checkbox" data-char="spell6prep_2"><input data-char="spell6_2"></label>
+            <label><input type="checkbox" data-char="spell6prep_3"><input data-char="spell6_3"></label>
+            <label><input type="checkbox" data-char="spell6prep_4"><input data-char="spell6_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">7</div>
+            <div class="spell-level-title">
+              <h3>Nivel 7</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots7_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots7_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell7prep_1"><input data-char="spell7_1"></label>
+            <label><input type="checkbox" data-char="spell7prep_2"><input data-char="spell7_2"></label>
+            <label><input type="checkbox" data-char="spell7prep_3"><input data-char="spell7_3"></label>
+            <label><input type="checkbox" data-char="spell7prep_4"><input data-char="spell7_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">8</div>
+            <div class="spell-level-title">
+              <h3>Nivel 8</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots8_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots8_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell8prep_1"><input data-char="spell8_1"></label>
+            <label><input type="checkbox" data-char="spell8prep_2"><input data-char="spell8_2"></label>
+            <label><input type="checkbox" data-char="spell8prep_3"><input data-char="spell8_3"></label>
+            <label><input type="checkbox" data-char="spell8prep_4"><input data-char="spell8_4"></label>
+          </div>
+        </section>
+
+        <section class="spell-level-box compact-level">
+          <div class="spell-level-heading">
+            <div class="spell-level-number">9</div>
+            <div class="spell-level-title">
+              <h3>Nivel 9</h3>
+              <div class="spell-slots-inline" hidden aria-hidden="true">
+                <label><span>Total</span><input data-char="spell_slots9_total"></label>
+                <label><span>Gastados</span><input data-char="spell_slots9_spent"></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-spell-list small-list">
+            <label><input type="checkbox" data-char="spell9prep_1"><input data-char="spell9_1"></label>
+            <label><input type="checkbox" data-char="spell9prep_2"><input data-char="spell9_2"></label>
+            <label><input type="checkbox" data-char="spell9prep_3"><input data-char="spell9_3"></label>
+            <label><input type="checkbox" data-char="spell9prep_4"><input data-char="spell9_4"></label>
+          </div>
+        </section>
+
+      </div>
+    </article>
+
+  </div>
+</section>
+</section>
+<section id="spellsView" class="screen"><div class="section-head"><p class="eyebrow">ARCANA Y MAGIA</p><h2>Trucos y conjuros</h2><p>Agrega tantos conjuros como necesite tu personaje.</p></div><section class="panel player-library" aria-label="Biblioteca de conjuros">
+ <h3>✧ Biblioteca de trucos y conjuros</h3>
+ <p>Busca conjuros del grimorio disponible, añádelos a tu ficha y marca cuáles preparas. También puedes crear conjuros propios abajo.</p>
+ <div class="library-filters">
+ <label>Buscar un conjuro<input id="playerSpellSearch" type="search" placeholder="Nombre, nivel o descripción"></label>
+ <label>Nivel<select id="playerSpellLevelFilter"><option value="all">Todos</option><option value="0">Trucos</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label>
+ </div>
+ <div id="playerSpellCatalog" class="spell-catalog" aria-live="polite"></div>
+ </section>
+ <section class="panel player-library">
+ <h3>◌ Espacios de conjuro</h3>
+ <p>Configura tus espacios por nivel. Los espacios gastados se descuentan durante tu partida.</p>
+ <div id="playerSpellSlots" class="player-slot-grid"></div>
+ </section><form id="spellForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Nivel<select name="level"><option value="0">Truco</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label></div><label>Descripción<textarea name="description" rows="3"></textarea></label><button type="submit" class="primary">✧ Añadir conjuro</button></form><div id="spellList" class="entries"></div></section>
 <section id="traitsView" class="screen"><div class="section-head"><p class="eyebrow">TALENTOS Y CAPACIDADES</p><h2>Rasgos y habilidades</h2><p>Aquí puedes registrar rasgos raciales, de clase, dotes, metamagia u otras capacidades.</p></div><form id="traitForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Tipo<select name="type"><option>Rasgo</option><option>Metamagia</option><option>Dote</option><option>Recurso de clase</option><option>Habilidad especial</option></select></label></div><label>Detalles<textarea name="description" rows="3"></textarea></label><button class="primary" type="submit">✦ Añadir rasgo</button></form><div id="traitList" class="entries"></div></section>
-<section id="combatView" class="screen"><div class="section-head"><p class="eyebrow">TURNO DEL AVENTURERO</p><h2>Mi combate</h2><p>Registra tu propia vida, iniciativa y condiciones. El combate conjunto llegará en una fase posterior.</p></div><section class="panel combat-panel"><div class="combat-stats"><div><small>PG actuales</small><strong id="combatHP">—</strong></div><div><small>PG máximos</small><strong id="combatMax">—</strong></div><div><small>Iniciativa</small><strong id="combatInitiative">—</strong></div><div><small>CA</small><strong id="combatAC">—</strong></div></div><div class="combat-tools"><label>Cantidad<input type="number" id="combatAmount" min="1" max="9999" value="1"></label><button type="button" id="takeDamage">⚔ Recibir daño</button><button type="button" id="receiveHeal">☼ Curarse</button></div><label>Condiciones y notas de combate<textarea id="combatNotes" rows="4" placeholder="Caído, concentrado, inspiración, condiciones..."></textarea></label></section></section>
+<section id="campaignView" class="screen">
+ <div class="section-head"><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h2>Campaña</h2><p>Multijugador · Mesa sincronizada con tu DM y el propietario</p></div>
+ <div class="mesa-compartida" data-shared-campaign></div>
+ </section>
+ <section id="combatView" class="screen" aria-hidden="true"><div class="section-head"><p class="eyebrow">TURNO DEL AVENTURERO</p><h2>Mi combate</h2><p>Registra tu propia vida, iniciativa y condiciones. El combate conjunto llegará en una fase posterior.</p></div><section class="panel combat-panel"><div class="combat-stats"><div><small>PG actuales</small><strong id="combatHP">—</strong></div><div><small>PG máximos</small><strong id="combatMax">—</strong></div><div><small>Iniciativa</small><strong id="combatInitiative">—</strong></div><div><small>CA</small><strong id="combatAC">—</strong></div></div><div class="combat-tools"><label>Cantidad<input type="number" id="combatAmount" min="1" max="9999" value="1"></label><button type="button" id="takeDamage">⚔ Recibir daño</button><button type="button" id="receiveHeal">☼ Curarse</button></div><label>Condiciones y notas de combate<textarea id="combatNotes" rows="4" placeholder="Caído, concentrado, inspiración, condiciones..."></textarea></label></section></section>
 <section id="designView" class="screen"><div class="section-head"><p class="eyebrow">UN SANTUARIO A TU MEDIDA</p><h2>Personalizar mi portada</h2><p>Tu portada es independiente de las demás cuentas. Puedes cambiar el fondo, el retrato y las imágenes de cada botón.</p></div>
-<div class="design-grid"><section class="panel"><h3>Fondo de inicio</h3><div class="theme-picker"><button data-theme="aurora" type="button">✦ Aurora arcana</button><button data-theme="night" type="button">☾ Noche encantada</button><button data-theme="violet" type="button">✧ Violeta</button></div><label>O subir tu propia imagen<input type="file" id="coverUpload" accept="image/png,image/jpeg,image/webp"></label><button type="button" id="clearCover" class="ghost">Restaurar fondo elegido</button><p class="hint">Las imágenes se optimizan antes de guardarse, para ahorrar espacio en Firebase.</p></section>
+<div class="design-grid"><section class="panel"><h3>Nombre del botón Rasgos</h3><label>Texto del acceso de Rasgos<input id="traitsButtonName" maxlength="30" placeholder="Rasgos, Metamagia, Capacidades..."></label><p class="hint">Puedes cambiar su nombre; tus rasgos y las secciones adicionales permanecerán intactos.</p></section><section class="panel"><h3>Fondo de inicio</h3><div class="theme-picker"><button data-theme="aurora" type="button">✦ Aurora arcana</button><button data-theme="night" type="button">☾ Noche encantada</button><button data-theme="violet" type="button">✧ Violeta</button></div><label>O subir tu propia imagen<input type="file" id="coverUpload" accept="image/png,image/jpeg,image/webp"></label><button type="button" id="clearCover" class="ghost">Restaurar fondo elegido</button><p class="hint">Las imágenes se optimizan antes de guardarse, para ahorrar espacio en Firebase.</p></section>
 <section class="panel"><h3>Retrato de personaje</h3><div class="portrait-field"><img id="portraitPreview" alt="Vista previa de retrato"><div><label>Cambiar retrato<input type="file" id="portraitUpload" accept="image/png,image/jpeg,image/webp"></label><p class="hint">La foto aparece en tu hoja y en la portada.</p></div></div></section>
 <section class="panel"><h3>Imágenes de los botones</h3><div id="tileEditors" class="tile-editors"></div></section>
 <section class="panel"><h3>Crear un botón adicional</h3><p class="hint">Por ejemplo: Metamagia, Inspiración bárdica, Forma salvaje o Canalizar Divinidad.</p><form id="extraForm"><label>Nombre del botón<input name="name" maxlength="30" placeholder="Metamagia" required></label><label>Descripción<input name="description" maxlength="75" placeholder="Mis puntos de hechicería"></label><button class="primary" type="submit">+ Agregar botón</button></form><div id="extraEditors"></div></section></div></section>
 <section id="extrasView" class="screen"><div class="section-head"><p class="eyebrow">SECCIÓN PERSONALIZADA</p><h2 id="extrasTitle">Mis habilidades</h2><p>Registra tus notas y recursos especiales.</p></div><section class="panel"><label>Notas de este rasgo<textarea id="extraNotes" rows="10" placeholder="Descripción, usos, recursos disponibles..."></textarea></label></section></section>
 </div></main>
 <footer><span>☀ GRIMORIO DE AVENTUREROS</span><span id="identityLine"></span><span>Tu hoja personal y privada</span></footer>
-<script src="firebase-config.js"></script><script type="module" src="jugador.js?v=47"></script>
+<script src="firebase-config.js"></script><script type="module" src="jugador.js?v=49"></script><script type="module" src="mesa-compartida.js?v=49"></script>
 </body></html>
