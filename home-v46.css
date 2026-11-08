@@ -65,7 +65,7 @@ body.home-active{overflow-x:hidden}
 #home .home-title-break{display:block}
 /* Textos de los botones inferiores, sin fondo ni bordes de relleno. */
 #home .home-stage .home-action-copy{
-  position:absolute;top:50%;left:24%;right:4%;width:auto;height:auto;
+  position:absolute;top:67%;left:24%;right:4%;width:auto;height:auto;
   display:block;transform:translateY(-50%);
   margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
   font:600 clamp(7px,1.02cqw,18px)/1.1 Georgia,"Times New Roman",serif;
@@ -79,7 +79,7 @@ body.home-active{overflow-x:hidden}
 #home .home-sound .home-action-copy{left:28%;right:3%}
 #home .home-current .home-action-copy{left:3%;right:3%}
 #home .home-status .home-action-copy{
-  left:32%;right:3%;
+  top:50%;left:32%;right:3%;
   font-size:clamp(6px,.76cqw,13px);
   font-weight:600;
   text-align:left;
