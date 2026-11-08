@@ -77,7 +77,54 @@ function renderSheet(){
  $("sheetPortrait").src=image;
  const uploader=$("playerReplicaPortraitUpload");if(uploader){uploader.disabled=!canChangePortrait();uploader.closest("label")?.classList.toggle("portrait-forbidden",!canChangePortrait())}
  $("portraitUpload").disabled=!canChangePortrait();
+ renderPlayerDeathSaves();
  const status=$("charSaveStatus");if(status)status.textContent=canChangePortrait()?"Ficha personal · guardado en la nube":"Vista de DM · retrato protegido";
+}
+// Cálculo de modificadores, salvaciones y habilidades como en la hoja de Alak Hul.
+const PLAYER_SKILL_ABILITIES=[1,4,3,0,5,3,4,5,3,4,3,4,5,5,3,1,1,4];
+function recalculatePlayerSkills(){
+ const root=$("character");if(!root||!model)return;
+ const ability=Array.from({length:6},(_,i)=>{
+  const el=root.querySelector('[data-char="ability_'+i+'"]');
+  return el&&String(el.value).trim()!==""?Math.floor((Number(el.value)-10)/2):null;
+ });
+ const bonus=Number(root.querySelector('[data-char="profBonus"]')?.value)||0;
+ const setField=(name,num)=>{
+  const el=root.querySelector('[data-char="'+name+'"]');
+  if(!el)return;
+  const value=num===null?"":(num>=0?"+":"")+num;
+  el.value=value;model.sheet[name]=value;
+ };
+ ability.forEach((value,i)=>setField("abilitymod_"+i,value));
+ const saves=["str","dex","con","int","wis","cha"];
+ saves.forEach((key,i)=>{
+  const enabled=root.querySelector('[data-char="saveprof_'+key+'"]')?.checked===true;
+  setField("save_"+key,ability[i]===null?null:ability[i]+(enabled?bonus:0));
+ });
+ PLAYER_SKILL_ABILITIES.forEach((index,i)=>{
+  const enabled=root.querySelector('[data-char="skillprof_'+i+'"]')?.checked===true;
+  setField("skill_"+i,ability[index]===null?null:ability[index]+(enabled?bonus:0));
+ });
+}
+function renderPlayerDeathSaves(){
+ const sheet=$("character");if(!sheet)return;
+ for(const host of sheet.querySelectorAll("[data-death]")){
+  const key=host.dataset.death;
+  const field=sheet.querySelector('[data-char="'+key+'"]');
+  if(!field)continue;
+  const count=Math.max(0,Math.min(3,Number(field.value)||0));host.replaceChildren();
+  for(let i=1;i<=3;i++){
+   const btn=document.createElement("button");btn.type="button";
+   btn.className="death-dot"+(i<=count?" filled":"");
+   btn.setAttribute("aria-pressed",String(i<=count));
+   btn.setAttribute("aria-label",(key==="deathSuccess"?"Éxitos":"Fallos")+": "+i);
+   btn.onclick=()=>{
+    const amount=i===count?i-1:i;field.value=String(amount);
+    model.sheet[key]=String(amount);change();renderPlayerDeathSaves();
+   };
+   host.append(btn);
+  }
+ }
 }
 function syncSheetField(el){
  const key=el.dataset.char;if(!key||!model)return;
@@ -93,6 +140,8 @@ function syncSheetField(el){
   const level=raw.match(/(?:nivel|n)\s*(\d+)/i);if(level)model.fields.level=level[1];
  }else if(legacyFieldMap[key])model.fields[legacyFieldMap[key]]=el.value;
  else if(/^ability_\d$/.test(key)){const ability=["strength","dexterity","constitution","intelligence","wisdom","charisma"][Number(key.slice(-1))];model.stats[ability]=el.value}
+ if(/^(ability_[0-5]|profBonus|saveprof_(str|dex|con|int|wis|cha)|skillprof_(\d|1\d))$/.test(key))recalculatePlayerSkills();
+ if(key==="deathSuccess"||key==="deathFail")renderPlayerDeathSaves();
  if(/^spell_slots(\d+)_(total|spent)$/.test(key)){
   const match=key.match(/^spell_slots(\d+)_(total|spent)$/),level=Number(match[1]),kind=match[2];
   model.slots[level]=model.slots[level]||{total:0,used:0};
