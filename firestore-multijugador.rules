@@ -1,0 +1,44 @@
+// Reglas V47 propuestas. Revisar y combinar con las reglas actuales antes de publicar.
+// Crear primero appRoles/{UID_PROP} con campo role: "owner" desde Firebase Console.
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function authenticated() {return request.auth != null;}
+  function me(uid) {return authenticated() && request.auth.uid == uid;}
+  function hasRole(name) {
+   return authenticated()
+     && exists(/databases/$(database)/documents/appRoles/$(request.auth.uid))
+     && get(/databases/$(database)/documents/appRoles/$(request.auth.uid)).data.role == name;
+  }
+  function owner() {return hasRole("owner");}
+  function admin() {return owner() || hasRole("dm");}
+  function validFields() {
+   return request.resource.data.keys().hasOnly([
+    "ownerUid","accountName","accountEmail","updatedBy","updatedAt",
+    "fields","stats","spells","traits","combatNotes",
+    "coverTheme","coverImage","portrait","tileImages","extras"
+   ]);
+  }
+  match /users/{uid}/characters/{characterId} {
+   allow get, list, create, update, delete: if me(uid);
+  }
+  match /players/{uid} {
+   allow get: if me(uid) || admin();
+   allow list: if admin();
+   allow create: if me(uid) && validFields()
+      && request.resource.data.ownerUid == uid;
+   allow update: if (me(uid) || admin()) && validFields()
+      && resource.data.ownerUid == uid
+      && request.resource.data.ownerUid == uid;
+   allow delete: if owner();
+  }
+  match /appRoles/{uid} {
+   allow get: if me(uid) || owner();
+   allow list: if owner();
+   allow create, update: if owner() && uid != request.auth.uid
+      && request.resource.data.keys().hasOnly(["role"])
+      && request.resource.data.role in ["player","dm"];
+   allow delete: if owner() && uid != request.auth.uid;
+  }
+ }
+}
