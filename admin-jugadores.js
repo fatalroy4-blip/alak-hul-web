@@ -20,9 +20,12 @@ function render(){
   const who=document.createElement("p");who.textContent=p.accountName||p.accountEmail||"Cuenta Google";
   const details=document.createElement("p");details.textContent=[p.fields?.race,p.fields?.className,p.fields?.level?"Nivel "+p.fields.level:""].filter(Boolean).join(" · ")||"Hoja en blanco";
   const progress=document.createElement("div");progress.className="progress";
-  const width=Math.min(100,Math.round(100*(Object.values(p.fields||{}).filter(x=>String(x??"").trim()).length+Object.values(p.stats||{}).filter(x=>String(x??"").trim()).length)/20));
+  const filledSheet=Object.entries(p.sheet||{}).filter(([key,value])=>!key.endsWith("__auto")&&String(value??"").trim()!=="").length;
+  const filledBasic=Object.values(p.fields||{}).filter(x=>String(x??"").trim()).length;
+  const filledAttributes=Object.values(p.stats||{}).filter(x=>String(x??"").trim()).length;
+  const width=Math.min(100,Math.round(100*(filledSheet||filledBasic+filledAttributes)/70));
   const fill=document.createElement("span");fill.style.width=width+"%";progress.append(fill);
-  const percent=document.createElement("small");percent.textContent=width+"% aproximado de campos básicos · "+(p.spells?.length||0)+" conjuros · "+(p.traits?.length||0)+" rasgos";
+  const percent=document.createElement("small");percent.textContent=(filledSheet||filledBasic+filledAttributes)+" campos completados · "+width+"% orientativo · "+(p.spells?.length||0)+" conjuros · "+(p.traits?.length||0)+" rasgos";
   const update=document.createElement("p");update.textContent="Último cambio: "+safeDate(p.updatedAt);
   const actions=document.createElement("div");actions.className="actions";
   const view=document.createElement("a");view.className="primary";view.textContent="Ver / editar hoja";view.href="jugador.html?uid="+encodeURIComponent(p.ownerUid);
