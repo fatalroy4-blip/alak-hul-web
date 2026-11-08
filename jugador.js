@@ -5,11 +5,11 @@ import {getFirestore,doc,getDoc,setDoc,onSnapshot,serverTimestamp} from "https:/
 const $=id=>document.getElementById(id), all=sel=>[...document.querySelectorAll(sel)];
 const auth=getAuth(initializeApp(window.ALAK_FIREBASE_CONFIG)),db=getFirestore();
 const stats={strength:"Fuerza",dexterity:"Destreza",constitution:"Constitución",intelligence:"Inteligencia",wisdom:"Sabiduría",charisma:"Carisma"};
-const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",target:"sheet"},{id:"spells",name:"Trucos y conjuros",subtitle:"Grimorio personal",symbol:"✧",target:"spells"},{id:"traits",name:"Rasgos",subtitle:"Dotes y habilidades",symbol:"✦",target:"traits"},{id:"combat",name:"Combate",subtitle:"Mis recursos",symbol:"⚔",target:"combat"}];
-let user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
+const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",target:"sheet"},{id:"spells",name:"Trucos y conjuros",subtitle:"Grimorio personal",symbol:"✧",target:"spells"},{id:"traits",name:"Rasgos",subtitle:"Dotes y habilidades",symbol:"✦",target:"traits"},{id:"campaign",name:"Campaña",subtitle:"Multijugador",symbol:"⚔",target:"campaign"}];
+let currentRole="player",spellLibrary=[],user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
 const genId=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);
-const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],combatNotes:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},extras:[]});
-const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})}});
+const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},extras:[]});
+const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})}});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
 function change(){if(!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
@@ -48,18 +48,117 @@ function renderHome(){
  for(const item of [...builtins,...model.extras.map(x=>({...x,target:"extras",symbol:"✹"}))]){
   const b=document.createElement("button");b.type="button";b.className="tile";
   const image=model.tileImages[item.id];if(image)b.style.setProperty("--tile-image",'url("'+image+'")');
-  const icon=document.createElement("span");icon.className="tile-icon";icon.textContent=item.symbol;
-  const title=document.createElement("strong");title.textContent=item.name;
+  const icon=document.createElement("span");icon.className="tile-icon";if(item.id==="sheet"&&model.portrait){const img=document.createElement("img");img.className="miniature-portrait";img.src=model.portrait;img.alt="Retrato de mi personaje";icon.append(img)}else icon.textContent=item.symbol;
+  const title=document.createElement("strong");title.textContent=item.id==="traits"?(model.traitsButtonName||"Rasgos"):item.name;
   const summary=document.createElement("small");summary.textContent=item.subtitle||item.description||"Sección personal";
   b.append(icon,title,summary);b.onclick=()=>switchView(item.target,item.target==="extras"?item.id:null);host.append(b);
  }
  updateSummary();
 }
-function renderSheet(){
- for(const el of all("[data-field]"))el.value=model.fields[el.dataset.field]??"";
- for(const el of all("[data-stat]"))el.value=model.stats[el.dataset.stat]??"";
- $("sheetPortrait").src=model.portrait||"assets/hero.svg";
+function canChangePortrait(){return !!user && (user.uid===targetUid || currentRole==="owner");}
+const legacyFieldMap={name:"name",name2:"name",race:"race",background:"background",alignment:"alignment",xp:"xp",classLevel:"className",hpCurrent:"hp",hpMax:"maxHP",hpTemp:"tempHP",ac:"ac",initiative:"initiative",speed:"speed",backstory:"story",equipment:"equipment",personality:"personality",ideals:"ideals",profBonus:"proficiency"};
+function sheetFieldValue(key){
+ if(Object.prototype.hasOwnProperty.call(model.sheet||{},key))return model.sheet[key];
+ if(key==="classLevel")return [model.fields.className,model.fields.level?"N"+model.fields.level:""].filter(Boolean).join(" ");
+ if(legacyFieldMap[key])return model.fields[legacyFieldMap[key]]??"";
+ if(/^ability_\d$/.test(key)){const ability=["strength","dexterity","constitution","intelligence","wisdom","charisma"][Number(key.slice(-1))];return model.stats?.[ability]??""}
+ return "";
 }
+function renderSheet(){
+ if(!model)return;
+ const scope=$("character");
+ scope.querySelectorAll("[data-char]").forEach(el=>{
+  const key=el.dataset.char,value=sheetFieldValue(key);
+  if(el.type==="checkbox")el.checked=value===true||value==="true";
+  else if(document.activeElement!==el)el.value=String(value??"");
+ });
+ const image=model.portrait||"assets/hero.svg";
+ $("characterPortrait").src=image;
+ $("sheetPortrait").src=image;
+ const uploader=$("playerReplicaPortraitUpload");if(uploader){uploader.disabled=!canChangePortrait();uploader.closest("label")?.classList.toggle("portrait-forbidden",!canChangePortrait())}
+ $("portraitUpload").disabled=!canChangePortrait();
+ const status=$("charSaveStatus");if(status)status.textContent=canChangePortrait()?"Ficha personal · guardado en la nube":"Vista de DM · retrato protegido";
+}
+function syncSheetField(el){
+ const key=el.dataset.char;if(!key||!model)return;
+ model.sheet[key]=el.type==="checkbox"?el.checked:el.value;
+ if(key==="name"||key==="name2"){
+  model.fields.name=el.value;
+  const other=$("character").querySelector('[data-char="'+(key==="name"?"name2":"name")+'"]');
+  if(other){other.value=el.value;model.sheet[other.dataset.char]=el.value}
+ }else if(key==="classLevel"){
+  const raw=String(el.value||"");
+  model.fields.className=raw.replace(/\s*(?:nivel|n)\s*\d+\s*$/i,"").trim();
+  const level=raw.match(/(?:nivel|n)\s*(\d+)/i);if(level)model.fields.level=level[1];
+ }else if(legacyFieldMap[key])model.fields[legacyFieldMap[key]]=el.value;
+ else if(/^ability_\d$/.test(key)){const ability=["strength","dexterity","constitution","intelligence","wisdom","charisma"][Number(key.slice(-1))];model.stats[ability]=el.value}
+ change();if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
+}
+function populateSelectedSpellsOnSheet(){
+ if(!model)return;
+ const scope=$("character");if(!scope)return;
+ for(let level=0;level<=9;level++){
+  const items=model.spells.filter(x=>Number(x.level)===level);
+  const sheetFields=[...scope.querySelectorAll('input[data-char^="spell'+level+'_"]')];
+  sheetFields.forEach((el,i)=>{
+   const item=items[i];const key=el.dataset.char;
+   if(item){
+    model.sheet[key]=item.title;
+    const prep=scope.querySelector('[data-char="spell'+level+'prep_'+(i+1)+'"]');
+    if(prep)model.sheet[prep.dataset.char]=item.prepared===true;
+   }else if(key in model.sheet && model.sheet[key+"__auto"]){
+    model.sheet[key]="";delete model.sheet[key+"__auto"];
+   }
+  });
+ }
+ renderSheet();
+}
+function renderSpellSlots(){
+ if(!model)return;
+ const host=$("playerSpellSlots");if(!host)return;host.replaceChildren();
+ for(let level=1;level<=9;level++){
+  const values=model.slots[level]||{total:0,used:0},wrap=document.createElement("div");wrap.className="player-slot";
+  const title=document.createElement("h4");title.textContent="Nivel "+level;
+  const total=document.createElement("label");total.textContent="Total";
+  const tin=document.createElement("input");tin.type="number";tin.min=0;tin.max=30;tin.value=values.total||"";tin.placeholder="—";
+  const used=document.createElement("label");used.textContent="Gastados";
+  const uin=document.createElement("input");uin.type="number";uin.min=0;uin.max=30;uin.value=values.used||"";uin.placeholder="0";
+  const update=()=>{
+   const t=Math.max(0,Math.min(30,Number(tin.value)||0)),u=Math.min(t,Math.max(0,Math.min(30,Number(uin.value)||0)));
+   model.slots[level]={total:t,used:u};
+   const totalField=$("character")?.querySelector('[data-char="spell_slots'+level+'_total"]'),usedField=$("character")?.querySelector('[data-char="spell_slots'+level+'_spent"]');
+   if(totalField){totalField.value=String(t);model.sheet[totalField.dataset.char]=String(t)}
+   if(usedField){usedField.value=String(u);model.sheet[usedField.dataset.char]=String(u)}
+   change();
+  };
+  tin.onchange=update;uin.onchange=update;total.append(tin);used.append(uin);wrap.append(title,total,used);host.append(wrap);
+ }
+}
+async function loadSpellCatalog(){
+ try{
+  const response=await fetch("data.json",{cache:"force-cache"});if(!response.ok)throw Error("Sin catálogo");
+  const data=await response.json();
+  spellLibrary=Array.isArray(data.spells)?data.spells.filter(x=>typeof x.name==="string").map(x=>({title:x.name,level:Number(x.level)||0,description:x.description||""})):[];
+ }catch(e){spellLibrary=[]}
+ renderSpellCatalog();
+}
+function renderSpellCatalog(){
+ const host=$("playerSpellCatalog");if(!host||!model)return;host.replaceChildren();
+ const query=($("playerSpellSearch")?.value||"").toLowerCase().trim(),level=$("playerSpellLevelFilter")?.value||"all";
+ const items=spellLibrary.filter(x=>(level==="all"||String(x.level)===level)&&(!query||(x.title+" "+x.description).toLowerCase().includes(query))).slice(0,70);
+ if(!items.length){const p=document.createElement("p");p.className="hint";p.textContent=spellLibrary.length?"No hay coincidencias. Puedes añadir un conjuro personalizado abajo.":"El catálogo no está disponible; puedes agregar conjuros manualmente.";host.append(p)}
+ for(const item of items){
+  const selected=model.spells.find(x=>x.title.toLowerCase()===item.title.toLowerCase()&&Number(x.level)===item.level);
+  const card=document.createElement("article");card.className="spell-choice";
+  const title=document.createElement("strong");title.textContent=item.title;
+  const meta=document.createElement("small");meta.textContent=item.level===0?"Truco":"Nivel "+item.level;
+  const info=document.createElement("p");info.textContent=item.description.slice(0,330)+(item.description.length>330?"…":"");
+  const button=document.createElement("button");button.type="button";button.textContent=selected?"✓ Elegido":"✦ Elegir";button.disabled=Boolean(selected);
+  button.onclick=()=>{model.spells.push({id:genId(),title:item.title,level:String(item.level),description:item.description,prepared:false});populateSelectedSpellsOnSheet();change();renderEntries("spells");renderSpellCatalog()};
+  card.append(title,meta,info,button);host.append(card);
+ }
+}
+
 function renderCombat(){
  for(const [id,field] of [["combatHP","hp"],["combatMax","maxHP"],["combatInitiative","initiative"],["combatAC","ac"]])$(id).textContent=model.fields[field]||"—";
  if(document.activeElement!==$("combatNotes"))$("combatNotes").value=model.combatNotes||"";
@@ -72,7 +171,10 @@ function renderEntries(type){
   const h=document.createElement("h3");h.textContent=item.title;
   const small=document.createElement("small");small.textContent=type==="spells"?(Number(item.level)===0?"Truco":"Nivel "+item.level):item.type;
   const p=document.createElement("p");p.textContent=item.description||"Sin descripción";
-  const remove=document.createElement("button");remove.textContent="Eliminar";remove.onclick=()=>{if(!confirm("¿Eliminar "+item.title+"?"))return;model[type]=model[type].filter(x=>x.id!==item.id);change();renderEntries(type)};
+  if(type==="spells"){
+   const prep=document.createElement("button");prep.type="button";prep.textContent=item.prepared?"✓ Preparado":"Preparar";prep.onclick=()=>{item.prepared=!item.prepared;populateSelectedSpellsOnSheet();change();renderEntries("spells")};card.append(prep);
+  }
+  const remove=document.createElement("button");remove.textContent="Eliminar";remove.onclick=()=>{if(!confirm("¿Eliminar "+item.title+"?"))return;model[type]=model[type].filter(x=>x.id!==item.id);change();renderEntries(type);if(type==="spells"){populateSelectedSpellsOnSheet();renderSpellCatalog()}};
   card.append(h,small,p,remove);host.append(card);
  }
 }
@@ -84,6 +186,8 @@ function renderDesign(){
  if(!model)return;
  for(const btn of all("[data-theme]"))btn.classList.toggle("selected",btn.dataset.theme===model.coverTheme);
  $("portraitPreview").src=model.portrait||"assets/hero.svg";
+ $("portraitUpload").disabled=!canChangePortrait();
+ $("traitsButtonName").value=model.traitsButtonName||"Rasgos";
  const host=$("tileEditors");host.replaceChildren();
  for(const item of [...builtins,...model.extras]){
   const wrapper=document.createElement("div");wrapper.className="tile-editor";
@@ -131,10 +235,11 @@ async function changeImage(file,callback,refresh=false){
  status("Preparando imagen…");
  try{callback(await optimize(file));change();renderHome();renderSheet();if(refresh)renderDesign()}catch(e){status("Error de imagen: "+e.message)}
 }
-function renderAll(){if(!model)return;renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat()}
+function renderAll(){if(!model)return;renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog()}
 async function activate(account){
  user=account;const requested=new URLSearchParams(location.search).get("uid");
- administrator=["owner","dm"].includes(await role(account.uid));
+ currentRole=await role(account.uid);
+ administrator=["owner","dm"].includes(currentRole);
  if(requested&&requested!==account.uid&&!administrator){$("loginStatus").textContent="Esta hoja pertenece a otra persona.";return}
  targetUid=requested||account.uid;
  $("authWall").hidden=true;$("workspace").hidden=false;$("logoutBtn").hidden=false;
@@ -145,7 +250,7 @@ async function activate(account){
   if(snapshot.exists())model=normalize(snapshot.data());
   else if(targetUid===account.uid){model=blank(targetUid,account);await setDoc(ref,{...model,updatedAt:serverTimestamp()})}
   else {status("El jugador todavía no ha creado su hoja.");return}
-  renderAll();
+  renderAll();void loadSpellCatalog();
   if(unsubscribe)unsubscribe();
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
@@ -168,6 +273,16 @@ function bind(){
  all("[data-field]").forEach(el=>el.oninput=()=>{if(!model)return;model.fields[el.dataset.field]=el.value;change();renderCombat()});
  all("[data-stat]").forEach(el=>el.oninput=()=>{if(!model)return;model.stats[el.dataset.stat]=el.value;change()});
  $("combatNotes").oninput=()=>{model.combatNotes=$("combatNotes").value;change()};
+ $("character").querySelectorAll("[data-char]").forEach(el=>el.addEventListener("input",()=>syncSheetField(el)));
+ $("playerReplicaPortraitUpload").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];e.target.value="";if(!file||!canChangePortrait())return;
+  await changeImage(file,value=>model.portrait=value,true);
+ });
+ $("traitsButtonName").oninput=e=>{model.traitsButtonName=e.target.value.slice(0,30)||"Rasgos";change();renderHome();
+  const tab=document.querySelector('[data-view="traits"]');if(tab)tab.textContent="✦ "+model.traitsButtonName;
+  const heading=document.querySelector("#traitsView h2");if(heading)heading.textContent=model.traitsButtonName;};
+ $("playerSpellSearch").addEventListener("input",renderSpellCatalog);
+ $("playerSpellLevelFilter").addEventListener("change",renderSpellCatalog);
  for(const [button,direction] of [["takeDamage",-1],["receiveHeal",1]]){
   $(button).onclick=()=>{
    const amount=Math.max(1,Math.min(9999,Number($("combatAmount").value)||1));
@@ -180,13 +295,13 @@ function bind(){
    event.preventDefault();const f=event.currentTarget,fd=new FormData(f);
    const title=String(fd.get("title")||"").trim();if(!title)return;
    model[kind].push({id:genId(),title:title.slice(0,90),description:String(fd.get("description")||"").slice(0,3500),...(kind==="spells"?{level:String(fd.get("level"))}:{type:String(fd.get("type"))})});
-   f.reset();change();renderEntries(kind);
+   f.reset();change();renderEntries(kind);if(kind==="spells"){populateSelectedSpellsOnSheet();renderSpellCatalog()}
   };
  }
  for(const b of all("[data-theme]"))b.onclick=()=>{model.coverTheme=b.dataset.theme;model.coverImage="";change();renderHome();renderDesign()};
  $("clearCover").onclick=()=>{model.coverImage="";change();renderHome()};
  $("coverUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file)await changeImage(file,value=>model.coverImage=value)};
- $("portraitUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file)await changeImage(file,value=>model.portrait=value,true)};
+ $("portraitUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file&&canChangePortrait())await changeImage(file,value=>model.portrait=value,true)};
  $("extraForm").onsubmit=event=>{
   event.preventDefault();if(model.extras.length>=10){alert("Límite de 10 botones adicionales.");return}
   const fd=new FormData(event.currentTarget),name=String(fd.get("name")||"").trim();
