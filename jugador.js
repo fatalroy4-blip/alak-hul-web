@@ -8,8 +8,8 @@ const stats={strength:"Fuerza",dexterity:"Destreza",constitution:"Constitución"
 const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",target:"sheet"},{id:"spells",name:"Trucos y conjuros",subtitle:"Grimorio personal",symbol:"✧",target:"spells"},{id:"traits",name:"Rasgos",subtitle:"Dotes y habilidades",symbol:"✦",target:"traits"},{id:"campaign",name:"Campaña",subtitle:"Multijugador",symbol:"⚔",target:"campaign"}];
 let currentRole="player",spellLibrary=[],user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
 const genId=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);
-const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},extras:[]});
-const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})}});
+const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},extras:[],ruleBuild:null});
+const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
 function change(){if(!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
@@ -148,7 +148,7 @@ function syncSheetField(el){
   model.slots[level][kind==="total"?"total":"used"]=Math.max(0,Number(el.value)||0);
   renderSpellSlots();
  }
- change();if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
+ change();if(key==="classLevel")window.dispatchEvent(new Event("alak:player-level-changed"));if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
 }
 function populateSelectedSpellsOnSheet(){
  if(!model)return;
@@ -318,12 +318,109 @@ async function activate(account){
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
    const data=snap.data();
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos"});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
  }catch(e){$("workspace").hidden=true;$("authWall").hidden=false;$("loginStatus").textContent="No pude cargar la hoja: "+(e.code||e.message)+". Revisa las reglas de Firebase."}
 }
+// Puente controlado para el asistente del Manual del Jugador 2014.
+// La aplicación realiza únicamente fusiones aditivas y preserva campos ya llenados.
+window.alakRuleBridge={
+ get:()=>model?{...model,editable:Boolean(user),role:currentRole,ownSheet:targetUid===user.uid}:null,
+ apply:(choice)=>{
+  if(!model||!user||!choice)return {ok:false,message:"Abre primero tu ficha con Google"};
+  const cat=window.ALAK_RULES_2014;if(!cat)return {ok:false,message:"Catálogo sin cargar"};
+  const race=cat.races[choice.raceId],klass=cat.classes[choice.classId];
+  const features=cat.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
+  const info=cat.levelInfo(choice.classId,choice.level);
+  let added=0,fieldsAdded=0;
+  const add=(key,val)=>{
+   if(val===undefined||val===null||String(val).trim()==="")return;
+   if(model.fields[key]===undefined||String(model.fields[key]).trim()===""){model.fields[key]=String(val);fieldsAdded++}
+  };
+  const addSheet=(key,val)=>{
+   if(val===undefined||val===null||String(val).trim()==="")return;
+   if(model.sheet[key]===undefined||String(model.sheet[key]).trim()===""){model.sheet[key]=String(val);fieldsAdded++}
+  };
+  add("race",race?race.name+(race.sub?.[choice.subraceId]?" · "+race.sub[choice.subraceId].name:""):"");
+  add("className",klass?.name);
+  add("level",choice.level);
+  add("background",choice.background);
+  add("speed",race?.sub?.[choice.subraceId]?.speed||race?.speed);
+  add("proficiency",info.proficiency);
+  addSheet("race",model.fields.race);
+  addSheet("classLevel",klass?klass.name+" N"+choice.level:"");
+  addSheet("background",model.fields.background);
+  addSheet("speed",model.fields.speed);
+  addSheet("profBonus",info.proficiency>=0?"+"+info.proficiency:"");
+  addSheet("hitDice",info.hitDice);
+  if(klass?.casting!=="none"&&klass?.casting){
+   addSheet("spell_class",klass.name);
+   if(klass.casting==="pact"||klass.casting==="full"||klass.casting==="half"){
+    const castAbility=({bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
+    if(castAbility)addSheet("spell_ability",cat.keys[castAbility]);
+   }
+  }
+  const saves={str:"str",dex:"dex",con:"con",int:"int",wis:"wis",cha:"cha"};
+  for(const key of klass?.saves||[]){
+   if(model.sheet["saveprof_"+saves[key]]===undefined)model.sheet["saveprof_"+saves[key]]=true;
+  }
+  for(const f of features.filter(x=>!choice.selectedFeatureIds||choice.selectedFeatureIds.includes(x.id))){
+   if(!model.traits.some(x=>x.rulesId===f.id||(x.title||"").toLowerCase().trim()===f.title.toLowerCase().trim())){
+    model.traits.push({id:genId(),title:f.title,description:f.note,type:"Manual 2014 · "+f.kind,level:f.level,rulesId:f.id});
+    added++;
+   }
+  }
+  if(info.resource&&!model.traits.some(x=>x.rulesId==="resources:"+choice.classId)){
+   model.traits.push({id:genId(),title:"Recursos de clase",description:info.resource,type:"Progresión",rulesId:"resources:"+choice.classId});
+   added++;
+  }
+  if(Array.isArray(choice.abilities)){
+   const attrs=["strength","dexterity","constitution","intelligence","wisdom","charisma"];
+   for(let i=0;i<attrs.length;i++){
+    const value=choice.abilities[i];
+    if(value!==null&&value!==undefined&&value!==""){
+     const field="ability_"+i;
+     if(model.sheet[field]===undefined||String(model.sheet[field]).trim()===""){
+      // El usuario asigna las puntuaciones base. Los bonificadores raciales se muestran
+      // por separado para evitar aumentarlos dos veces en una hoja existente.
+      model.sheet[field]=String(value);model.stats[attrs[i]]=String(value);fieldsAdded++;
+     }
+    }
+   }
+  }
+  for(let i=0;i<(info.slots||[]).length;i++){
+   const level=i+1,total=info.slots[i];if(!total)continue;
+   const previous=model.slots[level];
+   if(previous===undefined||choice.updateSlots===true){
+    const used=Math.min(total,Math.max(0,Number(previous?.used)||0));
+    model.slots[level]={total,used};
+    if(choice.updateSlots||model.sheet["spell_slots"+level+"_total"]===undefined){
+     model.sheet["spell_slots"+level+"_total"]=String(total);
+     model.sheet["spell_slots"+level+"_spent"]=String(used);
+    }
+   }
+  }
+  model.ruleBuild={
+   edition:"2014",raceId:choice.raceId,subraceId:choice.subraceId||"",
+   classId:choice.classId,subclassId:choice.subclassId||"",level:Number(choice.level),
+   background:choice.background||"",autoProgress:choice.autoProgress!==false,
+   selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),
+   updatedAt:new Date().toISOString()
+  };
+  change();renderAll();
+  return {ok:true,added,fieldsAdded,message:"Se añadieron "+added+" rasgos y se completaron "+fieldsAdded+" campos vacíos. Lo existente quedó intacto."};
+ }
+};
+window.addEventListener("alak:player-level-changed",()=>{
+ if(!model?.ruleBuild?.autoProgress||!window.ALAK_RULES_2014)return;
+ const raw=String(model.fields.level||"");
+ const n=Math.min(20,Math.max(1,Number(raw)||0));
+ if(!n||n<=Number(model.ruleBuild.level||0))return;
+ const build=model.ruleBuild;
+ window.alakRuleBridge.apply({...build,level:n,updateSlots:true});
+});
 function bind(){
  const grid=$("statsGrid");for(const [key,title] of Object.entries(stats)){
   const label=document.createElement("label");label.textContent=title;
