@@ -123,6 +123,7 @@ if(mountPoints.length){
    return {...s,roster,selectionInitialized:true,turnIndex:index>=0?index:Math.min(s.turnIndex||0,Math.max(0,roster.length-1)),started:roster.length?s.started:false};
   });
  }
+ window.alakResetEncounter=async()=>{while(saving)await new Promise(resolve=>setTimeout(resolve,50));return editCombat(s=>({...s,roster:[],started:false,round:0,turnIndex:0,selectionInitialized:true}));};
  window.alakToggleParticipant=toggleParticipant;
  window.alakSetEncounterSelection=(roster,catalog)=>void editCombat(s=>{
   const currentId=s.roster[s.turnIndex]?.id;
@@ -148,7 +149,7 @@ if(mountPoints.length){
   help.setAttribute('aria-controls','combatActionsDialog');surface.querySelector('h3').append(help);
   const status=create('p','mc-combat-status',signal.textContent);status.setAttribute('role','status');status.hidden=!/local:|No se pudo|guardado en curso|Sin acceso/.test(signal.textContent);surface.append(status);
   const summary=create("div","mc-summary");
-  const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",String(info.started===false?0:(info.round||1))));summary.append(round);
+  const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",info.started===false?"—":String(info.round||1)));summary.append(round);
   const turn=create("div","mc-stat");turn.append(create("small","","Turno de"),create("strong","",info.started===false?"—":(info.roster[info.turnIndex]?.name||"—")));summary.append(turn);surface.append(summary);
   const controls=create("div","mc-actions");
   if(isAdmin){

@@ -49,3 +49,11 @@ window.alakApplyEncounterCatalog=catalog=>{
 
 // Manual initiative arrows also publish the visible order without resetting the actor.
 document.getElementById('initiativeList')?.addEventListener('click',event=>{if(event.target.closest('.move-up,.move-down'))queueMicrotask(()=>window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog()));},true);
+// A new encounter resets both the legacy board and its shared turn tracker.
+document.getElementById('newCombatBtn').onclick=async()=>{
+ if(!confirm('¿Iniciar un nuevo combate? Se quitarán todos los participantes y el daño volverá a 0.'))return;
+ await window.alakResetEncounter?.();
+ state.selected={};state.selectionOrder=[];
+ state.combat=Object.fromEntries(Object.entries(state.combat||{}).map(([name,c])=>[name,{maxHp:c.maxHp,side:c.side,kind:c.kind,damage:0,dead:false}]));
+ sharedTurn=null;saveState();renderRoster();renderInitiative();renderCombatAdmin();
+};

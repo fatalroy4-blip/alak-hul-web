@@ -39,12 +39,12 @@ async function startApp() {
   // El código y los controles de la ficha antigua solo se inicializan después
   // de comprobar que la sesión autenticada es la propietaria.
   await insertScript("cleric-grimoire-2014.js?v=51");
-  await insertScript("script.js?v=56");
+  await insertScript("script.js?v=57");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
   await insertScript("cloud-sync.js?v=48", true);
-  await insertScript("encounter-bridge.js?v=56");
-  await insertScript("mesa-compartida.js?v=56", true);
+  await insertScript("encounter-bridge.js?v=57");
+  await insertScript("mesa-compartida.js?v=57", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");
