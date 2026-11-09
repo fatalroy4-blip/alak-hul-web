@@ -1,11 +1,25 @@
 // The left-hand catalog is the source of the owner's encounter.
 function encounterEntry(name){
  const c=combatState(name),max=getParticipantMaxHp(name,c);
- return {id:'local:'+name,name,type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
+ return {id:'local:'+name,name,type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,damage:Math.max(0,Number(c.damage)||0),dead:!!c.dead,side:isEnemyCombatant(name,c)?'enemy':'ally',portrait:getPortrait(name,isEnemyCombatant(name,c)),maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
 }
 window.alakEncounterParticipants=()=>state.selectionOrder.filter(n=>state.selected[n]&&combatantNames().includes(n)).map(encounterEntry);
 window.alakEncounterCatalog=()=>combatantNames().map(encounterEntry);
-let sharedTurn=null;
+let sharedTurn=null,applyingShared=false;
+let lastPublished=new Map();
+const baseSaveState=saveState;
+saveState=function(){baseSaveState();if(!applyingShared)queueMicrotask(publishCombatDetails);};
+function publishCombatDetails(){
+ if(!window.alakPatchEncounter)return;
+ const patches=[];
+ for(const entry of window.alakEncounterCatalog()){
+  const previous=lastPublished.get(entry.id)||{};const changes={};
+  for(const key of ['damage','dead','side','portrait','maxHP','hp','initiative'])if(entry[key]!==previous[key])changes[key]=entry[key];
+  if(Object.keys(changes).length)patches.push({id:entry.id,...changes});
+  lastPublished.set(entry.id,entry);
+ }
+ if(patches.length)window.alakPatchEncounter(patches);
+}
 const originalInitiative=renderInitiative;
 renderInitiative=function(){
  originalInitiative();
@@ -20,12 +34,25 @@ renderInitiative=function(){
  });
 };
 window.alakApplyEncounterRoster=(roster,started=false,index=0)=>{
+ applyingShared=true;
  const names=new Set(combatantNames());
  for(const name of names)state.selected[name]=roster.some(p=>p.name===name);
  state.selectionOrder=roster.map(p=>p.name).filter(n=>names.has(n));
- for(const p of roster)if(names.has(p.name)&&Number.isFinite(p.initiative))state.combat[p.name]={...combatState(p.name),initiative:p.initiative};
+ for(const p of roster)if(names.has(p.name)){
+  const c={...combatState(p.name)};
+  if(Number.isFinite(p.initiative))c.initiative=p.initiative;
+  if(p.maxHP!==undefined)c.maxHp=p.maxHP;
+  if(p.damage!==undefined)c.damage=p.damage;
+  else if(p.hp!=null&&p.maxHP!=null)c.damage=Math.max(0,p.maxHP-p.hp);
+  if(p.dead!==undefined)c.dead=p.dead;
+  if(p.side)c.side=p.side;
+  if(p.portrait?.startsWith('data:image/'))state.portraits[p.name]=p.portrait;
+  state.combat[p.name]=c;
+  if(p.name==='Roger'&&typeof hpInput==='function'){const field=hpInput('hpMax');if(field&&p.maxHP!=null)field.value=String(p.maxHP);syncRogerHpFromCombat();}
+ }
  sharedTurn=started?roster[index]?.name:null;
  saveState();renderRoster();renderInitiative();
+ lastPublished=new Map(window.alakEncounterCatalog().map(p=>[p.id,p]));applyingShared=false;
 };
 // Preserve the existing list click behaviour; publish the resulting selection afterwards.
 document.getElementById('rosterList')?.addEventListener('click',()=>{
@@ -34,7 +61,8 @@ document.getElementById('rosterList')?.addEventListener('click',()=>{
 const rosterPanel=document.querySelector('.roster-panel');
 const manage=document.createElement('button');manage.type='button';manage.textContent='Editar lista';manage.title='Agregar un personaje nuevo o quitarlo de la lista';
 const catalogDialog=document.createElement('dialog');catalogDialog.className='combat-actions-dialog';catalogDialog.setAttribute('aria-label','Editar lista de participantes');
-const close=document.createElement('button');close.type='button';close.textContent='Cerrar';close.onclick=()=>{catalogDialog.close();window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog());};catalogDialog.append(close);
+catalogDialog.addEventListener('close',()=>window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog()));
+const close=document.createElement('button');close.type='button';close.textContent='Cerrar';close.onclick=()=>catalogDialog.close();catalogDialog.append(close);
 const editor=document.getElementById('combatAdmin');if(editor)catalogDialog.append(editor);
 document.body.append(catalogDialog);manage.onclick=()=>catalogDialog.showModal();rosterPanel?.insertBefore(manage,document.getElementById('rosterList'));
 renderInitiative();

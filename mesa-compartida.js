@@ -89,6 +89,15 @@ if(mountPoints.length){
   if(saved){localCombat=false;window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);render();}
   else{warn('Combate local: el cambio NO se sincronizó con el DM. Revisa la conexión o los permisos de Firebase.');}
  }
+ let patchQueue=Promise.resolve();
+ window.alakPatchEncounter=patches=>{
+  patchQueue=patchQueue.then(async()=>{
+   while(saving)await new Promise(resolve=>setTimeout(resolve,30));
+   if(!isAdmin)return;
+   const merge=rows=>(rows||[]).map(p=>({...p,...patches.find(x=>x.id===p.id)}));
+   await edit(s=>({...s,roster:merge(s.roster),participantCatalog:merge(s.participantCatalog)}));
+  });return patchQueue;
+ };
  function renderTable(){
   const box=element.table;box.replaceChildren();
   const top=panel("✦ Mi mesa · "+info.title,box);
@@ -98,20 +107,43 @@ if(mountPoints.length){
    stat.append(create("small","",label),n);summary.append(stat)
   }
   top.append(summary);
-  const roster=create("div","mc-roster");
-  if(!info.roster.length)empty(top,"Tu DM todavía no ha agregado participantes. Cuando lo haga, aparecerán aquí para todos.");
-  else {
-   info.roster.forEach((member,i)=>{
-    const card=create("article","mc-figure"+(info.turnIndex===i?" is-active":""));
-    card.append(create("small","mc-type",member.type==="enemy"?"Enemigo":member.type==="ally"?"Aliado":"Jugador"));
-    card.append(create("strong","",member.name||"Sin nombre"));
-    card.append(create("small","",member.classInfo||"Participante"));
-    card.append(create("div","mc-hp","PG: "+(member.hp??"—")+" / "+(member.maxHP??"—")+" · CA "+(member.ac??"—")+" · Inic. "+(member.initiative??"—")));
-    if(info.turnIndex===i)card.append(create("small","", "✦ Turno actual"));
-    roster.append(card);
-   });top.append(roster);
-  }
+  top.append(combatList());
  }
+ function portrait(entry){
+  const value=entry.portrait||info.participantCatalog?.find(p=>p.id===entry.id)?.portrait;
+  return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
+ }
+ function combatList(){
+  const list=create('div','mc-combat-list');
+  if(!info.roster.length){empty(list,'No hay participantes seleccionados.');return list;}
+  info.roster.forEach((entry,i)=>{
+   const enemy=(entry.side||entry.type)==='enemy';
+   const card=create('article','mc-combat-row'+(enemy?' enemy':' ally')+(info.started&&info.turnIndex===i?' is-current':'')+(entry.dead?' is-dead':''));
+   if(info.started&&info.turnIndex===i)card.setAttribute('aria-current','step');
+   card.append(create('span','mc-order',String(i+1)));
+   const photo=makeBtn('',()=>window.alakViewPortrait?.(entry.name,portrait(entry),photo));photo.className='mc-portrait';photo.setAttribute('aria-label','Ver retrato de '+entry.name);
+   const img=create('img');img.src=portrait(entry);img.alt='Retrato de '+entry.name;photo.append(img);card.append(photo);
+   const identity=create('div','mc-identity');identity.append(create('strong','',entry.name),create('small','mc-badge',enemy?'ENEMIGO':entry.type==='player'?'JUGADOR':'ALIADO'));
+   if(isAdmin){
+    const roll=field('Inic.','initiative',entry.initiative??0,'number');const input=roll.querySelector('input');input.min='-99';input.setAttribute('aria-label','Tirada de iniciativa de '+entry.name);
+    input.onchange=()=>{const value=input.valueAsNumber;if(Number.isFinite(value))void edit(s=>{
+     const currentId=s.roster[s.turnIndex]?.id;
+     const roster=s.roster.map(p=>p.id===entry.id?{...p,initiative:Math.trunc(value)}:p).sort((a,b)=>(b.initiative||0)-(a.initiative||0));
+     return {...s,roster,turnIndex:Math.max(0,roster.findIndex(p=>p.id===currentId))};
+    });};identity.append(roll);
+   }else identity.append(create('small','','Inic. '+(entry.initiative??0)));
+   if(entry.dead)identity.append(create('small','','Caído'));
+   card.append(identity);
+   const damage=Math.max(0,Number(entry.damage??(entry.maxHP!=null&&entry.hp!=null?entry.maxHP-entry.hp:0))||0);
+   const max=Number(entry.maxHP)>0?Number(entry.maxHP):null, hp=max===null?null:Math.max(0,max-damage),ratio=max?Math.min(100,100*hp/max):100;
+   const health=create('div','mc-health');health.append(create('div','','Vida '+(hp??'—')+' / '+(max??'—')+(max?' · '+Math.round(ratio)+'%':' · PG sin definir')));
+   const bar=create('div','mc-life-track');bar.setAttribute('role','meter');bar.setAttribute('aria-label','Vida de '+entry.name);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax',String(max||100));bar.setAttribute('aria-valuenow',String(hp??100));bar.setAttribute('aria-valuetext',max?hp+' de '+max:'PG sin definir');const fill=create('span');fill.style.width=ratio+'%';bar.append(fill);health.append(bar);card.append(health);
+   const damages=create('div','mc-damage');damages.append(create('small','','DAÑO'),create('strong','',String(damage)));card.append(damages);
+   if(isAdmin){const actions=create('div','mc-actions');actions.append(makeBtn('⚔ Daño',()=>void changeHP(entry.id,-1)),makeBtn('✚ Curar',()=>void changeHP(entry.id,1)));card.append(actions);}
+   list.append(card);
+  });return list;
+ }
+
  function toggleParticipant(name){
   if(!isAdmin)return;
   void edit(s=>{
@@ -164,30 +196,18 @@ if(mountPoints.length){
   }
   if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
   if(!info.roster.length&&!window.alakEncounterParticipants?.().length){empty(surface,"Selecciona participantes de la lista para iniciar el combate.");return}
-  const list=create("div","mc-roster");
-  info.roster.forEach((entry,i)=>{
-   const card=create("article","mc-figure"+(info.turnIndex===i?" is-active":""));
-   card.append(create("small","mc-type",entry.type==="enemy"?"Enemigo":entry.type==="ally"?"Aliado":"Jugador"));
-   card.append(create("strong","",entry.name||"Sin nombre"));
-   card.append(create("div","mc-hp","PG "+(entry.hp??"—")+" / "+(entry.maxHP??"—")+" · Iniciativa "+(entry.initiative??"—")));
-   if(isAdmin){
-    const roll=field('Tirada de iniciativa','initiative',entry.initiative??0,'number');const input=roll.querySelector('input');input.min='-99';input.onchange=()=>{const value=input.valueAsNumber;if(Number.isFinite(value))void edit(s=>({...s,roster:s.roster.map(p=>p.id===entry.id?{...p,initiative:Math.trunc(value)}:p)}))};card.append(roll);
-    const actions=create("div","mc-actions");
-    actions.append(makeBtn("− Daño",()=>void changeHP(entry.id,-1)),makeBtn("+ Curación",()=>void changeHP(entry.id,1)),makeBtn("Quitar",()=>{if(confirm("¿Retirar a "+entry.name+" del combate?"))void edit(s=>({...s,roster:s.roster.filter(x=>x.id!==entry.id),turnIndex:0}))}));
-    card.append(actions);
-   }
-   list.append(card);
-  });surface.append(list);
+  surface.append(combatList());
   if(!isAdmin)surface.append(create("p","mc-info","Los cambios de vida, turnos y rondas se actualizan automáticamente desde la cuenta del DM o del propietario."));
  }
  async function changeHP(entryId,direction){
   const delta=Number(prompt(direction<0?"¿Cuántos puntos de daño?":"¿Cuántos puntos de curación?","1"));
   if(!Number.isFinite(delta)||delta<=0||delta>9999)return;
   const m=info.roster.find(x=>x.id===entryId);if(!m)return;
-  const newHp=Math.max(0,Math.min(Number(m.maxHP)||9999,(Number(m.hp)||0)+direction*delta));
-  await edit(s=>({...s,roster:s.roster.map(x=>x.id===entryId?{...x,hp:newHp}:x)}));
+  const damage=Math.max(0,Number(m.damage??(m.maxHP!=null&&m.hp!=null?m.maxHP-m.hp:0))-direction*delta);
+  const newHp=m.maxHP==null?null:Math.max(0,Number(m.maxHP)-damage);
+  await edit(s=>({...s,roster:s.roster.map(x=>x.id===entryId?{...x,hp:newHp,damage}:x)}));
   // Mantener sincronizada también la hoja de personaje individual; nunca editar su retrato.
-  if(m.uid){
+  if(m.uid&&newHp!==null){
    try{await updateDoc(doc(db,"players",m.uid),{"fields.hp":String(newHp),"sheet.hpCurrent":String(newHp),"updatedBy":current.uid,"updatedAt":serverTimestamp()})}
    catch(e){warn("Mesa guardada; no se pudo sincronizar la hoja individual: "+(e.code||"error"))}
   }
@@ -219,8 +239,9 @@ if(mountPoints.length){
   const open=makeBtn('Agregar / quitar participantes',()=>select('combat',true));surface.append(open);
 
  }
- function render(){renderTable();renderCombat();renderDiary();renderManage();select(active)}
+ function render(){if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();select(active)}
  async function activate(account){
+  const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
   try{
    const roleDoc=await getDoc(doc(db,"appRoles",account.uid));
@@ -249,8 +270,11 @@ if(mountPoints.length){
     },e=>warn("Mesa disponible; no se pueden consultar personajes: "+(e.code||"")));
    }else players=[];
    if(isAdmin&&window.alakEncounterCatalog){
-    const catalog=window.alakEncounterCatalog(),selected=window.alakEncounterParticipants();
-    await edit(s=>({...s,participantCatalog:s.participantCatalog?.length?s.participantCatalog:catalog,roster:s.selectionInitialized||s.roster.length?s.roster:selected,selectionInitialized:true}));
+    const catalog=localCatalog||window.alakEncounterCatalog(),selected=window.alakEncounterParticipants();
+    await edit(s=>{
+     const migrate=p=>{const local=catalog.find(c=>c.id===p.id||c.name===p.name);return local?{...local,...p,portrait:p.portrait||local.portrait}:p;};
+     return {...s,participantCatalog:(s.participantCatalog?.length?s.participantCatalog:catalog).map(migrate),roster:(s.selectionInitialized||s.roster.length?s.roster:selected).map(migrate),selectionInitialized:true};
+    });
    }
    render();
   }catch(e){warn("No se pudo verificar rol: "+(e.code||e.message))}
@@ -264,3 +288,7 @@ if(mountPoints.length){
  });
  select("table");
 }
+
+
+
+

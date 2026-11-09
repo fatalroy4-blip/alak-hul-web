@@ -68,3 +68,21 @@
 #combat .mc-combat-dock .mc-roster,#combat .mc-combat-dock .mc-info{display:none}
 #combat .mc-combat-dock .mc-empty{font-size:11px;margin:0;padding:4px 6px}
 .encounter-roll{display:flex;align-items:center;gap:4px;font-size:11px;margin-top:4px}.encounter-roll input{width:48px;padding:3px;color:inherit;background:#21142d;border:1px solid #8c6d99;border-radius:4px}.initiative-row.encounter-current{outline:2px solid #f8d5a5;outline-offset:-2px;background-color:#493153}.roster-panel>button{font-size:12px;margin:0 0 8px}
+
+/* Detailed initiative is identical for table and combat viewers. */
+.mesa-compartida .mc-combat-list{display:grid;gap:10px;min-width:0}
+.mesa-compartida .mc-combat-row{display:grid;grid-template-columns:32px 52px minmax(90px,160px) minmax(90px,1fr) 50px;align-items:center;gap:12px;padding:12px;border:1px solid #64466f;border-left:2px solid #a47bc5;border-radius:12px;background:#21172bf0;min-width:0}
+.mesa-compartida .mc-combat-row.enemy{border-left-color:#dc6984}.mesa-compartida .mc-combat-row.is-current{outline:2px solid #efcf87;outline-offset:-2px;background:#39263f}.mc-combat-row.is-dead{opacity:.7}
+.mc-order{border:1px solid #a77ac3;background:#503064;border-radius:8px;text-align:center;padding:6px;color:#ffe9b6}
+.mesa-compartida .mc-portrait{padding:0;border:1px solid #d6b675;border-radius:50%;background:#3e284a;width:48px;height:48px;cursor:zoom-in;overflow:hidden}.mc-portrait img{width:100%;height:100%;object-fit:cover}
+.mc-identity{min-width:0}.mc-identity strong{display:block;font:700 17px Georgia;color:#ffe5b5;overflow-wrap:anywhere}.mc-identity small{display:block;font-size:11px;margin-top:4px}.mc-identity label{display:block;font-size:11px;margin-top:4px}.mc-identity input{width:48px;background:#21142d;color:#f8dfbc;border:1px solid #856693;border-radius:4px}.mc-badge{color:#9ce5d0}.enemy .mc-badge{color:#ffa1b8}
+.mc-health{min-width:0;text-align:center;font-size:12px;color:#e0d0e8}.mc-life-track{height:7px;border-radius:9px;background:#423047;border:1px solid #70577b;overflow:hidden;margin-top:9px}.mc-life-track span{display:block;height:100%;background:linear-gradient(90deg,#31ad82,#8fdfb6)}.enemy .mc-life-track span{background:linear-gradient(90deg,#d34b7a,#f4ac8a)}.mc-damage{text-align:center}.mc-damage small{display:block;font-size:10px}.mc-damage strong{font:700 20px Georgia;color:#f5d3ec}.mc-combat-row>.mc-actions{grid-column:3/-1;justify-content:flex-end;margin:0}
+#combat .mc-combat-dock .mc-combat-list{display:none}
+.portrait-viewer{box-sizing:border-box;width:min(760px,calc(100% - 32px));max-height:88dvh;overflow:auto;border:1px solid #ba9bc4;border-radius:16px;background:#21142d;color:#f8d5a5;padding:16px}.portrait-viewer::backdrop{background:#080510d9}.portrait-viewer h2{font:26px Georgia;margin:0 0 12px}.portrait-viewer button{background:#603976;color:#ffebd5;border:1px solid #cbaa86;border-radius:6px;padding:8px 12px}.portrait-viewer img{display:block;width:100%;max-height:65dvh;object-fit:contain;margin:12px 0}.portrait-viewer [hidden]{display:none}
+@media(max-width:600px){.mesa-compartida .mc-surface{padding:12px}.mesa-compartida .mc-combat-row{grid-template-columns:27px 44px minmax(0,1fr) 42px;gap:8px;padding:10px}.mesa-compartida .mc-portrait{width:42px;height:42px}.mc-health{grid-row:2;grid-column:2/-1}.mc-damage{grid-column:4;grid-row:1}.mc-combat-row>.mc-actions{grid-column:2/-1}.mesa-compartida .mc-stat{min-width:0;padding:8px 12px}}
+
+@media (orientation:portrait) and (max-width:1280px){
+ body:has(#campaignView.active),body:has(#campaign.panel.active),body:has(#adminWorkspace:not([hidden])){overflow:auto}
+ body:has(#campaignView.active)>:not(.rotate),body:has(#campaign.panel.active)>:not(.rotate),body:has(#adminWorkspace:not([hidden]))>:not(.rotate){visibility:visible!important;pointer-events:auto!important}
+ body:has(#campaignView.active)>.rotate,body:has(#campaign.panel.active)>.rotate,body:has(#adminWorkspace:not([hidden]))>.rotate{display:none!important}
+}
