@@ -12,7 +12,7 @@ if(mountPoints.length){
  const $=id=>document.getElementById(id);
  const create=(tag,cl="",value)=>{const node=document.createElement(tag);if(cl)node.className=cl;if(value!==undefined)node.textContent=value;return node};
  const makeBtn=(caption,callback)=>{const b=create("button","",caption);b.type="button";b.addEventListener("click",callback);return b};
- const defaults=()=>({title:"Las nieblas de Barovia",round:1,turnIndex:0,roster:[],diary:[]});
+ const defaults=()=>({title:"Las nieblas de Barovia",round:1,turnIndex:0,roster:[],diary:[],started:false});
  const parse=d=>({...defaults(),...(d||{}),roster:Array.isArray(d?.roster)?d.roster:[],diary:Array.isArray(d?.diary)?d.diary:[]});
  const uid=()=>crypto.randomUUID?.()||String(Date.now())+"-"+Math.random().toString(36).slice(2);
  let current=null,role="player",isAdmin=false,info=defaults(),players=[],cancelCampaign=null,cancelPlayers=null,active="table",saving=false;
@@ -28,10 +28,10 @@ if(mountPoints.length){
  }
  root.append(header,nav,main);mountPoints.forEach((mount,i)=>{if(i===0)mount.append(root);else mount.append(root.cloneNode(true))});
  // Move the actual pane, including its live listeners and controls; never clone it.
- const combatBoard=document.querySelector('#combat .combat-layout');
+ const combatBoard=document.querySelector('#combat .initiative-head');
  if(combatBoard){
   const dock=create('div','mesa-compartida mc-combat-dock');
-  combatBoard.before(dock);dock.append(element.combat);
+  combatBoard.append(dock);dock.append(element.combat);
  }
  document.querySelector('[data-campaign-view="combat"]')?.addEventListener('click',()=>select('combat'));
  // Normally one mount exists per page; the shared component is instantiated identically in each page.
@@ -104,19 +104,20 @@ if(mountPoints.length){
   help.className='mc-actions-help';help.setAttribute('aria-haspopup','dialog');
   help.setAttribute('aria-controls','combatActionsDialog');surface.querySelector('h3').append(help);
   const summary=create("div","mc-summary");
-  const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",String(info.round||1)));summary.append(round);
-  const turn=create("div","mc-stat");turn.append(create("small","","Turno de"),create("strong","",info.roster[info.turnIndex]?.name||"—"));summary.append(turn);surface.append(summary);
+  const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",String(info.started===false?0:(info.round||1))));summary.append(round);
+  const turn=create("div","mc-stat");turn.append(create("small","","Turno de"),create("strong","",info.started===false?"—":(info.roster[info.turnIndex]?.name||"—")));summary.append(turn);surface.append(summary);
   const controls=create("div","mc-actions");
   if(isAdmin){
    controls.append(
-    makeBtn("Iniciar / reiniciar combate",()=>{if(confirm("¿Reiniciar la ronda y el orden de iniciativa?"))void edit(s=>({...s,round:1,turnIndex:0}))}),
+    makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void edit(s=>({...s,roster:selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster,started:true,round:1,turnIndex:0}))}),
     makeBtn("Siguiente turno",()=>void edit(s=>{
+     if(!s.roster.length||s.started===false)return null;
      const next=(Number(s.turnIndex||0)+1)%Math.max(1,s.roster.length);
      return {...s,turnIndex:next,round:next===0?Number(s.round||1)+1:Number(s.round||1)};
     }))
    );
   }
-  if(controls.childElementCount)surface.append(controls);
+  if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
   if(!info.roster.length){empty(surface,"El DM añadirá primero los personajes desde Dirección.");return}
   const list=create("div","mc-roster");
   info.roster.forEach((entry,i)=>{
