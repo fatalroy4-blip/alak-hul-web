@@ -1,4 +1,4 @@
-import "./combat-actions.js?v=52";
+import "./combat-actions.js?v=58";
 /* V49: Mesa compartida de Alak Hul.
    MISMA interfaz y MISMO documento Firestore en owner, DM y jugadores.
    Permisos reales requieren reglas Firestore publicadas para campaigns/main. */
