@@ -1,10 +1,12 @@
 // The left-hand catalog is the source of the owner's encounter.
 function encounterEntry(name){
  const c=combatState(name),max=getParticipantMaxHp(name,c);
- return {id:'local:'+name,name,type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,damage:Math.max(0,Number(c.damage)||0),dead:!!c.dead,side:isEnemyCombatant(name,c)?'enemy':'ally',portrait:getPortrait(name,isEnemyCombatant(name,c)),maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
+ return {id:'local:'+name,name,...(window.alakParticipantUid?.(name)?{uid:window.alakParticipantUid(name)}:{}),type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,damage:Math.max(0,Number(c.damage)||0),dead:!!c.dead,side:isEnemyCombatant(name,c)?'enemy':'ally',portrait:getPortrait(name,isEnemyCombatant(name,c)),maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
 }
 window.alakEncounterParticipants=()=>state.selectionOrder.filter(n=>state.selected[n]&&combatantNames().includes(n)).map(encounterEntry);
 window.alakEncounterCatalog=()=>combatantNames().map(encounterEntry);
+const localPortrait=getPortrait;
+getPortrait=function(name,isEnemy){return window.alakCombatPortrait?.(name)||localPortrait(name,isEnemy);};
 let sharedTurn=null,applyingShared=false;
 let lastPublished=new Map();
 const baseSaveState=saveState;

@@ -8,8 +8,8 @@ const stats={strength:"Fuerza",dexterity:"Destreza",constitution:"Constitución"
 const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",target:"sheet"},{id:"spells",name:"Trucos y conjuros",subtitle:"Grimorio personal",symbol:"✧",target:"spells"},{id:"traits",name:"Rasgos",subtitle:"Dotes y habilidades",symbol:"✦",target:"traits"},{id:"campaign",name:"Campaña",subtitle:"Multijugador",symbol:"⚔",target:"campaign"}];
 let currentRole="player",spellLibrary=[],user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
 const genId=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);
-const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},extras:[],ruleBuild:null});
-const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},ruleBuild:d.ruleBuild||null});
+const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",pageTheme:"purple",pageBackground:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},tileLabels:{},extras:[],ruleBuild:null});
+const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
 function change(){if(!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
@@ -21,10 +21,18 @@ async function save(){
  if(JSON.stringify({...payload,updatedAt:null}).length>760000){status("Demasiadas imágenes. Reduce su tamaño.");saving=false;return}
  try{
   await setDoc(doc(db,"players",targetUid),payload);
+  if(user.uid===targetUid)await publishMyPortrait();
   pending=false;status("✓ Guardado en nube");
   try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify({...model,updatedAt:null}))}catch{}
  }catch(e){pending=true;status("Guardado pendiente: "+(e?.code||"error"))}
  finally{saving=false;if(queued){queued=false;change()}}
+}
+let publishedPortraitSignature='';
+async function publishMyPortrait(){
+ if(user?.uid!==targetUid)return;
+ const portrait=model.portrait||'',name=String(model.fields.name||'').slice(0,200),signature=targetUid+'|'+name+'|'+portrait;
+ if(signature===publishedPortraitSignature)return;
+ await setDoc(doc(db,'combatPortraits',targetUid),{portrait,name,updatedAt:serverTimestamp()});publishedPortraitSignature=signature;
 }
 function switchView(view,extraId){
  for(const panel of all(".screen"))panel.classList.toggle("active",panel.id===view+"View");
@@ -40,6 +48,12 @@ function updateSummary(){
  $("heroName").textContent=model.fields.name?.trim()||"Mi personaje";
  $("heroSubtitle").textContent=[model.fields.race,model.fields.className,model.fields.level?"Nivel "+model.fields.level:""].filter(Boolean).join(" · ")||"Tu historia aún está por escribirse";
 }
+function renderPageBackground(){
+ if(!model)return;const src=model.pageBackground||({purple:'assets/barovia-purple.png',night:'assets/player-home-night.svg',aurora:'assets/player-home-aurora.svg'}[model.pageTheme]||'assets/barovia-purple.png');
+ document.body.style.setProperty('--player-page-art','url("'+src+'")');
+ if($('pageBackgroundPreview'))$('pageBackgroundPreview').src=src;
+ if($('pageTheme'))$('pageTheme').value=model.pageTheme||'purple';
+}
 function renderHome(){
  if(!model)return;
  const cover=model.coverImage?'url("'+model.coverImage+'")':model.coverTheme==="night"?"url('assets/player-home-night.svg')":model.coverTheme==="violet"?"url('assets/barovia-purple.png')":"url('assets/player-home-aurora.svg')";
@@ -49,13 +63,13 @@ function renderHome(){
   const b=document.createElement("button");b.type="button";b.className="tile";
   const image=model.tileImages[item.id];if(image)b.style.setProperty("--tile-image",'url("'+image+'")');
   const icon=document.createElement("span");icon.className="tile-icon";if(item.id==="sheet"&&model.portrait){const img=document.createElement("img");img.className="miniature-portrait";img.src=model.portrait;img.alt="Retrato de mi personaje";icon.append(img)}else icon.textContent=item.symbol;
-  const title=document.createElement("strong");title.textContent=item.id==="traits"?(model.traitsButtonName||"Rasgos"):item.name;
-  const summary=document.createElement("small");summary.textContent=item.subtitle||item.description||"Sección personal";
+  const title=document.createElement("strong");title.textContent=model.tileLabels?.[item.id]?.name||(item.id==="traits"?(model.traitsButtonName||"Rasgos"):item.name);
+  const summary=document.createElement("small");summary.textContent=model.tileLabels?.[item.id]?.subtitle||item.subtitle||item.description||"Sección personal";
   b.append(icon,title,summary);b.onclick=()=>switchView(item.target,item.target==="extras"?item.id:null);host.append(b);
  }
  updateSummary();
 }
-function canChangePortrait(){return !!user && (user.uid===targetUid || currentRole==="owner");}
+function canChangePortrait(){return !!user && user.uid===targetUid;}
 const legacyFieldMap={name:"name",name2:"name",race:"race",background:"background",alignment:"alignment",xp:"xp",classLevel:"className",hpCurrent:"hp",hpMax:"maxHP",hpTemp:"tempHP",ac:"ac",initiative:"initiative",speed:"speed",backstory:"story",equipment:"equipment",personality:"personality",ideals:"ideals",profBonus:"proficiency"};
 function sheetFieldValue(key){
  if(Object.prototype.hasOwnProperty.call(model.sheet||{},key))return model.sheet[key];
@@ -208,33 +222,79 @@ function renderSpellSlots(){
    const totalField=$("character")?.querySelector('[data-char="spell_slots'+level+'_total"]'),usedField=$("character")?.querySelector('[data-char="spell_slots'+level+'_spent"]');
    if(totalField){totalField.value=String(t);model.sheet[totalField.dataset.char]=String(t)}
    if(usedField){usedField.value=String(u);model.sheet[usedField.dataset.char]=String(u)}
-   change();
+   change();renderPrepared();
   };
   tin.onchange=update;uin.onchange=update;total.append(tin);used.append(uin);wrap.append(title,total,used);host.append(wrap);
  }
 }
+const normalized=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function spellBuild(){
+ const book=window.ALAK_RULES_2014, b=model.ruleBuild||{};
+ const klass=b.classId||Object.keys(book?.classes||{}).find(id=>normalized(model.fields.className).includes(normalized(book.classes[id].name)))||'';
+ const level=Math.max(1,Math.min(20,Number(model.fields.level||b.level)||1));
+ return {...b,classId:klass,level};
+}
+function spellMaxLevel(b){
+ if(['eldritchknight','arcanetrickster'].includes(b.subclassId))return b.level<3?0:b.level<7?1:b.level<13?2:b.level<19?3:4;
+ const slots=window.ALAK_RULES_2014?.spellSlots(b.classId,b.level)||[];
+ return slots.reduce((max,n,i)=>n?i+1:max,0);
+}
+function racialSpells(b){
+ if(b.raceId==='elfo'&&b.subraceId==='alto')return x=>x.level===0&&x.classes.includes('mago');
+ const grants=b.raceId==='elfo'&&b.subraceId==='oscuro'?{'dancing-lights':1,'faerie-fire':3,darkness:5}:b.raceId==='gnomo'&&b.subraceId==='bosque'?{'minor-illusion':1}:b.raceId==='tiflin'&&(!b.subraceId||b.subraceId==='basico')?{thaumaturgy:1,'hellish-rebuke':3,darkness:5}:null;
+ return grants?x=>grants[x.index]&&b.level>=grants[x.index]:null;
+}
+function showSpellDetails(item){
+ let dialog=$('playerSpellDetails');if(!dialog){dialog=document.createElement('dialog');dialog.id='playerSpellDetails';dialog.className='spell-details';dialog.setAttribute('aria-labelledby','playerSpellDetailsTitle');document.body.append(dialog);}
+ dialog.replaceChildren();const h=document.createElement('h2');h.id='playerSpellDetailsTitle';h.textContent=item.title;
+ const close=document.createElement('button');close.type='button';close.textContent='Cerrar';close.onclick=()=>dialog.close();
+ const meta=document.createElement('p');meta.textContent=[Number(item.level)?'Nivel '+item.level:'Truco',item.castingTime,item.range,item.duration,item.components,item.concentration?'Concentración':'',item.ritual?'Ritual':''].filter(Boolean).join(' · ');
+ const text=document.createElement('p');text.textContent=item.description||'Añade la descripción del conjuro en tu registro.';text.lang=item.language||'es';
+ dialog.append(h,close,meta);if(item.language==='en'){const note=document.createElement('p');note.textContent='Texto de referencia SRD 2014 en inglés. El nombre y los controles están en español.';dialog.append(note);}dialog.append(text);dialog.showModal();
+}
 async function loadSpellCatalog(){
- try{
-  const response=await fetch("data.json",{cache:"force-cache"});if(!response.ok)throw Error("Sin catálogo");
-  const data=await response.json();
-  spellLibrary=Array.isArray(data.spells)?data.spells.filter(x=>typeof x.name==="string").map(x=>({title:x.name,level:Number(x.level)||0,description:x.description||""})):[];
- }catch(e){spellLibrary=[]}
- renderSpellCatalog();
+ try{const response=await fetch('player-spells-2014.json?v=60');if(!response.ok)throw Error();const data=await response.json();spellLibrary=data.spells;}
+ catch{spellLibrary=[];}
+ renderSpellCatalog();renderPrepared();
 }
 function renderSpellCatalog(){
- const host=$("playerSpellCatalog");if(!host||!model)return;host.replaceChildren();
- const query=($("playerSpellSearch")?.value||"").toLowerCase().trim(),level=$("playerSpellLevelFilter")?.value||"all";
- const items=spellLibrary.filter(x=>(level==="all"||String(x.level)===level)&&(!query||(x.title+" "+x.description).toLowerCase().includes(query))).slice(0,70);
- if(!items.length){const p=document.createElement("p");p.className="hint";p.textContent=spellLibrary.length?"No hay coincidencias. Puedes añadir un conjuro personalizado abajo.":"El catálogo no está disponible; puedes agregar conjuros manualmente.";host.append(p)}
+ const host=$('playerSpellCatalog');if(!host||!model)return;host.replaceChildren();
+ const b=spellBuild(),query=normalized($('playerSpellSearch').value),level=$('playerSpellLevelFilter').value,origin=$('playerSpellOrigin').value,show=$('playerSpellShow').value;
+ let klass=$('playerSpellClass').value;if(klass==='auto')klass=b.classId;
+ let classFilter=klass;if(['guerrero','picaro'].includes(klass)&&['eldritchknight','arcanetrickster'].includes(b.subclassId))classFilter='mago';
+ const raceFilter=racialSpells(b),max=spellMaxLevel(b);
+ $('spellBuildSummary').textContent=[window.ALAK_RULES_2014?.classes[b.classId]?.name||'Configura tu clase para filtrar tus conjuros','Nivel '+b.level,model.fields.race,model.fields.background].filter(Boolean).join(' · ');
+ const messages={class:'Lista de clase. Los conocidos y preparados dependen de tu nivel y rasgos; las selecciones son manuales.',race:raceFilter?'Magia racial según tu raza, subraza y nivel. Sus usos no gastan necesariamente espacios de clase.':'Elige únicamente la magia que conceda tu linaje. Configura raza y subraza para ver las opciones básicas de 2014.',subclass:'Elige solo los conjuros que conceda tu subclase. Un dominio puede tener conjuros siempre preparados; un patrón de brujo amplía opciones, no los aprende automáticamente.',background:'Los trasfondos básicos de 2014 no conceden conjuros por defecto. Usa este origen solo si tu trasfondo específico lo permite.',feat:'Elige los conjuros permitidos por tu dote y respeta sus límites y usos.',other:'Registra aquí una opción concedida por un rasgo o acordada con tu DM.'};
+ $('spellCatalogNotice').textContent=messages[origin]+' Catálogo SRD 2014; para suplementos usa Añadir conjuro.';
+ const chosen=x=>model.spells.some(s=>s.catalogId===x.index||normalized(s.title)===normalized(x.title));
+ const items=spellLibrary.filter(x=>
+  (level==='all'||String(x.level)===level)&&(!query||normalized(x.title+' '+x.originalName+' '+x.description).includes(query))&&
+  (show!=='chosen'||chosen(x))&&
+  (origin!=='class'||!klass||klass==='all'||x.classes.includes(classFilter))&&
+  (origin!=='race'||!raceFilter||raceFilter(x))&&
+  (show!=='available'||origin!=='class'||!b.classId||x.level<=max));
+ if(!items.length){const hint=document.createElement('p');hint.textContent=spellLibrary.length?'No hay conjuros para estos filtros. Revisa tu clase y nivel o cambia el origen.':'No se pudo cargar el catálogo. Puedes añadir conjuros manualmente.';host.append(hint);}
  for(const item of items){
-  const selected=model.spells.find(x=>x.title.toLowerCase()===item.title.toLowerCase()&&Number(x.level)===item.level);
-  const card=document.createElement("article");card.className="spell-choice";
-  const title=document.createElement("strong");title.textContent=item.title;
-  const meta=document.createElement("small");meta.textContent=item.level===0?"Truco":"Nivel "+item.level;
-  const info=document.createElement("p");info.textContent=item.description.slice(0,330)+(item.description.length>330?"…":"");
-  const button=document.createElement("button");button.type="button";button.textContent=selected?"✓ Elegido":"✦ Elegir";button.disabled=Boolean(selected);
-  button.onclick=()=>{model.spells.push({id:genId(),title:item.title,level:String(item.level),description:item.description,prepared:false});populateSelectedSpellsOnSheet();change();renderEntries("spells");renderSpellCatalog()};
-  card.append(title,meta,info,button);host.append(card);
+  const card=document.createElement('article');card.className='spell-choice';
+  const h=document.createElement('strong');h.textContent=item.title;
+  const meta=document.createElement('small');meta.textContent=(item.level?'Nivel '+item.level:'Truco')+' · '+item.classes.map(id=>window.ALAK_RULES_2014?.classes[id]?.name||id).join(', ');
+  const details=document.createElement('button');details.type='button';details.textContent='Ver conjuro';details.onclick=()=>showSpellDetails(item);
+  const pick=document.createElement('button');pick.type='button';pick.textContent=chosen(item)?'✓ Elegido':'✦ Elegir';pick.disabled=chosen(item);
+  pick.onclick=()=>{model.spells.push({...item,id:genId(),catalogId:item.index,level:String(item.level),prepared:false,origin,source:origin==='class'?(window.ALAK_RULES_2014?.classes[klass]?.name||'Clase'):({race:'Raza / linaje',subclass:'Subclase',background:'Trasfondo',feat:'Dote',other:'Otro rasgo'}[origin])});populateSelectedSpellsOnSheet();change();renderEntries('spells');renderSpellCatalog();};
+  card.append(h,meta,details,pick);host.append(card);
+ }
+ let credit=$('srdCredit');if(!credit){credit=document.createElement('p');credit.id='srdCredit';credit.className='hint';credit.innerHTML='Referencia: <a href="https://www.dndbeyond.com/srd" target="_blank" rel="noopener">SRD 5.1 · Wizards of the Coast</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Datos estructurados de 5e-bits; nombres traducidos y resúmenes propios.';host.after(credit);}
+}
+function renderPrepared(){
+ const host=$('playerPrepared');if(!host||!model)return;host.replaceChildren();
+ for(let level=0;level<=9;level++){
+  const items=model.spells.filter(s=>Number(s.level)===level&&(level===0||s.prepared||s.alwaysPrepared));
+  if(level>0&&!items.length&&!model.slots[level]?.total)continue;
+  const group=document.createElement('section');group.className='prepared-level';const h=document.createElement('h3');h.textContent=level?'Nivel '+level:'Trucos conocidos';group.append(h);
+  if(level){const dots=document.createElement('div');dots.className='spell-slot-dots';const slot=model.slots[level]||{total:0,used:0};
+   for(let i=0;i<Math.min(30,slot.total);i++){const button=document.createElement('button');button.type='button';button.setAttribute('aria-label','Espacio '+(i+1)+' de nivel '+level);button.setAttribute('aria-pressed',String(i<slot.used));button.onclick=()=>{slot.used=i<slot.used?slot.used-1:slot.used+1;model.slots[level]=slot;model.sheet['spell_slots'+level+'_spent']=String(slot.used);change();renderSpellSlots();renderSheet();renderPrepared();};dots.append(button);}group.append(dots);}
+  for(const item of items){const button=document.createElement('button');button.type='button';button.textContent=item.title;button.onclick=()=>showSpellDetails({...spellLibrary.find(s=>s.index===item.catalogId),...item});group.append(button);}
+  if(!items.length){const p=document.createElement('p');p.textContent=level?'Nada preparado todavía.':'Elige tus trucos en la biblioteca.';group.append(p);}host.append(group);
  }
 }
 
@@ -243,15 +303,17 @@ function renderCombat(){
  if(document.activeElement!==$("combatNotes"))$("combatNotes").value=model.combatNotes||"";
 }
 function renderEntries(type){
+ if(type==="spells")renderPrepared();
  const host=$(type==="spells"?"spellList":"traitList");host.replaceChildren();
  if(!model[type].length){const p=document.createElement("p");p.className="hint";p.textContent="Todavía no has añadido "+(type==="spells"?"conjuros.":"rasgos.");host.append(p);return}
  for(const item of model[type]){
   const card=document.createElement("article");card.className="entry";
-  const h=document.createElement("h3");h.textContent=item.title;
+  const h=document.createElement("h3");h.textContent=item.title;if(type==="spells"){const detail=document.createElement("button");detail.type="button";detail.textContent="Ver conjuro";detail.onclick=()=>showSpellDetails({...spellLibrary.find(s=>s.index===item.catalogId),...item});card.append(detail);}
   const small=document.createElement("small");small.textContent=type==="spells"?(Number(item.level)===0?"Truco":"Nivel "+item.level):item.type;
-  const p=document.createElement("p");p.textContent=item.description||"Sin descripción";
+  const p=document.createElement("p");p.textContent=type==="spells"?(item.description||"Sin descripción").slice(0,180):item.description||"Sin descripción";
   if(type==="spells"){
-   const prep=document.createElement("button");prep.type="button";prep.textContent=item.prepared?"✓ Preparado":"Preparar";prep.onclick=()=>{item.prepared=!item.prepared;populateSelectedSpellsOnSheet();change();renderEntries("spells")};card.append(prep);
+   const source=document.createElement("label");source.className="spell-source";source.textContent="Origen / rasgo: ";const input=document.createElement("input");input.value=item.source||item.origin||"Clase";input.onchange=()=>{item.source=input.value;change();};source.append(input);card.append(source);
+   const prep=document.createElement("button");prep.type="button";prep.textContent=Number(item.level)===0?"✓ Truco conocido":item.prepared?"✓ Preparado / disponible":"Preparar / disponible";prep.disabled=Number(item.level)===0;prep.onclick=()=>{item.prepared=!item.prepared;populateSelectedSpellsOnSheet();change();renderEntries("spells")};card.append(prep);
   }
   const remove=document.createElement("button");remove.textContent="Eliminar";remove.onclick=()=>{if(!confirm("¿Eliminar "+item.title+"?"))return;model[type]=model[type].filter(x=>x.id!==item.id);change();renderEntries(type);if(type==="spells"){populateSelectedSpellsOnSheet();renderSpellCatalog()}};
   card.append(h,small,p,remove);host.append(card);
@@ -262,7 +324,7 @@ function renderExtraNav(){
  for(const item of model.extras){const b=document.createElement("button");b.type="button";b.textContent="✹ "+item.name;b.onclick=()=>switchView("extras",item.id);host.append(b)}
 }
 function renderDesign(){
- if(!model)return;
+ if(!model)return;renderPageBackground();
  for(const btn of all("[data-theme]"))btn.classList.toggle("selected",btn.dataset.theme===model.coverTheme);
  $("portraitPreview").src=model.portrait||"assets/hero.svg";
  $("portraitUpload").disabled=!canChangePortrait();
@@ -279,7 +341,10 @@ function renderDesign(){
   const clear=document.createElement("button");clear.type="button";clear.className="ghost";clear.textContent="Quitar imagen";
   clear.disabled=item.id==="sheet"&&!canChangePortrait();
   clear.onclick=()=>{if(item.id==="sheet"&&!canChangePortrait())return;delete model.tileImages[item.id];change();renderHome()};
-  wrapper.append(title,label,clear);host.append(wrapper);
+  const nameLabel=document.createElement('label');nameLabel.textContent='Nombre del botón';const nameInput=document.createElement('input');nameInput.maxLength=40;nameInput.value=model.tileLabels?.[item.id]?.name||item.name;nameInput.setAttribute('aria-label','Nombre del botón '+item.name);
+  const descLabel=document.createElement('label');descLabel.textContent='Descripción del botón';const descInput=document.createElement('input');descInput.maxLength=80;descInput.value=model.tileLabels?.[item.id]?.subtitle||item.subtitle||item.description||'';
+  const rename=()=>{model.tileLabels=model.tileLabels||{};model.tileLabels[item.id]={name:nameInput.value.trim(),subtitle:descInput.value.trim()};change();renderHome();};nameInput.oninput=rename;descInput.oninput=rename;nameLabel.append(nameInput);descLabel.append(descInput);
+  wrapper.append(title,nameLabel,descLabel,label,clear);host.append(wrapper);
  }
  const extraHost=$("extraEditors");extraHost.replaceChildren();
  for(const item of model.extras){
@@ -335,12 +400,12 @@ async function activate(account){
   if(snapshot.exists())model=normalize(snapshot.data());
   else if(targetUid===account.uid){model=blank(targetUid,account);await setDoc(ref,{...model,updatedAt:serverTimestamp()})}
   else {status("El jugador todavía no ha creado su hoja.");return}
-  renderAll();void loadSpellCatalog();
+  renderAll();void loadSpellCatalog();if(user.uid===targetUid)void publishMyPortrait().catch(()=>status("Retrato de combate pendiente de sincronizar"));
   if(unsubscribe)unsubscribe();
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
    const data=snap.data();
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
@@ -531,6 +596,14 @@ window.addEventListener("alak:player-level-changed",()=>{
  window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
 function bind(){
+ $('pageTheme').onchange=e=>{model.pageTheme=e.target.value;model.pageBackground='';change();renderPageBackground();};
+ $('clearPageBackground').onclick=()=>{model.pageBackground='';change();renderPageBackground();};
+ $('pageBackgroundUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await changeImage(file,value=>model.pageBackground=value,true);};
+ $('playerLongRest').onclick=()=>{for(const [level,slots] of Object.entries(model.slots)){slots.used=0;model.sheet['spell_slots'+level+'_spent']='0';}change();renderSpellSlots();renderSheet();renderPrepared();};
+ $('spellRulesSetup').onclick=()=>document.getElementById('openRulesWizardHome')?.click();
+ for(const id of ['playerSpellClass','playerSpellOrigin','playerSpellShow'])$(id).addEventListener('change',renderSpellCatalog);
+ for(const [id,klass] of Object.entries(window.ALAK_RULES_2014?.classes||{})){const opt=document.createElement('option');opt.value=id;opt.textContent=klass.name;$('playerSpellClass').append(opt);}
+
  const grid=$("statsGrid");for(const [key,title] of Object.entries(stats)){
   const label=document.createElement("label");label.textContent=title;
   const input=document.createElement("input");input.dataset.stat=key;input.type="number";input.min=1;input.max=30;input.placeholder="—";label.append(input);grid.append(label);

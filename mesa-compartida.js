@@ -16,6 +16,33 @@ if(mountPoints.length){
  const parse=d=>({...defaults(),...(d||{}),roster:Array.isArray(d?.roster)?d.roster:[],diary:Array.isArray(d?.diary)?d.diary:[]});
  const uid=()=>crypto.randomUUID?.()||String(Date.now())+"-"+Math.random().toString(36).slice(2);
  let current=null,role="player",isAdmin=false,info=defaults(),players=[],cancelCampaign=null,cancelPlayers=null,active="table",saving=false;
+ const portraitProfiles=new Map(),portraitSubscriptions=new Map();
+ const participant=name=>[...info.roster,...(info.participantCatalog||[])].find(p=>p.name===name);
+ window.alakParticipantUid=name=>participant(name)?.uid||null;
+ window.alakCombatPortrait=name=>{const p=participant(name);return p?.uid?(portraitProfiles.get(p.uid)?.portrait||'assets/hero.svg'):null;};
+ function watchPortraits(){
+  const ids=new Set([...info.roster,...(info.participantCatalog||[])].map(p=>p.uid).filter(Boolean));
+  for(const [id,stop] of portraitSubscriptions)if(!ids.has(id)){stop();portraitSubscriptions.delete(id);portraitProfiles.delete(id);}
+  for(const id of ids)if(!portraitSubscriptions.has(id)){
+   portraitSubscriptions.set(id,()=>{});
+   const stop=onSnapshot(doc(db,'combatPortraits',id),snap=>{portraitProfiles.set(id,snap.exists()?snap.data():{});render();},()=>{portraitProfiles.set(id,{});});
+   portraitSubscriptions.set(id,stop);
+  }
+ }
+ function renderPlayerLinks(){
+  if(!isAdmin)return;
+  const host=document.querySelector('dialog[aria-label="Editar lista de participantes"]')||element.manage;
+  host.querySelector('.mc-player-links')?.remove();
+  const section=create('section','mc-player-links');section.append(create('h3','','Vincular retratos de jugadores'),create('p','','Vincula cada participante con su ficha. Su jugador controla la imagen; los enemigos y aliados sin ficha conservan sus retratos de mesa.'));
+  for(const entry of info.participantCatalog||info.roster){
+   if(entry.type!=='player')continue;
+   const label=create('label','',entry.name+' '),select=create('select');select.setAttribute('aria-label','Ficha de '+entry.name);
+   const empty=create('option','','Sin vincular');empty.value='';select.append(empty);
+   for(const player of players){const id=player.ownerUid;if(!id)continue;const option=create('option','',(player.fields?.name||player.accountName||'Jugador')+' · '+(player.accountName||id));option.value=id;select.append(option);}
+   select.value=entry.uid||'';
+   select.onchange=()=>{const id=select.value;void edit(s=>{const link=rows=>(rows||[]).map(p=>p.id===entry.id?{...p,uid:id}:p);return {...s,participantCatalog:link(s.participantCatalog),roster:link(s.roster)};});};label.append(select);section.append(label);
+  }host.append(section);
+ }
  const element={};
  const root=create("div","mc-root");
  const header=create("header","mc-header");
@@ -110,6 +137,7 @@ if(mountPoints.length){
   top.append(combatList());
  }
  function portrait(entry){
+  if(entry.uid)return portraitProfiles.get(entry.uid)?.portrait||'assets/hero.svg';
   const value=entry.portrait||info.participantCatalog?.find(p=>p.id===entry.id)?.portrait;
   return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
  }
@@ -239,7 +267,7 @@ if(mountPoints.length){
   const open=makeBtn('Agregar / quitar participantes',()=>select('combat',true));surface.append(open);
 
  }
- function render(){if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();select(active)}
+ function render(){watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(active)}
  async function activate(account){
   const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
@@ -266,7 +294,7 @@ if(mountPoints.length){
    if(cancelPlayers)cancelPlayers();
    if(isAdmin){
     cancelPlayers=onSnapshot(collection(db,"players"),snap=>{
-     players=snap.docs.map(d=>d.data());if(active==="manage")renderManage()
+     players=snap.docs.map(d=>({...d.data(),ownerUid:d.id||d.data().ownerUid}));renderPlayerLinks();
     },e=>warn("Mesa disponible; no se pueden consultar personajes: "+(e.code||"")));
    }else players=[];
    if(isAdmin&&window.alakEncounterCatalog){
@@ -282,6 +310,7 @@ if(mountPoints.length){
  onAuthStateChanged(auth,account=>{
   if(cancelCampaign){cancelCampaign();cancelCampaign=null}
   if(cancelPlayers){cancelPlayers();cancelPlayers=null}
+  for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();
   current=null;players=[];info=defaults();role="player";isAdmin=false;
   if(account)void activate(account);
   else{warn("Inicia sesión con Google para acceder a la mesa.");render()}

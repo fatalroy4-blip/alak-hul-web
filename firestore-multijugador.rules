@@ -1,14 +1,25 @@
-// V49 · Alak Hul — usuarios, propietario, DM y mesa multijugador.
-// Publicar en Firebase Console → Firestore → Reglas, después de revisar la versión activa.
-// La hoja histórica de Alak Hul permanece privada bajo users/{uid}/characters/alak-hul.
+
+
+
+
 rules_version = '2';
+
+
+
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
+
+
+
     function esUsuario(uid) {
-      return request.auth != null && request.auth.uid == uid;
+      return request.auth != null
+        && request.auth.uid == uid;
     }
+
+
+
 
     function tieneRol(rol) {
       return request.auth != null
@@ -16,68 +27,98 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/appRoles/$(request.auth.uid)).data.role == rol;
     }
 
+
+
+
     function esPropietario() {
       return tieneRol('owner');
     }
+
+
+
 
     function esAdministrador() {
       return esPropietario() || tieneRol('dm');
     }
 
-    function usuarioAutorizado() {
-      return tieneRol('owner') || tieneRol('dm') || tieneRol('player');
+
+
+
+    // Combate compartido: propietario y DM editan; jugadores consultan.
+    match /campaigns/main {
+      allow get: if esAdministrador() || tieneRol('player');
+      allow create, update: if esAdministrador();
+      allow delete: if esPropietario();
     }
 
-    // Hoja original de Alak Hul: nunca lectura cruzada.
+
+    // Miniaturas públicas de la mesa: solo su jugador puede modificarlas.
+    match /combatPortraits/{userId} {
+      allow get: if esAdministrador() || tieneRol('player');
+      allow create, update: if esUsuario(userId)
+        && (esAdministrador() || tieneRol('player'))
+        && request.resource.data.keys().hasOnly(['portrait', 'name', 'updatedAt'])
+        && request.resource.data.portrait is string
+        && request.resource.data.portrait.size() <= 82000
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 200;
+    }
+
+    // Hoja original de Alak Hul: conservar su protección.
     match /users/{userId}/characters/{characterId} {
-      allow read, write: if esUsuario(userId) && characterId == 'alak-hul';
+      allow read, write: if esUsuario(userId)
+        && characterId == 'alak-hul';
     }
 
-    // Fichas personales independientes por UID.
+
+
+
+    // Hojas nuevas, independientes para cada jugador.
     match /players/{userId} {
       allow get: if esUsuario(userId) || esAdministrador();
       allow list: if esAdministrador();
 
+
+
+
       allow create: if esUsuario(userId)
         && request.resource.data.ownerUid == userId;
 
-      // El DM puede corregir otros datos, pero NO la imagen de personaje
-      // ni la miniatura del botón Personaje. El dueño y owner sí pueden.
+
+
+
       allow update: if (esUsuario(userId) || esAdministrador())
         && resource.data.ownerUid == userId
         && request.resource.data.ownerUid == userId
-        && (
-          esUsuario(userId)
-          || esPropietario()
-          || (
-            request.resource.data.get('portrait', '') == resource.data.get('portrait', '')
-            && request.resource.data.get('tileImages', {}).get('sheet', '') ==
-               resource.data.get('tileImages', {}).get('sheet', '')
-          )
-        );
+        && (esUsuario(userId) || (
+          request.resource.data.get('portrait', '') == resource.data.get('portrait', '')
+          && request.resource.data.get('tileImages', {}).get('sheet', '') == resource.data.get('tileImages', {}).get('sheet', '')
+        ));
+
+
+
 
       allow delete: if esPropietario();
     }
 
-    // Mesa única compartida, sincronizada con los participantes.
-    // Todos los usuarios que ya tienen un rol pueden verla.
-    // Solo DM y owner pueden editar la iniciativa, rondas, PG y crónica.
-    match /campaigns/{campaignId} {
-      allow get: if campaignId == 'main' && usuarioAutorizado();
-      allow list: if false;
-      allow create, update: if campaignId == 'main' && esAdministrador();
-      allow delete: if campaignId == 'main' && esPropietario();
-    }
 
-    // La primera cuenta owner se registró manualmente desde Firebase Console.
+
+
+    // Permisos de propietario, Dungeon Master y jugador.
     match /appRoles/{userId} {
       allow get: if esUsuario(userId) || esPropietario();
       allow list: if esPropietario();
 
+
+
+
       allow create, update: if esPropietario()
         && userId != request.auth.uid
         && request.resource.data.keys().hasOnly(['role'])
-        && request.resource.data.role in ['dm','player'];
+        && request.resource.data.role in ['dm', 'player'];
+
+
+
 
       allow delete: if esPropietario()
         && userId != request.auth.uid;

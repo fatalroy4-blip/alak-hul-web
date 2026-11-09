@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="slots-v36.css?v=49">
 <link rel="stylesheet" href="jugador.css?v=47">
 <link rel="stylesheet" href="campaign-v42.css?v=49">
-<link rel="stylesheet" href="mesa-compartida.css?v=59">
-<link rel="stylesheet" href="jugador-v49.css?v=49">
+<link rel="stylesheet" href="mesa-compartida.css?v=60">
+<link rel="stylesheet" href="jugador-v49.css?v=60">
 <link rel="stylesheet" href="rules-2014-wizard.css?v=50">
 </head><body>
 <div class="rotate"><div class="rotate-card"><span class="rotate-glyph">↻</span><h2>Gira tu dispositivo</h2><p>Tu hoja de aventurero está diseñada para usarse en horizontal.</p></div></div>
@@ -463,15 +463,14 @@
 </section>
 <section id="spellsView" class="screen"><div class="section-head"><p class="eyebrow">ARCANA Y MAGIA</p><h2>Trucos y conjuros</h2><p>Agrega tantos conjuros como necesite tu personaje.</p></div><section class="panel player-library" aria-label="Biblioteca de conjuros">
  <h3>✧ Biblioteca de trucos y conjuros</h3>
- <p>Busca conjuros del grimorio disponible, añádelos a tu ficha y marca cuáles preparas. También puedes crear conjuros propios abajo.</p>
- <div class="library-filters">
+ <p>Elige conjuros de tu clase o de un rasgo de raza, subclase, trasfondo o dote. Las opciones adicionales dependen del rasgo concreto de tu personaje (edición 2014).</p>
+ <button type="button" id="spellRulesSetup" class="primary">Configurar raza, clase y trasfondo</button><p id="spellBuildSummary" class="hint"></p><div class="library-filters"><label>Clase<select id="playerSpellClass"><option value="auto">Mi clase</option><option value="all">Todas las clases</option></select></label><label>Origen<select id="playerSpellOrigin"><option value="class">Clase</option><option value="race">Raza / linaje</option><option value="subclass">Subclase</option><option value="background">Trasfondo</option><option value="feat">Dote</option><option value="other">Otro rasgo autorizado</option></select></label><label>Mostrar<select id="playerSpellShow"><option value="available">Disponibles a mi nivel</option><option value="all">Todos los niveles</option><option value="chosen">Elegidos</option></select></label>
  <label>Buscar un conjuro<input id="playerSpellSearch" type="search" placeholder="Nombre, nivel o descripción"></label>
  <label>Nivel<select id="playerSpellLevelFilter"><option value="all">Todos</option><option value="0">Trucos</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label>
  </div>
- <div id="playerSpellCatalog" class="spell-catalog" aria-live="polite"></div>
+ <p id="spellCatalogNotice" class="hint"></p><div id="playerSpellCatalog" class="spell-catalog" aria-live="polite"></div>
  </section>
- <section class="panel player-library">
- <h3>◌ Espacios de conjuro</h3>
+ <section class="panel player-library"><h3>Preparados y conocidos</h3><div id="playerPrepared" class="player-prepared"></div></section><section class="panel player-library"><h3>◌ Espacios de conjuro</h3><button type="button" id="playerLongRest" class="ghost">Descanso largo · recuperar espacios</button>
  <p>Configura tus espacios por nivel. Los espacios gastados se descuentan durante tu partida.</p>
  <div id="playerSpellSlots" class="player-slot-grid"></div>
  </section><form id="spellForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Nivel<select name="level"><option value="0">Truco</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label></div><label>Descripción<textarea name="description" rows="3"></textarea></label><button type="submit" class="primary">✧ Añadir conjuro</button></form><div id="spellList" class="entries"></div></section>
@@ -483,8 +482,8 @@
  <section id="combatView" class="screen" aria-hidden="true"><div class="section-head"><p class="eyebrow">TURNO DEL AVENTURERO</p><h2>Mi combate</h2><p>Registra tu propia vida, iniciativa y condiciones. El combate conjunto llegará en una fase posterior.</p></div><section class="panel combat-panel"><div class="combat-stats"><div><small>PG actuales</small><strong id="combatHP">—</strong></div><div><small>PG máximos</small><strong id="combatMax">—</strong></div><div><small>Iniciativa</small><strong id="combatInitiative">—</strong></div><div><small>CA</small><strong id="combatAC">—</strong></div></div><div class="combat-tools"><label>Cantidad<input type="number" id="combatAmount" min="1" max="9999" value="1"></label><button type="button" id="takeDamage">⚔ Recibir daño</button><button type="button" id="receiveHeal">☼ Curarse</button></div><label>Condiciones y notas de combate<textarea id="combatNotes" rows="4" placeholder="Caído, concentrado, inspiración, condiciones..."></textarea></label></section></section>
 <section id="designView" class="screen"><div class="section-head"><p class="eyebrow">UN SANTUARIO A TU MEDIDA</p><h2>Personalizar mi portada</h2><p>Tu portada es independiente de las demás cuentas. Puedes cambiar el fondo, el retrato y las imágenes de cada botón.</p></div>
 <div class="design-grid"><section class="panel"><h3>Nombre del botón Rasgos</h3><label>Texto del acceso de Rasgos<input id="traitsButtonName" maxlength="30" placeholder="Rasgos, Metamagia, Capacidades..."></label><p class="hint">Puedes cambiar su nombre; tus rasgos y las secciones adicionales permanecerán intactos.</p></section><section class="panel"><h3>Fondo de inicio</h3><div class="theme-picker"><button data-theme="aurora" type="button">✦ Aurora arcana</button><button data-theme="night" type="button">☾ Noche encantada</button><button data-theme="violet" type="button">✧ Violeta</button></div><label>O subir tu propia imagen<input type="file" id="coverUpload" accept="image/png,image/jpeg,image/webp"></label><button type="button" id="clearCover" class="ghost">Restaurar fondo elegido</button><p class="hint">Las imágenes se optimizan antes de guardarse, para ahorrar espacio en Firebase.</p></section>
-<section class="panel"><h3>Retrato de personaje</h3><div class="portrait-field"><img id="portraitPreview" alt="Vista previa de retrato"><div><label>Cambiar retrato<input type="file" id="portraitUpload" accept="image/png,image/jpeg,image/webp"></label><p class="hint">La foto aparece en tu hoja y en la portada.</p></div></div></section>
-<section class="panel"><h3>Imágenes de los botones</h3><div id="tileEditors" class="tile-editors"></div></section>
+<section class="panel"><h3>Retrato y miniatura del combate</h3><div class="portrait-field"><img id="portraitPreview" alt="Vista previa de retrato"><div><label>Cambiar retrato<input type="file" id="portraitUpload" accept="image/png,image/jpeg,image/webp"></label><p class="hint">Tu foto aparece en la hoja, la portada y el combate cuando el DM vincule tu ficha. Solo tú puedes cambiarla.</p></div></div></section>
+<section class="panel"><h3>Fondo general</h3><p class="hint">Se aplica a tus secciones. El fondo de Inicio se elige por separado.</p><label>Fondo<select id="pageTheme"><option value="purple">Morado clásico</option><option value="night">Noche encantada</option><option value="aurora">Aurora arcana</option></select></label><label>Subir fondo general<input type="file" id="pageBackgroundUpload" accept="image/png,image/jpeg,image/webp"></label><img id="pageBackgroundPreview" class="design-preview" alt="Vista previa del fondo general"><button id="clearPageBackground" type="button" class="ghost">Restaurar fondo elegido</button></section><section class="panel"><h3>Imágenes de los botones</h3><div id="tileEditors" class="tile-editors"></div></section>
 <section class="panel"><h3>Crear un botón adicional</h3><p class="hint">Por ejemplo: Metamagia, Inspiración bárdica, Forma salvaje o Canalizar Divinidad.</p><form id="extraForm"><label>Nombre del botón<input name="name" maxlength="30" placeholder="Metamagia" required></label><label>Descripción<input name="description" maxlength="75" placeholder="Mis puntos de hechicería"></label><button class="primary" type="submit">+ Agregar botón</button></form><div id="extraEditors"></div></section></div></section>
 <section id="extrasView" class="screen"><div class="section-head"><p class="eyebrow">SECCIÓN PERSONALIZADA</p><h2 id="extrasTitle">Mis habilidades</h2><p>Registra tus notas y recursos especiales.</p></div><section class="panel"><label>Notas de este rasgo<textarea id="extraNotes" rows="10" placeholder="Descripción, usos, recursos disponibles..."></textarea></label></section></section>
 </div></main>
@@ -494,9 +493,9 @@
 <script src="rules-2014-subclasses.js?v=50"></script>
 <script src="rules-2014-backgrounds.js?v=50"></script>
 <script src="rules-2014-spells.js?v=50"></script>
-<script type="module" src="jugador.js?v=50"></script>
+<script type="module" src="jugador.js?v=60"></script>
 <script src="rules-2014-wizard.js?v=50"></script>
-<script type="module" src="mesa-compartida.js?v=59"></script>
+<script type="module" src="mesa-compartida.js?v=60"></script>
 <script src="dialogs.js?v=59"></script></body></html>
 
 

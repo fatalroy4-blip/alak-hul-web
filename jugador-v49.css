@@ -48,3 +48,14 @@
 #sheetView #character .dnd-sheet label{margin-bottom:0!important}
 #sheetView #character .dnd-sheet input,#sheetView #character .dnd-sheet textarea{margin-top:0!important}
 #sheetView #character .dnd-sheet button{font-family:Georgia,serif}
+
+/* Inner panels are content, not the top-level tabs of the owner page. */
+#workspace .screen>.panel,#workspace .screen .design-grid>.panel{display:block!important}
+#workspace .screen>.panel{margin:18px 0;padding:22px;border:1px solid #765681;border-radius:16px;background:#1b1329ed}
+#designView .design-grid>.panel{padding:20px;border:1px solid #765681;border-radius:16px;background:#1b1329ed}
+#workspace .design-grid{align-items:start}.design-preview{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:10px 0}.player-prepared{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.prepared-level{padding:14px;border:1px solid #765681;background:#21142d;border-radius:12px}.prepared-level button{display:block;width:100%;margin:6px 0;text-align:left;padding:10px;background:#32203d;color:#ffe5b5;border:1px solid #82648d;border-radius:8px}.spell-source{color:#dec098;font-size:12px}.spell-slot-dots{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.spell-slot-dots button{width:26px;height:26px;border-radius:50%;border:2px solid #bf91e6;background:#aa64d0}.spell-slot-dots button[aria-pressed="true"]{background:#25172f}.spell-details{width:min(700px,calc(100% - 28px));max-height:85dvh;overflow:auto;padding:22px;background:#21142d;color:#efe0ec;border:1px solid #a989b0;border-radius:14px}.spell-details p{white-space:pre-wrap}.spell-details::backdrop{background:#080510cc}.spell-details button{padding:8px 14px;background:#603976;color:#ffe9c8;border:1px solid #b18bba;border-radius:8px}
+body{background-image:var(--player-page-background,linear-gradient(#130b21aa,#130b21bb)),var(--player-page-art,url('assets/barovia-purple.png'));background-size:cover;background-position:center;background-attachment:fixed}
+@media (orientation:portrait) and (max-width:1280px){body:has(#spellsView.active),body:has(#designView.active){overflow:auto}body:has(#spellsView.active)>:not(.rotate),body:has(#designView.active)>:not(.rotate){visibility:visible!important;pointer-events:auto!important}body:has(#spellsView.active)>.rotate,body:has(#designView.active)>.rotate{display:none!important}}
+@media(max-width:600px){#designView .design-grid{grid-template-columns:minmax(0,1fr)}#workspace .screen>.panel{padding:14px}.library-filters{display:grid;grid-template-columns:minmax(0,1fr)}.spell-catalog{grid-template-columns:minmax(0,1fr)}.topbar{flex-wrap:wrap}.topnav{max-width:100%}.session{white-space:normal}}
+
+body::before{background:linear-gradient(90deg,#090511de,#130822b8),var(--player-page-art,url('assets/barovia-purple.png')) center/cover no-repeat}

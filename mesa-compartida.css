@@ -86,3 +86,5 @@
  body:has(#campaignView.active)>:not(.rotate),body:has(#campaign.panel.active)>:not(.rotate),body:has(#adminWorkspace:not([hidden]))>:not(.rotate){visibility:visible!important;pointer-events:auto!important}
  body:has(#campaignView.active)>.rotate,body:has(#campaign.panel.active)>.rotate,body:has(#adminWorkspace:not([hidden]))>.rotate{display:none!important}
 }
+
+.mc-player-links{margin:18px 0;padding:14px;border:1px solid #765681;border-radius:12px}.mc-player-links label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}.mc-player-links select{max-width:100%;padding:8px;background:#21142d;color:#f5dfbb;border:1px solid #a385ae;border-radius:6px}
