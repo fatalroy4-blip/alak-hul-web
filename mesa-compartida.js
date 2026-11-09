@@ -97,8 +97,31 @@ if(mountPoints.length){
    });top.append(roster);
   }
  }
+ function toggleParticipant(name){
+  if(!isAdmin)return;
+  void edit(s=>{
+   const catalog=s.participantCatalog||[];
+   const entry=catalog.find(p=>p.name===name)||s.roster.find(p=>p.name===name);if(!entry)return null;
+   const currentId=s.roster[s.turnIndex]?.id;
+   const roster=s.roster.some(p=>p.id===entry.id)?s.roster.filter(p=>p.id!==entry.id):[...s.roster,entry];
+   const index=roster.findIndex(p=>p.id===currentId);
+   return {...s,roster,selectionInitialized:true,turnIndex:index>=0?index:Math.min(s.turnIndex||0,Math.max(0,roster.length-1)),started:roster.length?s.started:false};
+  });
+ }
+ window.alakToggleParticipant=toggleParticipant;
  function renderCombat(){
   const box=element.combat;box.replaceChildren();
+  if(!combatBoard&&isAdmin){
+   const picker=panel('Participantes',box);
+   const list=create('div','mc-participant-picker');
+   for(const entry of info.participantCatalog||info.roster){
+    const selected=info.roster.some(p=>p.id===entry.id);
+    const button=makeBtn((selected?'✓ ':'+ ')+entry.name,()=>toggleParticipant(entry.name));
+    button.setAttribute('aria-pressed',String(selected));list.append(button);
+   }
+   if(!list.childElementCount)empty(picker,'La lista se sincronizará cuando el propietario abra la campaña.');
+   picker.append(list);
+  }
   const surface=panel("⚔ Iniciativa y combate",box);
   const help=makeBtn('Acciones',()=>window.alakCombatActions?.open(help));
   help.className='mc-actions-help';help.setAttribute('aria-haspopup','dialog');
@@ -118,7 +141,7 @@ if(mountPoints.length){
    );
   }
   if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
-  if(!info.roster.length){empty(surface,"El DM añadirá primero los personajes desde Dirección.");return}
+  if(!info.roster.length){empty(surface,"Selecciona participantes de la lista para iniciar el combate.");return}
   const list=create("div","mc-roster");
   info.roster.forEach((entry,i)=>{
    const card=create("article","mc-figure"+(info.turnIndex===i?" is-active":""));
@@ -170,36 +193,8 @@ if(mountPoints.length){
   const titleForm=create("form","mc-form"),title=field("Nombre de la campaña","title",info.title);
   const btn=create("button","","Guardar nombre");btn.type="submit";
   titleForm.append(title,btn);titleForm.onsubmit=e=>{e.preventDefault();const name=title.querySelector("input").value.trim();if(name)void edit(s=>({...s,title:name.slice(0,80)}))};surface.append(titleForm);
-  const members=panel("Añadir participante a la mesa",box);
-  const form=create("form","mc-form"),selectWrap=create("label","","Jugador registrado");
-  const select=create("select");select.name="selectedPlayer";const none=create("option","","Crear NPC o enemigo");none.value="";select.append(none);
-  for(const p of players.filter(x=>x.ownerUid)){
-   const option=create("option","",p.fields?.name||p.accountName||p.accountEmail||"Personaje sin nombre");option.value=p.ownerUid;select.append(option);
-  }selectWrap.append(select);
-  const name=field("Nombre","name");const typeWrap=create("label","","Tipo");const type=create("select");
-  for(const [value,display] of [["player","Jugador"],["ally","Aliado / NPC"],["enemy","Enemigo"]]){const opt=create("option","",display);opt.value=value;type.append(opt)}
-  typeWrap.append(type);
-  const hp=field("PG máximos","maxHP","","number"),ac=field("CA","ac","","number"),initiative=field("Iniciativa","initiative","","number");
-  const add=create("button","","+ Añadir participante");add.type="submit";form.append(selectWrap,name,typeWrap,hp,ac,initiative,add);
-  select.onchange=()=>{
-   const player=players.find(x=>x.ownerUid===select.value);
-   if(!player)return;
-   name.querySelector("input").value=player.fields?.name||"";
-   hp.querySelector("input").value=player.fields?.maxHP||player.sheet?.hpMax||"";
-   ac.querySelector("input").value=player.fields?.ac||player.sheet?.ac||"";
-   initiative.querySelector("input").value=player.fields?.initiative||player.sheet?.initiative||"";
-   type.value="player";
-  };
-  form.onsubmit=e=>{
-   e.preventDefault();
-   const fd=new FormData(form),display=String(fd.get("name")||"").trim(),playerUid=String(fd.get("selectedPlayer")||"");
-   if(!display)return;
-   const maxHP=Math.max(0,Math.min(9999,Number(fd.get("maxHP"))||0));
-   const entry={id:uid(),uid:playerUid||null,type:type.value,name:display.slice(0,80),classInfo:players.find(x=>x.ownerUid===playerUid)?.fields?.className||"",hp:maxHP,maxHP,ac:Number(fd.get("ac"))||0,initiative:Number(fd.get("initiative"))||0};
-   void edit(s=>({...s,roster:[...s.roster,entry].slice(0,40)}));
-   form.reset();
-  };
-  members.append(form,create("p","mc-info","El DM puede ajustar vida y turnos desde Combate. Los jugadores verán los cambios en la misma mesa."));
+  const open=makeBtn('Agregar / quitar participantes',()=>select('combat',true));surface.append(open);
+
  }
  function render(){renderTable();renderCombat();renderDiary();renderManage();select(active)}
  async function activate(account){
@@ -219,6 +214,7 @@ if(mountPoints.length){
       catch(e){warn("No se pudo crear la mesa: "+(e.code||"error"))}
      }else warn("Tu DM aún no ha iniciado la campaña.");
     }else{info=parse(snap.data());warn("✓ Mesa conectada · actualizada en tiempo real")}
+    if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster);
     render();
    },e=>{warn("Sin acceso a Campaña: revisa las reglas Firestore ('campaigns/main'). "+(e.code||""))});
    if(cancelPlayers)cancelPlayers();
@@ -227,6 +223,10 @@ if(mountPoints.length){
      players=snap.docs.map(d=>d.data());if(active==="manage")renderManage()
     },e=>warn("Mesa disponible; no se pueden consultar personajes: "+(e.code||"")));
    }else players=[];
+   if(isAdmin&&window.alakEncounterCatalog){
+    const catalog=window.alakEncounterCatalog(),selected=window.alakEncounterParticipants();
+    await edit(s=>({...s,participantCatalog:catalog,roster:s.selectionInitialized||s.roster.length?s.roster:selected,selectionInitialized:true}));
+   }
    render();
   }catch(e){warn("No se pudo verificar rol: "+(e.code||e.message))}
  }
