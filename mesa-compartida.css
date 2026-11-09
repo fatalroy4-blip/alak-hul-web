@@ -67,3 +67,4 @@
 #combat .mc-combat-dock .mc-actions button{padding:6px 8px;font-size:12px}
 #combat .mc-combat-dock .mc-roster,#combat .mc-combat-dock .mc-info{display:none}
 #combat .mc-combat-dock .mc-empty{font-size:11px;margin:0;padding:4px 6px}
+.encounter-roll{display:flex;align-items:center;gap:4px;font-size:11px;margin-top:4px}.encounter-roll input{width:48px;padding:3px;color:inherit;background:#21142d;border:1px solid #8c6d99;border-radius:4px}.initiative-row.encounter-current{outline:2px solid #f8d5a5;outline-offset:-2px;background-color:#493153}.roster-panel>button{font-size:12px;margin:0 0 8px}

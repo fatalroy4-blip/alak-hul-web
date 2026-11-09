@@ -109,6 +109,11 @@ if(mountPoints.length){
   });
  }
  window.alakToggleParticipant=toggleParticipant;
+ window.alakSetEncounterSelection=(roster,catalog)=>void edit(s=>{
+  const currentId=s.roster[s.turnIndex]?.id;
+  const index=roster.findIndex(p=>p.id===currentId);
+  return {...s,roster,participantCatalog:catalog,selectionInitialized:true,turnIndex:index>=0?index:0,started:roster.length?s.started:false};
+ });
  function renderCombat(){
   const box=element.combat;box.replaceChildren();
   if(!combatBoard&&isAdmin){
@@ -120,7 +125,7 @@ if(mountPoints.length){
     button.setAttribute('aria-pressed',String(selected));list.append(button);
    }
    if(!list.childElementCount)empty(picker,'La lista se sincronizará cuando el propietario abra la campaña.');
-   picker.append(list);
+   const add=makeBtn('Nuevo personaje',()=>{const name=prompt('Nombre del nuevo personaje')?.trim();if(!name)return;void edit(s=>{const catalog=s.participantCatalog||[];if(catalog.some(p=>p.name.toLowerCase()===name.toLowerCase()))return null;return {...s,participantCatalog:[...catalog,{id:'local:'+name,name,type:'player',initiative:0,hp:null,maxHP:null}]};});});picker.append(list,add);
   }
   const surface=panel("⚔ Iniciativa y combate",box);
   const help=makeBtn('Acciones',()=>window.alakCombatActions?.open(help));
@@ -132,7 +137,7 @@ if(mountPoints.length){
   const controls=create("div","mc-actions");
   if(isAdmin){
    controls.append(
-    makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void edit(s=>({...s,roster:selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster,started:true,round:1,turnIndex:0}))}),
+    makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void edit(s=>({...s,roster:(selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster).slice().sort((a,b)=>(Number(b.initiative)||0)-(Number(a.initiative)||0)),selectionInitialized:true,started:true,round:1,turnIndex:0}))}),
     makeBtn("Siguiente turno",()=>void edit(s=>{
      if(!s.roster.length||s.started===false)return null;
      const next=(Number(s.turnIndex||0)+1)%Math.max(1,s.roster.length);
@@ -141,7 +146,7 @@ if(mountPoints.length){
    );
   }
   if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
-  if(!info.roster.length){empty(surface,"Selecciona participantes de la lista para iniciar el combate.");return}
+  if(!info.roster.length&&!window.alakEncounterParticipants?.().length){empty(surface,"Selecciona participantes de la lista para iniciar el combate.");return}
   const list=create("div","mc-roster");
   info.roster.forEach((entry,i)=>{
    const card=create("article","mc-figure"+(info.turnIndex===i?" is-active":""));
@@ -149,6 +154,7 @@ if(mountPoints.length){
    card.append(create("strong","",entry.name||"Sin nombre"));
    card.append(create("div","mc-hp","PG "+(entry.hp??"—")+" / "+(entry.maxHP??"—")+" · Iniciativa "+(entry.initiative??"—")));
    if(isAdmin){
+    const roll=field('Tirada de iniciativa','initiative',entry.initiative??0,'number');const input=roll.querySelector('input');input.min='-99';input.onchange=()=>{const value=input.valueAsNumber;if(Number.isFinite(value))void edit(s=>({...s,roster:s.roster.map(p=>p.id===entry.id?{...p,initiative:Math.trunc(value)}:p)}))};card.append(roll);
     const actions=create("div","mc-actions");
     actions.append(makeBtn("− Daño",()=>void changeHP(entry.id,-1)),makeBtn("+ Curación",()=>void changeHP(entry.id,1)),makeBtn("Quitar",()=>{if(confirm("¿Retirar a "+entry.name+" del combate?"))void edit(s=>({...s,roster:s.roster.filter(x=>x.id!==entry.id),turnIndex:0}))}));
     card.append(actions);
@@ -214,7 +220,8 @@ if(mountPoints.length){
       catch(e){warn("No se pudo crear la mesa: "+(e.code||"error"))}
      }else warn("Tu DM aún no ha iniciado la campaña.");
     }else{info=parse(snap.data());warn("✓ Mesa conectada · actualizada en tiempo real")}
-    if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster);
+    window.alakApplyEncounterCatalog?.(info.participantCatalog);
+    if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);
     render();
    },e=>{warn("Sin acceso a Campaña: revisa las reglas Firestore ('campaigns/main'). "+(e.code||""))});
    if(cancelPlayers)cancelPlayers();
@@ -225,7 +232,7 @@ if(mountPoints.length){
    }else players=[];
    if(isAdmin&&window.alakEncounterCatalog){
     const catalog=window.alakEncounterCatalog(),selected=window.alakEncounterParticipants();
-    await edit(s=>({...s,participantCatalog:catalog,roster:s.selectionInitialized||s.roster.length?s.roster:selected,selectionInitialized:true}));
+    await edit(s=>({...s,participantCatalog:s.participantCatalog?.length?s.participantCatalog:catalog,roster:s.selectionInitialized||s.roster.length?s.roster:selected,selectionInitialized:true}));
    }
    render();
   }catch(e){warn("No se pudo verificar rol: "+(e.code||e.message))}
