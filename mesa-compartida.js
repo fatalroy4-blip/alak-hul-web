@@ -1,3 +1,4 @@
+import "./combat-actions.js?v=52";
 /* V49: Mesa compartida de Alak Hul.
    MISMA interfaz y MISMO documento Firestore en owner, DM y jugadores.
    Permisos reales requieren reglas Firestore publicadas para campaigns/main. */
@@ -22,17 +23,28 @@ if(mountPoints.length){
  const signal=create("span","mc-sync","⏳ Conectando mesa…");header.append(signal);
  const nav=create("div","mc-nav"),main=create("div","mc-body");
  for(const [key,label] of [["table","✦ Mi mesa"],["combat","⚔ Combate"],["diary","📖 Diario"],["manage","⚙ Dirección"]]){
-  const b=makeBtn(label,()=>select(key));b.dataset.mcView=key;nav.append(b);
+  const b=makeBtn(label,()=>select(key,true));b.dataset.mcView=key;nav.append(b);
   const pane=create("div","mc-pane");pane.dataset.mcPane=key;main.append(pane);element[key]=pane;
  }
  root.append(header,nav,main);mountPoints.forEach((mount,i)=>{if(i===0)mount.append(root);else mount.append(root.cloneNode(true))});
+ // Move the actual pane, including its live listeners and controls; never clone it.
+ const combatBoard=document.querySelector('#combat .combat-layout');
+ if(combatBoard){
+  const dock=create('div','mesa-compartida mc-combat-dock');
+  combatBoard.before(dock);dock.append(element.combat);
+ }
+ document.querySelector('[data-campaign-view="combat"]')?.addEventListener('click',()=>select('combat'));
  // Normally one mount exists per page; the shared component is instantiated identically in each page.
  const warn=t=>{signal.textContent=t};
- function select(name){
+ function select(name,navigate=false){
   if(name==="manage"&&!isAdmin)return;
   active=name;
   nav.querySelectorAll("[data-mc-view]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.mcView===name)));
-  main.querySelectorAll("[data-mc-pane]").forEach(p=>p.classList.toggle("active",p.dataset.mcPane===name));
+  Object.values(element).forEach(p=>p.classList.toggle("active",p.dataset.mcPane===name));
+  if(combatBoard&&name==='combat'&&navigate){
+   document.querySelector('.legacy-campaign').open=true;
+   window.alakShowCampaignView?.('combat');
+  }
  }
  function panel(title,parent){
   const outer=create("section","mc-surface");outer.append(create("h3","",title));parent.append(outer);return outer
@@ -88,6 +100,9 @@ if(mountPoints.length){
  function renderCombat(){
   const box=element.combat;box.replaceChildren();
   const surface=panel("⚔ Iniciativa y combate",box);
+  const help=makeBtn('Acciones',()=>window.alakCombatActions?.open(help));
+  help.className='mc-actions-help';help.setAttribute('aria-haspopup','dialog');
+  help.setAttribute('aria-controls','combatActionsDialog');surface.querySelector('h3').append(help);
   const summary=create("div","mc-summary");
   const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",String(info.round||1)));summary.append(round);
   const turn=create("div","mc-stat");turn.append(create("small","","Turno de"),create("strong","",info.roster[info.turnIndex]?.name||"—"));summary.append(turn);surface.append(summary);
