@@ -13,7 +13,7 @@ renderInitiative=function(){
   const name=row.querySelector('.init-name')?.textContent;
   const label=document.createElement('label');label.className='encounter-roll';label.textContent='Inic. ';
   const input=document.createElement('input');input.type='number';input.step='1';input.value=String(Number(combatState(name).initiative)||0);input.setAttribute('aria-label','Tirada de iniciativa de '+name);
-  input.onchange=()=>{if(!Number.isFinite(input.valueAsNumber))return;state.combat[name]={...combatState(name),initiative:Math.trunc(input.valueAsNumber)};saveState();};
+  input.onchange=()=>{if(!Number.isFinite(input.valueAsNumber))return;state.combat[name]={...combatState(name),initiative:Math.trunc(input.valueAsNumber)};state.selectionOrder.sort((a,b)=>(Number(combatState(b).initiative)||0)-(Number(combatState(a).initiative)||0));saveState();renderInitiative();window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog());};
   label.append(input);row.querySelector('.identity').append(label);
   row.classList.toggle('encounter-current',sharedTurn===name);
   if(sharedTurn===name)row.setAttribute('aria-current','step');
@@ -46,3 +46,6 @@ window.alakApplyEncounterCatalog=catalog=>{
  for(const p of catalog)if(!DATA.combatants.includes(p.name)&&!state.customCombatants.some(c=>c.name===p.name))state.customCombatants.push({name:p.name,kind:p.type==='player'?'main':p.type});
  renderRoster();renderCombatAdmin();
 };
+
+// Manual initiative arrows also publish the visible order without resetting the actor.
+document.getElementById('initiativeList')?.addEventListener('click',event=>{if(event.target.closest('.move-up,.move-down'))queueMicrotask(()=>window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog()));},true);

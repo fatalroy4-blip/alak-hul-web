@@ -35,7 +35,7 @@ if(mountPoints.length){
  }
  document.querySelector('[data-campaign-view="combat"]')?.addEventListener('click',()=>select('combat'));
  // Normally one mount exists per page; the shared component is instantiated identically in each page.
- const warn=t=>{signal.textContent=t};
+ const warn=t=>{signal.textContent=t;document.querySelectorAll('.mc-combat-status').forEach(el=>{el.textContent=t;el.hidden=!/local:|No se pudo|guardado en curso|Sin acceso/.test(t)});};
  function select(name,navigate=false){
   if(name==="manage"&&!isAdmin)return;
   active=name;
@@ -60,19 +60,34 @@ if(mountPoints.length){
   try{const d=value?.toDate?.();return d?d.toLocaleString("es-MX"):"Fecha sin registrar"}catch{return "Fecha sin registrar"}
  }
  async function edit(changeFn){
-  if(!current||!isAdmin)return;
+  if(!current||!isAdmin)return false;
   saving=true;warn("⏳ Guardando cambios…");
   try{
+   let committed;
    await runTransaction(db,async transaction=>{
     const old=await transaction.get(ref);
     const data=parse(old.exists()?old.data():{});
     const next=changeFn(data);
     if(!next)return;
+    committed=next;
     transaction.set(ref,{...next,updatedAt:serverTimestamp(),updatedBy:current.uid});
    });
-   warn("✓ Campaña sincronizada");
-  }catch(e){warn("No se pudo guardar en la mesa: "+(e.code||e.message))}
+   if(committed){info=parse(committed);render();}
+   warn("✓ Campaña sincronizada");return true;
+  }catch(e){warn("No se pudo guardar en la mesa: "+(e.code||e.message));return false;}
   finally{saving=false}
+ }
+ // Combat remains usable locally when Firebase rejects or cannot save the write.
+ let localCombat=false;
+ async function editCombat(changeFn){
+  if(!current||!isAdmin)return;
+  if(saving){warn('Hay un guardado en curso. Espera un momento y vuelve a pulsar.');return;}
+  const next=changeFn(info);if(!next)return;
+  info=parse(next);localCombat=true;
+  window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);render();
+  const saved=await edit(s=>({...s,roster:next.roster,round:next.round,turnIndex:next.turnIndex,started:next.started,selectionInitialized:true,...(next.participantCatalog?{participantCatalog:next.participantCatalog}:{})}));
+  if(saved){localCombat=false;window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);render();}
+  else{warn('Combate local: el cambio NO se sincronizó con el DM. Revisa la conexión o los permisos de Firebase.');}
  }
  function renderTable(){
   const box=element.table;box.replaceChildren();
@@ -109,7 +124,7 @@ if(mountPoints.length){
   });
  }
  window.alakToggleParticipant=toggleParticipant;
- window.alakSetEncounterSelection=(roster,catalog)=>void edit(s=>{
+ window.alakSetEncounterSelection=(roster,catalog)=>void editCombat(s=>{
   const currentId=s.roster[s.turnIndex]?.id;
   const index=roster.findIndex(p=>p.id===currentId);
   return {...s,roster,participantCatalog:catalog,selectionInitialized:true,turnIndex:index>=0?index:0,started:roster.length?s.started:false};
@@ -131,14 +146,15 @@ if(mountPoints.length){
   const help=makeBtn('Acciones',()=>window.alakCombatActions?.open(help));
   help.className='mc-actions-help';help.setAttribute('aria-haspopup','dialog');
   help.setAttribute('aria-controls','combatActionsDialog');surface.querySelector('h3').append(help);
+  const status=create('p','mc-combat-status',signal.textContent);status.setAttribute('role','status');status.hidden=!/local:|No se pudo|guardado en curso|Sin acceso/.test(signal.textContent);surface.append(status);
   const summary=create("div","mc-summary");
   const round=create("div","mc-stat");round.append(create("small","","Ronda actual"),create("strong","",String(info.started===false?0:(info.round||1))));summary.append(round);
   const turn=create("div","mc-stat");turn.append(create("small","","Turno de"),create("strong","",info.started===false?"—":(info.roster[info.turnIndex]?.name||"—")));summary.append(turn);surface.append(summary);
   const controls=create("div","mc-actions");
   if(isAdmin){
    controls.append(
-    makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void edit(s=>({...s,roster:(selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster).slice().sort((a,b)=>(Number(b.initiative)||0)-(Number(a.initiative)||0)),selectionInitialized:true,started:true,round:1,turnIndex:0}))}),
-    makeBtn("Siguiente turno",()=>void edit(s=>{
+    makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void editCombat(s=>({...s,roster:(selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster).slice(),selectionInitialized:true,started:true,round:1,turnIndex:0}))}),
+    makeBtn("Siguiente turno",()=>void editCombat(s=>{
      if(!s.roster.length||s.started===false)return null;
      const next=(Number(s.turnIndex||0)+1)%Math.max(1,s.roster.length);
      return {...s,turnIndex:next,round:next===0?Number(s.round||1)+1:Number(s.round||1)};
@@ -214,6 +230,7 @@ if(mountPoints.length){
    if(!isAdmin&&active==="manage")active="table";
    if(cancelCampaign)cancelCampaign();
    cancelCampaign=onSnapshot(ref,async snap=>{
+    if(localCombat)return;
     if(!snap.exists()){
      info=defaults();if(isAdmin){
       try{await runTransaction(db,async transaction=>{const saved=await transaction.get(ref);if(!saved.exists())transaction.set(ref,{...defaults(),createdBy:current.uid,updatedBy:current.uid,updatedAt:serverTimestamp()})})}
