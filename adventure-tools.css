@@ -20,3 +20,28 @@
 #sheetPaperSettings .paper-swatch span{display:block;background:#fffcf1eb;color:#332719;border:1px solid #aa987a88;border-radius:5px;padding:8px;font-weight:700;width:100%}
 #sheetPaperSettings .paper-swatch:focus-visible{outline:3px solid #e0b8ff;outline-offset:4px}
 @media(max-width:500px){#sheetPaperSettings .paper-choices{grid-template-columns:repeat(2,minmax(0,1fr))}#sheetPaperSettings .paper-swatch{min-height:170px;padding:8px}}
+/* Metamagic: visible resources and one action per known option. */
+#sorceryTools{max-width:1120px;margin:24px auto;padding:clamp(18px,3vw,34px)}
+#sorceryTools .meta-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+#sorceryTools .meta-heading h2{margin:5px 0;color:#f1d291;font:700 clamp(28px,3vw,38px) Georgia,serif}
+#sorceryTools .meta-heading p{margin:8px 0;line-height:1.6}
+#sorceryTools .meta-eyebrow{font-size:11px;font-weight:800;letter-spacing:.15em;color:#d6a8ef}
+#sorceryTools .meta-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:560px;margin:24px 0 6px}
+#sorceryTools .meta-stats>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px 10px;border:1px solid #9471a5;border-radius:12px;background:#3b284c;min-height:90px;box-sizing:border-box}
+#sorceryTools .meta-stats span{font-size:13px;color:#e0cde8}
+#sorceryTools .meta-stats strong{font:700 30px Georgia,serif;color:#ffe3a2}
+#sorceryTools [data-resource-status]{min-height:24px;color:#e8cda0;margin:10px 0 20px}
+#sorceryTools .meta-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px;margin:16px 0 28px}
+#sorceryTools .meta-option{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:22px;border:1px solid #866294;border-radius:14px;background:#191121}
+#sorceryTools .meta-option h4{font:700 23px Georgia,serif;color:#f1d291;margin:0}
+#sorceryTools .meta-option p{line-height:1.6;margin:0;color:#d6c7df}
+#sorceryTools .meta-option label{display:grid;gap:8px;font-size:13px;font-weight:700;color:#e4c48f}
+#sorceryTools .meta-option select{width:100%;min-height:40px;box-sizing:border-box}
+#sorceryTools .meta-option .meta-cost{font-weight:700;color:#f0d49b;margin-top:auto;padding-top:8px}
+#sorceryTools .meta-option button{min-height:44px;font-weight:700;background:#694084;border-color:#bf99ce}
+#sorceryTools button:disabled{opacity:.5;cursor:not-allowed}
+#sorceryTools .meta-conversion{border:1px solid #73547f;border-radius:12px;padding:16px 20px;background:#1a1123}
+#sorceryTools .meta-conversion summary{cursor:pointer;font-weight:700;color:#ecd19c;min-height:24px}
+#sorceryTools .meta-conversion table{max-width:none;font-size:13px}
+#sorceryTools .meta-footnote{font-size:12px;line-height:1.6;color:#beacc7;margin:18px 0 0}
+@media(max-width:500px){#sorceryTools .meta-stats{gap:8px}#sorceryTools .meta-stats>div{padding:12px 5px}#sorceryTools .meta-option{padding:16px}#sorceryTools .meta-conversion{padding:14px 10px}#sorceryTools .meta-conversion th,#sorceryTools .meta-conversion td{padding:7px 3px}}
