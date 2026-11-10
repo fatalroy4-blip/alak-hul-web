@@ -19,7 +19,7 @@
 #rulesWizard2014 .rw-titleline{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 #rulesWizard2014 .rw-attrs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:12px 0}
 #rulesWizard2014 .rw-bonuses{color:#f5d4a1!important}
-#rulesWizard2014 .rw-feature-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:11px 0;max-height:380px;overflow:auto}
+#rulesWizard2014 .rw-feature-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:11px 0;max-height:420px;overflow-y:auto;overflow-x:hidden;padding:3px}
 #rulesWizard2014 .rw-check{flex-direction:row;align-items:flex-start;gap:11px;border:1px solid #6d4f77;border-radius:9px;background:#291a34;padding:10px;cursor:pointer}
 #rulesWizard2014 .rw-check:hover{border-color:#aa8db5}
 #rulesWizard2014 .rw-check.exists{opacity:.65;cursor:default}
@@ -36,3 +36,15 @@
 #rulesWizard2014 #rwResult{border-radius:9px;color:#f4d6a2;min-height:20px}
 #rulesWizard2014 .rw-safety{border-left:3px solid #e1b77d;background:#382640;padding:12px 14px}
 @media(max-width:880px){#rulesWizard2014 .rw-fields{grid-template-columns:repeat(2,minmax(0,1fr))}#rulesWizard2014 .rw-attrs{grid-template-columns:repeat(3,minmax(0,1fr))}#rulesWizard2014 .rw-feature-list{grid-template-columns:1fr}}
+
+/* Selectores aislados de los campos de ancho completo de la hoja. */
+#rulesWizard2014 .rw-check{display:flex;box-sizing:border-box;width:100%;min-width:0;min-height:52px;margin:0;padding:12px;align-items:flex-start;}
+#rulesWizard2014 .rw-check input[type="checkbox"]{appearance:none;-webkit-appearance:none;box-sizing:border-box;display:block;position:static;flex:0 0 20px;width:20px;min-width:20px;max-width:20px;height:20px;min-height:20px;max-height:20px;padding:0;margin:1px 0 0;border:2px solid #b99ac7;border-radius:50%;background:#1b1227;box-shadow:none;cursor:pointer;}
+#rulesWizard2014 .rw-check input[type="checkbox"]:checked{border-color:#f1d397;background:radial-gradient(circle,#f1d397 0 5px,#35203e 6px);}
+#rulesWizard2014 .rw-check:has(input:checked){border-color:#d6ad6d;background:#382343;}
+#rulesWizard2014 .rw-check input[type="checkbox"]:focus-visible{outline:2px solid #ffe1a0;outline-offset:3px;}
+#rulesWizard2014 .rw-check input[type="checkbox"]:disabled{cursor:default;opacity:.6;}
+#rulesWizard2014 .rw-check>span{flex:1 1 0;min-width:0;overflow-wrap:anywhere;}
+#rulesWizard2014 .rw-check strong{font-size:16px;line-height:1.35;}
+#rulesWizard2014 .rw-check small{font-size:12px;line-height:1.5;}
+@media(forced-colors:active){#rulesWizard2014 .rw-check input[type="checkbox"]{appearance:auto;}}
