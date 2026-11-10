@@ -873,7 +873,7 @@ function renderInitiative(){
   row.querySelector('.plus').onclick=()=>changeDamage(name,1);
   row.querySelector('.dead-btn').onclick=()=>toggleDead(name);
   row.querySelector('.combat-side').onclick=()=>toggleCombatSide(name);
-  const portraitButton=row.querySelector('.avatar-button');portraitButton.title='Ver retrato de '+name;portraitButton.setAttribute('aria-label','Ver retrato de '+name);portraitButton.onclick=()=>window.alakViewPortrait(name,getPortrait(name,enemy),portraitButton,window.alakParticipantUid?.(name)?null:()=>choosePortrait(name));
+  const portraitButton=row.querySelector('.avatar-button');portraitButton.title='Ver retrato de '+name;portraitButton.setAttribute('aria-label','Ver retrato de '+name);portraitButton.onclick=()=>window.alakViewPortrait(name,window.alakCombatFullPortrait?.(name)||getPortrait(name,enemy),portraitButton,window.alakParticipantUid?.(name)?null:()=>choosePortrait(name));
   row.querySelector('.hp-max-input').addEventListener('change',event=>setParticipantMaxHp(name,event.target.value));
   row.querySelector('.move-up').onclick=()=>moveCombatant(name,-1);
   row.querySelector('.move-down').onclick=()=>moveCombatant(name,1);

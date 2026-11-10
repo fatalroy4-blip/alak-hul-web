@@ -19,7 +19,8 @@ if(mountPoints.length){
  const portraitProfiles=new Map(),portraitSubscriptions=new Map();
  const participant=name=>[...info.roster,...(info.participantCatalog||[])].find(p=>p.name===name);
  window.alakParticipantUid=name=>participant(name)?.uid||null;
- window.alakCombatPortrait=name=>{const p=participant(name);return p?.uid?(portraitProfiles.get(p.uid)?.portrait||'assets/hero.svg'):null;};
+ window.alakCombatPortrait=name=>{const p=participant(name);return p?.uid?(portraitProfiles.get(p.uid)?.thumbnail||portraitProfiles.get(p.uid)?.portrait||'assets/hero.svg'):null;};
+ window.alakCombatFullPortrait=name=>{const p=participant(name);return p?.uid?(portraitProfiles.get(p.uid)?.portrait||'assets/hero.svg'):null;};
  function watchPortraits(){
   const ids=new Set([...info.roster,...(info.participantCatalog||[])].map(p=>p.uid).filter(Boolean));
   for(const [id,stop] of portraitSubscriptions)if(!ids.has(id)){stop();portraitSubscriptions.delete(id);portraitProfiles.delete(id);}
@@ -136,8 +137,8 @@ if(mountPoints.length){
   top.append(summary);
   top.append(combatList());
  }
- function portrait(entry){
-  if(entry.uid)return portraitProfiles.get(entry.uid)?.portrait||'assets/hero.svg';
+ function portrait(entry,full=false){
+  if(entry.uid){const profile=portraitProfiles.get(entry.uid);return (!full&&profile?.thumbnail)||profile?.portrait||'assets/hero.svg';}
   const value=entry.portrait||info.participantCatalog?.find(p=>p.id===entry.id)?.portrait;
   return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
  }
@@ -149,7 +150,7 @@ if(mountPoints.length){
    const card=create('article','mc-combat-row'+(enemy?' enemy':' ally')+(info.started&&info.turnIndex===i?' is-current':'')+(entry.dead?' is-dead':''));
    if(info.started&&info.turnIndex===i)card.setAttribute('aria-current','step');
    card.append(create('span','mc-order',String(i+1)));
-   const photo=makeBtn('',()=>window.alakViewPortrait?.(entry.name,portrait(entry),photo));photo.className='mc-portrait';photo.setAttribute('aria-label','Ver retrato de '+entry.name);
+   const photo=makeBtn('',()=>window.alakViewPortrait?.(entry.name,portrait(entry,true),photo));photo.className='mc-portrait';photo.setAttribute('aria-label','Ver retrato de '+entry.name);
    const img=create('img');img.src=portrait(entry);img.alt='Retrato de '+entry.name;photo.append(img);card.append(photo);
    const identity=create('div','mc-identity');identity.append(create('strong','',entry.name),create('small','mc-badge',enemy?'ENEMIGO':entry.type==='player'?'JUGADOR':'ALIADO'));
    if(isAdmin){

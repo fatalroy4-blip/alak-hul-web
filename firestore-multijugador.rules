@@ -2,7 +2,15 @@
 
 
 
+
+
+
+
 rules_version = '2';
+
+
+
+
 
 
 
@@ -13,10 +21,18 @@ service cloud.firestore {
 
 
 
+
+
+
+
     function esUsuario(uid) {
       return request.auth != null
         && request.auth.uid == uid;
     }
+
+
+
+
 
 
 
@@ -30,6 +46,10 @@ service cloud.firestore {
 
 
 
+
+
+
+
     function esPropietario() {
       return tieneRol('owner');
     }
@@ -37,9 +57,17 @@ service cloud.firestore {
 
 
 
+
+
+
+
     function esAdministrador() {
       return esPropietario() || tieneRol('dm');
     }
+
+
+
+
 
 
 
@@ -52,23 +80,32 @@ service cloud.firestore {
     }
 
 
+
+
     // Miniaturas públicas de la mesa: solo su jugador puede modificarlas.
     match /combatPortraits/{userId} {
       allow get: if esAdministrador() || tieneRol('player');
       allow create, update: if esUsuario(userId)
         && (esAdministrador() || tieneRol('player'))
-        && request.resource.data.keys().hasOnly(['portrait', 'name', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['portrait', 'thumbnail', 'name', 'updatedAt'])
         && request.resource.data.portrait is string
         && request.resource.data.portrait.size() <= 82000
+&& request.resource.data.get('thumbnail', '') is string
+&& request.resource.data.get('thumbnail', '').size() <= 82000
         && request.resource.data.name is string
         && request.resource.data.name.size() <= 200;
     }
+
 
     // Hoja original de Alak Hul: conservar su protección.
     match /users/{userId}/characters/{characterId} {
       allow read, write: if esUsuario(userId)
         && characterId == 'alak-hul';
     }
+
+
+
+
 
 
 
@@ -81,8 +118,16 @@ service cloud.firestore {
 
 
 
+
+
+
+
       allow create: if esUsuario(userId)
         && request.resource.data.ownerUid == userId;
+
+
+
+
 
 
 
@@ -92,14 +137,25 @@ service cloud.firestore {
         && request.resource.data.ownerUid == userId
         && (esUsuario(userId) || (
           request.resource.data.get('portrait', '') == resource.data.get('portrait', '')
-          && request.resource.data.get('tileImages', {}).get('sheet', '') == resource.data.get('tileImages', {}).get('sheet', '')
+          && request.resource.data.get('combatImage', '') == resource.data.get('combatImage', '')
+&& request.resource.data.get('combatThumbnail', '') == resource.data.get('combatThumbnail', '')
+&& request.resource.data.get('combatCrop', null) == resource.data.get('combatCrop', null)
+&& request.resource.data.get('tileImages', {}).get('sheet', '') == resource.data.get('tileImages', {}).get('sheet', '')
         ));
+
+
+
+
 
 
 
 
       allow delete: if esPropietario();
     }
+
+
+
+
 
 
 
@@ -112,10 +168,18 @@ service cloud.firestore {
 
 
 
+
+
+
+
       allow create, update: if esPropietario()
         && userId != request.auth.uid
         && request.resource.data.keys().hasOnly(['role'])
         && request.resource.data.role in ['dm', 'player'];
+
+
+
+
 
 
 

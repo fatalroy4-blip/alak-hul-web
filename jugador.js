@@ -8,8 +8,8 @@ const stats={strength:"Fuerza",dexterity:"Destreza",constitution:"Constitución"
 const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",target:"sheet"},{id:"spells",name:"Trucos y conjuros",subtitle:"Grimorio personal",symbol:"✧",target:"spells"},{id:"traits",name:"Rasgos",subtitle:"Dotes y habilidades",symbol:"✦",target:"traits"},{id:"campaign",name:"Campaña",subtitle:"Multijugador",symbol:"⚔",target:"campaign"}];
 let currentRole="player",spellLibrary=[],user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
 const genId=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);
-const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",pageTheme:"purple",pageBackground:"",coverTheme:"aurora",coverImage:"",portrait:"",tileImages:{},tileLabels:{},extras:[],ruleBuild:null});
-const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
+const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",pageTheme:"purple",pageBackground:"",coverTheme:"aurora",coverImage:"",portrait:"",combatImage:"",combatThumbnail:"",combatCrop:null,tileImages:{},tileLabels:{},extras:[],ruleBuild:null});
+const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,combatImage:d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatThumbnail:d.combatThumbnail??d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatCrop:d.combatCrop||null,fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
 function change(){if(!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
@@ -30,9 +30,9 @@ async function save(){
 let publishedPortraitSignature='';
 async function publishMyPortrait(){
  if(user?.uid!==targetUid)return;
- const portrait=model.portrait||'',name=String(model.fields.name||'').slice(0,200),signature=targetUid+'|'+name+'|'+portrait;
+ const portrait=model.combatImage||'',thumbnail=model.combatThumbnail||portrait,name=String(model.fields.name||'').slice(0,200),signature=targetUid+'|'+name+'|'+portrait+'|'+thumbnail;
  if(signature===publishedPortraitSignature)return;
- await setDoc(doc(db,'combatPortraits',targetUid),{portrait,name,updatedAt:serverTimestamp()});publishedPortraitSignature=signature;
+ await setDoc(doc(db,'combatPortraits',targetUid),{portrait,thumbnail,name,updatedAt:serverTimestamp()});publishedPortraitSignature=signature;
 }
 function switchView(view,extraId){
  for(const panel of all(".screen"))panel.classList.toggle("active",panel.id===view+"View");
@@ -334,6 +334,8 @@ function renderDesign(){
  if(!model)return;renderPageBackground();
  for(const btn of all("[data-theme]"))btn.classList.toggle("selected",btn.dataset.theme===model.coverTheme);
  $("portraitPreview").src=model.portrait||"assets/hero.svg";
+ $('combatImagePreview').src=model.combatImage||'assets/hero.svg';$('combatThumbnailPreview').src=model.combatThumbnail||model.combatImage||'assets/hero.svg';
+ $('combatImageUpload').disabled=!canChangePortrait();$('adjustCombatThumbnail').disabled=!canChangePortrait()||!model.combatImage;
  $("portraitUpload").disabled=!canChangePortrait();
  $("traitsButtonName").value=model.traitsButtonName||"Rasgos";
  const host=$("tileEditors");host.replaceChildren();
@@ -360,6 +362,21 @@ function renderDesign(){
   remove.onclick=()=>{if(!confirm("¿Eliminar «"+item.name+"» y sus notas?"))return;model.extras=model.extras.filter(x=>x.id!==item.id);delete model.tileImages[item.id];change();renderExtraNav();renderDesign();renderHome()};
   wrap.append(strong,document.createTextNode(" "),remove);extraHost.append(wrap);
  }
+}
+function openCombatCrop(src,initial){
+ if(!canChangePortrait())return;const owner=targetUid;
+ const dialog=document.createElement('dialog');dialog.className='combat-crop-dialog';dialog.setAttribute('aria-labelledby','combatCropTitle');
+ dialog.innerHTML='<h2 id="combatCropTitle">Encuadrar miniatura</h2><p>Arrastra la imagen y ajusta el zoom para centrar el rostro. Al abrir el retrato se mostrará la imagen completa.</p><canvas width="280" height="280" aria-label="Vista previa del encuadre"></canvas><label>Zoom<input type="range" min="1" max="5" step="0.01" value="1"></label><div class="crop-actions"><button type="button" data-center>Centrar</button><button type="button" data-cancel>Cancelar</button><button type="button" data-save>Guardar encuadre</button></div>';
+ const canvas=dialog.querySelector('canvas'),zoom=dialog.querySelector('input'),save=dialog.querySelector('[data-save]'),img=new Image();let z=initial?.zoom||1,x=initial?.x||0,y=initial?.y||0,drag=null,ready=false;zoom.value=z;save.disabled=true;
+ const geometry=()=>{const scale=Math.max(280/img.naturalWidth,280/img.naturalHeight)*z;const w=img.naturalWidth*scale,h=img.naturalHeight*scale;x=Math.max(-(w-280)/2,Math.min((w-280)/2,x));y=Math.max(-(h-280)/2,Math.min((h-280)/2,y));return {w,h,left:(280-w)/2+x,top:(280-h)/2+y};};
+ const draw=()=>{if(!ready)return;const g=geometry(),ctx=canvas.getContext('2d');ctx.fillStyle='#21142d';ctx.fillRect(0,0,280,280);ctx.drawImage(img,g.left,g.top,g.w,g.h);};
+ img.onload=()=>{if(!dialog.open)return;ready=true;save.disabled=false;draw();};img.onerror=()=>{save.disabled=true;dialog.querySelector('p').textContent='No se pudo abrir la imagen. Selecciona otra.';};
+ zoom.oninput=()=>{z=Number(zoom.value);draw();};canvas.style.touchAction='none';
+ canvas.onpointerdown=e=>{if(!ready)return;canvas.setPointerCapture(e.pointerId);drag={id:e.pointerId,x:e.clientX,y:e.clientY,px:x,py:y};};
+ canvas.onpointermove=e=>{if(!drag||drag.id!==e.pointerId)return;const factor=280/canvas.getBoundingClientRect().width;x=drag.px+(e.clientX-drag.x)*factor;y=drag.py+(e.clientY-drag.y)*factor;draw();};canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;};
+ dialog.querySelector('[data-center]').onclick=()=>{x=0;y=0;z=1;zoom.value='1';draw();};dialog.querySelector('[data-cancel]').onclick=()=>dialog.close();
+ save.onclick=()=>{if(!ready||!canChangePortrait()||targetUid!==owner)return;model.combatImage=src;model.combatThumbnail=canvas.toDataURL('image/jpeg',.82);model.combatCrop={zoom:z,x,y};change();renderDesign();dialog.close();};
+ dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();img.src=src;
 }
 async function optimize(file){
  if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error("Elige un JPG, PNG o WebP menor de 20 MB");
@@ -412,7 +429,7 @@ async function activate(account){
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
    const data=snap.data();
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
@@ -603,6 +620,10 @@ window.addEventListener("alak:player-level-changed",()=>{
  window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
 function bind(){
+ $('combatImageUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file||!canChangePortrait())return;try{openCombatCrop(await optimize(file),null);}catch(error){status(error.message);}};
+ $('adjustCombatThumbnail').onclick=()=>{if(canChangePortrait()&&model.combatImage)openCombatCrop(model.combatImage,model.combatCrop);};
+ $('viewCombatImage').onclick=()=>window.alakViewPortrait?.(model.fields.name||'Mi personaje',model.combatImage||'assets/hero.svg',$('viewCombatImage'));
+
  $('pageTheme').onchange=e=>{model.pageTheme=e.target.value;model.pageBackground='';change();renderPageBackground();};
  $('clearPageBackground').onclick=()=>{model.pageBackground='';change();renderPageBackground();};
  $('pageBackgroundUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await changeImage(file,value=>model.pageBackground=value,true);};
