@@ -87,11 +87,13 @@ function renderSheet(){
   if(el.type==="checkbox")el.checked=value===true||value==="true";
   else if(document.activeElement!==el)el.value=String(value??"");
  });
+ document.querySelectorAll('[data-derived]').forEach(el=>{const value=model.derivedAdjustments?.[el.dataset.derived];if(el.type==='checkbox')el.checked=!!value;else el.value=value??(el.tagName==='SELECT'?'normal':0);});
  const image=model.portrait||"assets/hero.svg";
  $("characterPortrait").src=image;
  $("sheetPortrait").src=image;
  const uploader=$("playerReplicaPortraitUpload");if(uploader){uploader.disabled=!canChangePortrait();uploader.closest("label")?.classList.toggle("portrait-forbidden",!canChangePortrait())}
  $("portraitUpload").disabled=!canChangePortrait();
+ recalculatePlayerSkills();renderSheetSpellTools();
  renderPlayerDeathSaves();
  const status=$("charSaveStatus");if(status)status.textContent=canChangePortrait()?"Ficha personal · guardado en la nube":"Vista de DM · retrato protegido";
 }
@@ -103,6 +105,8 @@ function recalculatePlayerSkills(){
   const el=root.querySelector('[data-char="ability_'+i+'"]');
   return el&&String(el.value).trim()!==""?Math.floor((Number(el.value)-10)/2):null;
  });
+ const traits=model.traits.map(t=>normalized(t.title+' '+(t.description||''))).join('\n'),build=model.ruleBuild||{},level=Number(model.fields.level||build.level)||1,klass=normalized(model.fields.className||'');
+ const bard=(klass==='bardo'&&level>=2)||/aprendiz de todo|jack of all trades/.test(traits);
  const bonus=Number(root.querySelector('[data-char="profBonus"]')?.value)||0;
  const setField=(name,num)=>{
   const el=root.querySelector('[data-char="'+name+'"]');
@@ -118,9 +122,49 @@ function recalculatePlayerSkills(){
  });
  PLAYER_SKILL_ABILITIES.forEach((index,i)=>{
   const enabled=root.querySelector('[data-char="skillprof_'+i+'"]')?.checked===true;
-  setField("skill_"+i,ability[index]===null?null:ability[index]+(enabled?bonus:0));
+  setField("skill_"+i,ability[index]===null?null:ability[index]+(enabled?bonus:(bard?Math.floor(bonus/2):0)));
  });
+ const adjust=model.derivedAdjustments||{},perception=root.querySelector('[data-char="skillprof_11"]')?.checked;
+ const expertise=adjust.perceptionExpertise||/pericia[^\n]*percepcion|percepcion[^\n]*pericia/.test(traits);
+ let percept=ability[4]===null?null:ability[4]+(expertise?2*bonus:perception?bonus:bard?Math.floor(bonus/2):0);
+ setField('skill_11',percept);
+ const champion=(klass==='guerrero'&&build.subclassId==='champion'&&level>=7)||/atleta destacado|remarkable athlete/.test(traits);
+ let initiative=ability[1]===null?null:ability[1]+Math.max(bard?Math.floor(bonus/2):0,champion?Math.ceil(bonus/2):0)+(/(?:^|\n)(?:alerta|alert|alerto)(?: |$)/.test(traits)?5:0)+(Number(adjust.initiative)||0);
+ if(initiative!==null&&/audacia fanfarrona|rakish audacity/.test(traits))initiative+=ability[5]||0;
+ setField('initiative',initiative);model.fields.initiative=model.sheet.initiative;
+ const passive=percept===null?'':String(10+percept+(/observador|observant/.test(traits)?5:0)+(Number(adjust.passive)||0)+(adjust.perceptionMode==='advantage'?5:adjust.perceptionMode==='disadvantage'?-5:0));
+ const passiveInput=root.querySelector('[data-char="passive"]');if(passiveInput){passiveInput.value=passive;model.sheet.passive=passive;passiveInput.readOnly=true;passiveInput.title='10 + Percepción + bonificaciones; ajustes en Cálculos de la hoja';}
+ const initiativeInput=root.querySelector('[data-char="initiative"]');if(initiativeInput){initiativeInput.readOnly=true;initiativeInput.title='Destreza + bonificaciones; ajustes en Cálculos de la hoja';}
 }
+
+function renderSheetSpellTools(){
+ if(!model)return;
+ const root=$('character');
+ for(const el of root.querySelectorAll('input[data-char]')){
+  if(!/^spell\d+_\d+$/.test(el.dataset.char))continue;
+  const title=String(el.value||'').trim(),item=model.spells.find(s=>normalized(s.title)===normalized(title))||spellLibrary.find(s=>normalized(s.title)===normalized(title));
+  let button=el.parentElement.querySelector('.sheet-spell-name');
+  if(item){el.classList.add('sheet-spell-data');if(!button){button=document.createElement('button');button.type='button';button.className='sheet-spell-name';el.after(button);}button.textContent=title;button.onclick=()=>showSpellDetails(item);}
+  else{el.classList.remove('sheet-spell-data');button?.remove();}
+ }
+ for(const box of root.querySelectorAll('.spell-level-box')){
+  const number=Number(box.querySelector('.spell-level-number')?.textContent);if(!number)continue;
+  let track=box.querySelector('.sheet-level-slot-track');if(!track){track=document.createElement('div');track.className='sheet-level-slot-track';box.querySelector('.spell-level-title').append(track);}
+  track.replaceChildren();const slot=model.slots[number]||{total:0,used:0};
+  if(!slot.total)continue;
+  const caption=document.createElement('span');caption.className='sheet-slot-caption';caption.textContent=(model.ruleBuild?.classId==='brujo'?'ESPACIOS DE PACTO':'ESPACIOS DE CONJURO')+' · '+Math.max(0,slot.total-slot.used)+' / '+slot.total+' disponibles';
+  const dots=document.createElement('div');dots.className='sheet-level-slot-dots';
+  for(let i=0;i<Math.min(30,slot.total);i++){const dot=document.createElement('button');dot.type='button';dot.className='sheet-level-slot-dot'+(i<slot.used?' used':'');dot.setAttribute('aria-pressed',String(i<slot.used));dot.setAttribute('aria-label','Espacio '+(i+1)+' de nivel '+number);dot.onclick=()=>{slot.used=Math.max(0,Math.min(slot.total,slot.used+(i<slot.used?-1:1)));model.slots[number]=slot;model.sheet['spell_slots'+number+'_spent']=String(slot.used);change();renderSheet();renderSpellSlots();renderPrepared();};dots.append(dot);}
+  track.append(caption,dots);
+ }
+}
+function bindDerivedAdjustments(){
+ const details=document.createElement('details');details.className='derived-adjustments';
+ details.innerHTML='<summary>Cálculos de la hoja</summary><p>Iniciativa y percepción pasiva se calculan con tus características, competencias y rasgos registrados. Aquí puedes indicar pericia, una situación de ventaja o una bonificación adicional de tu mesa.</p><label><input type="checkbox" data-derived="perceptionExpertise"> Pericia en Percepción</label><label>Percepción<select data-derived="perceptionMode"><option value="normal">Normal</option><option value="advantage">Ventaja (+5 pasiva)</option><option value="disadvantage">Desventaja (−5 pasiva)</option></select></label><label>Bonificación adicional a iniciativa<input type="number" data-derived="initiative" value="0"></label><label>Bonificación adicional a percepción pasiva<input type="number" data-derived="passive" value="0"></label>';
+ $('character').before(details);
+ details.addEventListener('change',e=>{const key=e.target.dataset.derived;if(!key)return;model.derivedAdjustments??={};model.derivedAdjustments[key]=e.target.type==='checkbox'?e.target.checked:e.target.value;recalculatePlayerSkills();change();renderCombat();});
+}
+
 function renderPlayerDeathSaves(){
  const sheet=$("character");if(!sheet)return;
  for(const host of sheet.querySelectorAll("[data-death]")){
@@ -144,7 +188,7 @@ function renderPlayerDeathSaves(){
 function syncSheetField(el){
  const key=el.dataset.char;if(!key||!model)return;
  model.sheet[key]=el.type==="checkbox"?el.checked:el.value;
- if(/^spell\d+_\d+$/.test(key))delete model.sheet[key+"__auto"];
+ if(/^spell\d+_\d+$/.test(key)){delete model.sheet[key+"__auto"];setTimeout(renderSheetSpellTools,0);}
  if(key==="name"||key==="name2"){
   model.fields.name=el.value;
   const other=$("character").querySelector('[data-char="'+(key==="name"?"name2":"name")+'"]');
@@ -163,6 +207,7 @@ function syncSheetField(el){
   model.slots[level][kind==="total"?"total":"used"]=Math.max(0,Number(el.value)||0);
   renderSpellSlots();
  }
+ if(key==="classLevel")recalculatePlayerSkills();
  change();if(key==="classLevel")window.dispatchEvent(new Event("alak:player-level-changed"));if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
 }
 function populateSelectedSpellsOnSheet(){
@@ -223,7 +268,7 @@ function renderSpellSlots(){
    const totalField=$("character")?.querySelector('[data-char="spell_slots'+level+'_total"]'),usedField=$("character")?.querySelector('[data-char="spell_slots'+level+'_spent"]');
    if(totalField){totalField.value=String(t);model.sheet[totalField.dataset.char]=String(t)}
    if(usedField){usedField.value=String(u);model.sheet[usedField.dataset.char]=String(u)}
-   change();renderPrepared();
+   change();renderPrepared();renderSheetSpellTools();
   };
   tin.onchange=update;uin.onchange=update;total.append(tin);used.append(uin);wrap.append(title,total,used);host.append(wrap);
  }
@@ -247,13 +292,13 @@ function racialSpells(b){
 }
 function spellInSpanish(item){
  const catalog=spellLibrary.find(s=>s.index===(item.catalogId||item.index)||normalized(s.title)===normalized(item.title));
- if(catalog?.pdfPage&&(item.catalogId||item.index||item.language==='en'))return catalog.description;
+ if(catalog?.pdfPage)return catalog.description;
  return item.language==='en'||(catalog?.language==='en'&&item.description===catalog.description)?'Descripción en español pendiente. Se añadirá el texto de la mesa.':item.description||'Descripción en español pendiente. Se añadirá el texto de la mesa.';
 }
 function spellGlyph(title){const glyph=document.createElement('span');glyph.className='spell-thumb theme-light';glyph.setAttribute('aria-hidden','true');glyph.textContent=/curar|sanar|auxilio/i.test(title)?'✚':/fuego|llama|ardiente/i.test(title)?'✹':/escudo|protecci/i.test(title)?'◇':'✦';return glyph;}
 function showSpellDetails(original){
  const catalog=spellLibrary.find(s=>s.index===(original.catalogId||original.index)||normalized(s.title)===normalized(original.title));
- const item=catalog?.pdfPage&&(original.catalogId||original.index||original.language==='en')?{...original,...catalog,title:original.title}:original;
+ const item=catalog?.pdfPage?{...original,...catalog,title:original.title}:original;
 
  let dialog=$('playerSpellDetails');if(!dialog){dialog=document.createElement('dialog');dialog.id='playerSpellDetails';dialog.className='spell-details';dialog.setAttribute('aria-labelledby','playerSpellDetailsTitle');document.body.append(dialog);}
  dialog.replaceChildren();const banner=document.createElement('div');banner.className='spell-modal-banner';const glyph=document.createElement('span');glyph.className='modal-glyph';glyph.append(spellGlyph(item.title));const eyebrow=document.createElement('p');eyebrow.className='eyebrow';eyebrow.textContent=Number(item.level)?'NIVEL '+item.level:'TRUCO';const h=document.createElement('h2');h.id='playerSpellDetailsTitle';h.textContent=item.title;banner.append(glyph,eyebrow,h);
@@ -270,7 +315,7 @@ function showSpellDetails(original){
 async function loadSpellCatalog(){
  try{const response=await fetch('player-spells-2014.json?v=63');if(!response.ok)throw Error();const data=await response.json();spellLibrary=data.spells;}
  catch{spellLibrary=[];}
- renderSpellCatalog();renderPrepared();
+ renderSpellCatalog();renderPrepared();renderSheetSpellTools();
 }
 function renderSpellCatalog(){
  const host=$('playerSpellCatalog');if(!host||!model)return;host.replaceChildren();
@@ -322,6 +367,7 @@ function renderCombat(){
 function renderEntries(type){
  if(type==="traits"){$("clearAllTraits").disabled=!model.traits.length;$("undoClearTraits").hidden=!model.traitsTrash?.traits?.length;}
  if(type==="spells")renderPrepared();
+ if(type==="traits")recalculatePlayerSkills();
  const host=$(type==="spells"?"spellList":"traitList");host.replaceChildren();
  if(!model[type].length){const p=document.createElement("p");p.className="hint";p.textContent="Todavía no has añadido "+(type==="spells"?"conjuros.":"rasgos.");host.append(p);return}
  for(const item of model[type]){
@@ -442,7 +488,7 @@ async function activate(account){
    const data=snap.data();
    if((data.sheetGeneration||'')!==(model.sheetGeneration||'')){clearTimeout(timer);pending=false;queued=false;sheetResetting=true;location.reload();return;}
    if(pending||saving)return;
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null,derivedAdjustments:x.derivedAdjustments||{}});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
@@ -451,6 +497,7 @@ async function activate(account){
 // Puente controlado para el asistente del Manual del Jugador 2014.
 // La aplicación realiza únicamente fusiones aditivas y preserva campos ya llenados.
 window.alakRuleBridge={
+ save:async()=>{while(saving)await new Promise(r=>setTimeout(r,50));await save();return !pending;},
  get:()=>model?{...model,editable:Boolean(user),role:currentRole,ownSheet:targetUid===user.uid}:null,
  apply:(choice)=>{
   if(!model||!user||!choice)return {ok:false,message:"Abre primero tu ficha con Google"};
@@ -462,6 +509,7 @@ window.alakRuleBridge={
   if(bg)features.push({id:"background:"+choice.background,level:1,kind:"trasfondo",title:bg.feature,note:bg.note,source:choice.background});
 
   const info=cat.levelInfo(choice.classId,choice.level);
+  if(window.ALAK_PLAYER_GUIDANCE)info.slots=window.ALAK_PLAYER_GUIDANCE.policy(choice).slots;
   let added=0,fieldsAdded=0;
   const newDescriptions=[];
   const add=(key,val)=>{
@@ -501,6 +549,7 @@ window.alakRuleBridge={
     if(castAbility)addSheet("spell_ability",cat.keys[castAbility]);
    }
   }
+  if(features.some(f=>f.title==='Sentidos agudos'&&(!choice.selectedFeatureIds||choice.selectedFeatureIds.includes(f.id)))&&model.sheet.skillprof_11===undefined)model.sheet.skillprof_11=true;
   const saves={str:"str",dex:"dex",con:"con",int:"int",wis:"wis",cha:"cha"};
   for(const index of bg?.skills||[]){
    if(model.sheet["skillprof_"+index]===undefined)model.sheet["skillprof_"+index]=true;
@@ -544,7 +593,7 @@ window.alakRuleBridge={
   }
   for(const spell of choice.selectedSpells||[]){
    if(!model.spells.some(x=>String(x.title||"").toLowerCase()===String(spell.title||"").toLowerCase()&&Number(x.level)===Number(spell.level))){
-    model.spells.push({id:genId(),title:spell.title,level:String(spell.level),description:"Conjuro elegido con Manual del Jugador 2014. Consulta el capítulo 11 para su descripción completa.",prepared:false,source:"Manual 2014"});
+    model.spells.push({id:genId(),title:spell.title,level:String(spell.level),origin:spell.extra?"race":"class",sourceDetail:spell.source||"Clase",alwaysPrepared:spell.extra===true,description:"Conjuro elegido con Manual del Jugador 2014. Consulta el capítulo 11 para su descripción completa.",prepared:spell.extra===true||Number(spell.level)>0,source:"Manual 2014"});
    }
   }
   const klassProf=({"barbaro":"Armadura ligera y media; escudos. Armas simples y marciales.",
@@ -635,6 +684,7 @@ window.addEventListener("alak:player-level-changed",()=>{
  window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
 function bind(){
+ bindDerivedAdjustments();
  $('clearAllTraits').onclick=()=>{
   if(!model?.traits.length||!confirm('¿Eliminar todos los rasgos de esta ficha? Se pausará la incorporación automática al subir de nivel. Podrás deshacerlo.'))return;
   const generated=new Set(model.traits.filter(t=>t.rulesId).map(t=>'• '+t.title+' — '+t.description));

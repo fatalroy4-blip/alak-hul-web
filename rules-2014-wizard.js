@@ -165,16 +165,23 @@ function selectedSpecials(){
  }).filter(Boolean)
 }
 
+function currentPolicy(){
+ const data=owner?{}:window.alakRuleBridge?.get?.(),scores={};
+ attrs.forEach((key,i)=>{const existing=data?.stats?.[["strength","dexterity","constitution","intelligence","wisdom","charisma"][i]];if(inputs[i].value!==""||String(existing??"")!=="")scores[key]=inputs[i].value!==""?Number(inputs[i].value)+(bonuses()[key]||0):Number(existing);});
+ return window.ALAK_PLAYER_GUIDANCE.policy({classId:classSel.value,subclassId:subclassSel.value,raceId:raceSel.value,subraceId:owner&&/zariel/i.test(existingOwner().raceText)?'zariel':subSel.value,level:level.value},scores);
+}
 function desiredSpells(){
  const id=classSel.value,c=book.classes[id],n=Number(level.value)||1;
  let key=id;
- if((id==="guerrero"&&subclassSel.value!=="eldritchknight")||(id==="picaro"&&subclassSel.value!=="arcanetrickster"))return [];
+ if((id==="guerrero"&&subclassSel.value!=="eldritchknight")||(id==="picaro"&&subclassSel.value!=="arcanetrickster"))return currentPolicy().extras;
  let rows=window.ALAK_RULE_SPELLS?.[key]||"";
  const canCast=id==="paladin"||id==="explorador"?n>=2:id==="guerrero"||id==="picaro"?n>=3:c?.casting!=="none";
- if(!canCast)return [];
- const slots=book.spellSlots(id,n);
+ const policy=currentPolicy();
+ if(!canCast)return policy.extras;
+ const slots=policy.slots;
  const top=slots.findLastIndex?.(x=>x>0)+1||1;
- return rows.split(";").filter(Boolean).map(s=>{const sep=s.indexOf("|");return {level:Number(s.slice(0,sep)),title:s.slice(sep+1)}}).filter(x=>x.level===0||x.level<=top).slice(0,40);
+ const basic=rows.split(";").filter(Boolean).map(s=>{const sep=s.indexOf("|");return {level:Number(s.slice(0,sep)),title:s.slice(sep+1)}}).filter(x=>x.level===0||x.level<=top).slice(0,40);
+ return basic.filter(x=>!policy.extras.some(e=>norm(e.title)===norm(x.title))).concat(policy.extras);
 }
 function previewFeature(feature,checked,label,existing=false){
  const wrap=print("label","rw-check"+(existing?" exists":"")),box=document.createElement("input");box.type="checkbox";box.checked=checked;box.dataset.feature=feature.id;
@@ -200,6 +207,7 @@ function review(){
  if(raceSel.value==="semielfo")lines.push("⚠ Selecciona manualmente dos aumentos de atributo +1");
  reference.textContent=lines.join("  ·  ")||"Elige raza y clase para revisar las reglas correspondientes";
  $("rwBonuses").textContent=Object.entries(scores).map(([key,val])=>book.keys[key]+" +"+val).join(" · ")||"Sin bonificadores automáticos";
+ const help=featuresHost.previousElementSibling;help.textContent='Estos rasgos corresponden a tu raza, clase, especialización y nivel. Se recomienda incorporar todos los que falten; no hay un cupo entre ellos. Las elecciones con límite están debajo.';
  const oldChecked=new Map([...featuresHost.querySelectorAll('input[data-feature]')].map(x=>[x.dataset.feature,x.checked]));
  featuresHost.replaceChildren();
  const fs=book.featuresFor(raceSel.value,subSel.value,classSel.value,subclassSel.value,n);
@@ -209,19 +217,24 @@ function review(){
  if(!fs.length)featuresHost.append(print("p","rw-muted","Elige al menos una raza o clase."));
  const oldSpell=new Map([...spellsHost.querySelectorAll('input[data-spell]')].map(x=>[x.dataset.spell,x.checked]));
  spellsHost.replaceChildren();
- const spells=desiredSpells();
+ const spells=desiredSpells(),policy=currentPolicy();
+ let guide=$('rwSelectionGuide');if(!guide){guide=print('div','rw-reference');guide.id='rwSelectionGuide';spellsHost.before(guide);}
+ const countText=policy.count===null?'completa tu característica de lanzamiento para calcular el límite':policy.count+' '+policy.kind;
+ guide.textContent=(policy.cast?'Clase: '+policy.cantrips+' trucos conocidos · '+countText+'. ':'Sin lanzamiento de conjuros de clase en este nivel. ')+policy.hints.join(' ')+' Los conjuros raciales y gratuitos se indican por separado. Los trasfondos básicos de 2014 no conceden conjuros por sí solos.';
+ const tally=print('p','rw-muted');tally.id='rwSpellTally';guide.append(tally);
  if(!spells.length)spellsHost.append(print("p","rw-muted","No hay sugerencias para esta clase y nivel, o no hay subclase lanzadora seleccionada."));
  renderSpecials();
   for(const spell of spells){
   const exists=spellExists(spell),key=spell.level+"|"+spell.title;
-  const wrap=print("label","rw-check"+(exists?" exists":""));const cb=document.createElement("input");cb.type="checkbox";cb.dataset.spell=key;cb.checked=!exists&&(oldSpell.get(key)===true);if(exists){cb.disabled=true;cb.checked=false}
-  const line=print("span","","");line.append(print("strong","",spell.title),print("small","",spell.level===0?"Truco":"Nivel "+spell.level));
+  const wrap=print("label","rw-check"+(exists?" exists":""));const cb=document.createElement("input");cb.type="checkbox";cb.dataset.spell=key;cb.dataset.extra=spell.extra?'true':'false';cb.checked=!exists&&(oldSpell.has(key)?oldSpell.get(key):spell.extra===true);if(exists){cb.disabled=true;cb.checked=false}
+  const line=print("span","","");line.append(print("strong","",spell.title),print("small","",(spell.level===0?"Truco":"Nivel "+spell.level)+(spell.extra?" · "+spell.source+" · adicional, no consume cupo":spells.filter(s=>!s.extra&&s.level===spell.level).indexOf(spell)<2?" · Sugerido para empezar":"")));
   if(exists)line.append(print("small","","✓ Ya aprendido"));
-  wrap.append(cb,line);spellsHost.append(wrap);
+  wrap.append(cb,line);spellsHost.append(wrap);cb.onchange=updateSpellTally;updateSpellTally();
  }
 }
+function updateSpellTally(){const p=currentPolicy(),chosen=desiredSpells().filter(s=>!s.extra&&(spellExists(s)||[...spellsHost.querySelectorAll('input[data-spell]:checked')].some(x=>x.dataset.spell===s.level+'|'+s.title)));const t=$('rwSpellTally');if(t)t.textContent='En esta selección: '+chosen.filter(s=>s.level===0).length+' / '+p.cantrips+' trucos de clase · '+chosen.filter(s=>s.level>0).length+' / '+(p.count??'—')+' '+p.kind+'. Puedes dejar elecciones pendientes.';}
 function selectedFeatures(){return [...featuresHost.querySelectorAll('input[data-feature]:checked')].map(x=>x.dataset.feature)}
-function selectedSpells(){return [...spellsHost.querySelectorAll('input[data-spell]:checked')].map(x=>{const [n,...name]=x.dataset.spell.split("|");return {level:Number(n),title:name.join("|")}})}
+function selectedSpells(){return [...spellsHost.querySelectorAll('input[data-spell]:checked')].map(x=>{const [n,...name]=x.dataset.spell.split("|");return {...desiredSpells().find(s=>s.level===Number(n)&&s.title===name.join("|")),level:Number(n),title:name.join("|")}})}
 function ownerApply(choice){
  const corpus=getInput("features"),extras=getInput("additional");if(!corpus)return {ok:false,message:"No se encontró el campo de rasgos de Alak Hul"};
  const all=book.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
@@ -244,7 +257,7 @@ function ownerApply(choice){
  }
  return {ok:true,message:"Alak Hul: "+added+" rasgos complementarios y "+addedSpells+" conjuros añadidos en casillas vacías. No se modificó ningún dato anterior."}
 }
-function apply(){
+async function apply(createNew=false){
  review();
  const raceId=raceSel.value,classId=classSel.value,subraceId=subSel.value,subclassId=subclassSel.value;
  if(!raceId||!classId){$("rwResult").textContent="Elige una raza y una clase.";return}
@@ -254,13 +267,17 @@ function apply(){
  if(klass?.subLevel<=n&&!subclassId){$("rwResult").textContent="Elige primero la subclase / origen / dominio para este nivel.";return}
  const specials=selectedSpecials(),maximum=possibleSpecials().limit;
  if(specials.length>maximum){$("rwResult").textContent="Seleccionaste más opciones de clase de las permitidas para este nivel ("+maximum+").";return}
+ const policy=currentPolicy(),chosen=desiredSpells().filter(s=>!s.extra&&(spellExists(s)||selectedSpells().some(x=>norm(x.title)===norm(s.title))));
+ if(!owner&&selectedSpells().some(s=>!s.extra)&&(chosen.filter(s=>s.level===0).length>policy.cantrips||(policy.count!==null&&classSel.value!=='mago'&&chosen.filter(s=>s.level>0).length>policy.count))){$('rwResult').textContent='La selección supera el cupo de clase indicado. Desmarca opciones; los conjuros adicionales de raza no consumen ese cupo.';return;}
  const abilities=inputs.map(x=>x.value===""?null:Number(x.value)),selected=abilities.filter(v=>v!==null);
  if(selected.length&&selected.length!==6){$("rwResult").textContent="Asigna las seis características, o deja todas sin completar.";return}
  if(inputs.some(x=>x.validity.badInput)||selected.some(v=>!Number.isInteger(v)||v<1||v>30)){$("rwResult").textContent="Escribe puntuaciones enteras entre 1 y 30.";return}
  const choice={edition:"2014",raceId,subraceId,classId,subclassId,level:n,background:background.value,abilities,bonuses:bonuses(),selectedFeatureIds:selectedFeatures(),selectedSpells:selectedSpells(),specialTraits:specials,computeHP:$("rwComputeHP").checked,updateSlots:$("rwUpdateSlots").checked,autoProgress:$("rwAutoProgress").checked};
  if(owner&&!confirm("¿Agregar únicamente rasgos y conjuros que faltan a Alak Hul? Sus valores actuales no se reemplazarán."))return;
  if(!owner&&!confirm("¿Agregar las opciones elegidas a tu propia hoja sin sobrescribir campos existentes?"))return;
+ if(createNew){choice.computeHP=true;choice.updateSlots=true;}
  const result=owner?ownerApply(choice):window.alakRuleBridge?.apply?.(choice);
+ if(result?.ok&&!owner){const saved=await window.alakRuleBridge.save();if(!saved){$('rwResult').textContent='Tu personaje está preparado, pero falta guardarlo en la nube. Revisa la conexión y vuelve a intentar.';return;}if(createNew){dlg.close();document.querySelector('[data-view="sheet"]')?.click();return;}}
  $("rwResult").textContent=result?.message||"No se pudo guardar. Verifica tu sesión de Google.";review();
 }
 launch.onclick=()=>{if(initial()&&!dlg.open)dlg.showModal()};
@@ -272,7 +289,9 @@ if(homeLaunch)homeLaunch.onclick=()=>{
  launch.click();
 };
 $("rwReview").onclick=review;
-$("rwApply").onclick=apply;
+$("rwApply").onclick=()=>apply(false);
+ if(!owner){const create=print("button","","Crear personaje");create.type="button";create.id="rwCreate";$("rwApply").after(create);create.onclick=()=>apply(true);}
+ inputs.forEach(input=>input.addEventListener("change",review));
 for(const select of [raceSel,classSel])select.onchange=()=>{dependency();review()};
 for(const select of [subSel,subclassSel,level,background])select.onchange=review;
 $("rwStandard").onclick=()=>{
