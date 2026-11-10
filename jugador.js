@@ -21,12 +21,12 @@ async function save(){
  const payload={...model,ownerUid:targetUid,updatedBy:user.uid,updatedAt:serverTimestamp()};
  if(JSON.stringify({...payload,updatedAt:null}).length>760000){status("Demasiadas imágenes. Reduce su tamaño.");saving=false;return}
  try{
-  await runTransaction(db,async tx=>{const ref=doc(db,'players',targetUid),snap=await tx.get(ref);if(snap.exists()&&(snap.data().sheetGeneration||'')!==(payload.sheetGeneration||''))throw Error('La hoja cambió desde otra ventana. Recarga la página.');tx.set(ref,payload);});
+  await runTransaction(db,async tx=>{const ref=doc(db,'players',targetUid),snap=await tx.get(ref);if(snap.exists()&&(snap.data().sheetGeneration||'')!==(payload.sheetGeneration||''))throw Error('La hoja cambió desde otra ventana. Recarga la página.');if(snap.exists()&&['rest','level'].some(k=>snap.data().appliedCampaignEvents?.[k]!==payload.appliedCampaignEvents?.[k]))throw Error('Hay una actualización del DM. Recarga la hoja antes de guardar.');tx.set(ref,payload);});
   if(user.uid===targetUid)await publishMyPortrait();
   pending=false;status("✓ Guardado en nube");
   try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify({...model,updatedAt:null}))}catch{}
  }catch(e){pending=true;status("Guardado pendiente: "+(e?.code||"error"))}
- finally{saving=false;if(queued){queued=false;change()}}
+ finally{saving=false;if(queued){queued=false;change()}else if(!pending)window.alakCampaignControls?.ready();}
 }
 let publishedPortraitSignature='';
 async function publishMyPortrait(){
@@ -36,12 +36,14 @@ async function publishMyPortrait(){
  await setDoc(doc(db,'combatPortraits',targetUid),{portrait,thumbnail,name,updatedAt:serverTimestamp()});publishedPortraitSignature=signature;
 }
 function switchView(view,extraId){
+ window.alakNavigation?.move(view,extraId);
  for(const panel of all(".screen"))panel.classList.toggle("active",panel.id===view+"View");
  for(const b of all("[data-view]"))b.classList.toggle("active",b.dataset.view===view);
  if(view==="extras"&&extraId){editingExtra=extraId;const e=model.extras.find(x=>x.id===extraId);$("extrasTitle").textContent=e?.name||"Mi rasgo";$("extraNotes").value=e?.notes||""}
  if(view==="design")renderDesign();if(view==="home")renderHome();if(view==="combat")renderCombat();
  window.scrollTo({top:0,behavior:"instant"});
 }
+window.alakNavigate=switchView;
 function updateSummary(){
  if(!model)return;
  const n=Object.values(model.fields).filter(x=>String(x??"").trim()).length+Object.values(model.stats).filter(x=>String(x??"").trim()).length+model.spells.length+model.traits.length;
@@ -73,6 +75,7 @@ function renderHome(){
 function canChangePortrait(){return !!user && user.uid===targetUid;}
 const legacyFieldMap={name:"name",name2:"name",race:"race",background:"background",alignment:"alignment",xp:"xp",classLevel:"className",hpCurrent:"hp",hpMax:"maxHP",hpTemp:"tempHP",ac:"ac",initiative:"initiative",speed:"speed",backstory:"story",equipment:"equipment",personality:"personality",ideals:"ideals",profBonus:"proficiency"};
 function sheetFieldValue(key){
+ if(key==="autoDerived"&&model.sheet[key]===undefined)return true;
  if(Object.prototype.hasOwnProperty.call(model.sheet||{},key))return model.sheet[key];
  if(key==="classLevel")return [model.fields.className,model.fields.level?"N"+model.fields.level:""].filter(Boolean).join(" ");
  if(legacyFieldMap[key])return model.fields[legacyFieldMap[key]]??"";
@@ -82,7 +85,7 @@ function sheetFieldValue(key){
 function renderSheet(){
  if(!model)return;
  const scope=$("character");
- scope.querySelectorAll("[data-char]").forEach(el=>{
+ document.querySelectorAll("[data-char]").forEach(el=>{
   const key=el.dataset.char,value=sheetFieldValue(key);
   if(el.type==="checkbox")el.checked=value===true||value==="true";
   else if(document.activeElement!==el)el.value=String(value??"");
@@ -102,6 +105,7 @@ const PLAYER_SKILL_ABILITIES=[1,4,3,0,5,3,4,5,3,4,3,4,5,5,3,1,1,4];
 function recalculateArmor(){if(!model)return;const values=window.alakArmor?.refresh(model.traits)||{};Object.assign(model.sheet,values);if(values.ac!==undefined)model.fields.ac=values.ac;}
 function recalculatePlayerSkills(){
  const root=$("character");if(!root||!model)return;
+ if(model.sheet.autoDerived===false){for(const k of ["initiative","passive"])root.querySelector(`[data-char="${k}"]`).readOnly=false;return;}
  const ability=Array.from({length:6},(_,i)=>{
   const el=root.querySelector('[data-char="ability_'+i+'"]');
   return el&&String(el.value).trim()!==""?Math.floor((Number(el.value)-10)/2):null;
@@ -161,8 +165,8 @@ function renderSheetSpellTools(){
 }
 function bindDerivedAdjustments(){
  const details=document.createElement('details');details.className='derived-adjustments';
- details.innerHTML='<summary>Cálculos de la hoja</summary><p>Iniciativa y percepción pasiva se calculan con tus características, competencias y rasgos registrados. Aquí puedes indicar pericia, una situación de ventaja o una bonificación adicional de tu mesa.</p><label><input type="checkbox" data-derived="perceptionExpertise"> Pericia en Percepción</label><label>Percepción<select data-derived="perceptionMode"><option value="normal">Normal</option><option value="advantage">Ventaja (+5 pasiva)</option><option value="disadvantage">Desventaja (−5 pasiva)</option></select></label><label>Bonificación adicional a iniciativa<input type="number" data-derived="initiative" value="0"></label><label>Bonificación adicional a percepción pasiva<input type="number" data-derived="passive" value="0"></label>';
- $('character').before(details);
+ details.innerHTML='<summary>Cálculos de la hoja</summary><label><input type="checkbox" data-char="autoDerived" checked> Calcular iniciativa y percepción pasiva automáticamente</label><p>Iniciativa y percepción pasiva se calculan con tus características, competencias y rasgos registrados. Aquí puedes indicar pericia, una situación de ventaja o una bonificación adicional de tu mesa.</p><label><input type="checkbox" data-derived="perceptionExpertise"> Pericia en Percepción</label><label>Percepción<select data-derived="perceptionMode"><option value="normal">Normal</option><option value="advantage">Ventaja (+5 pasiva)</option><option value="disadvantage">Desventaja (−5 pasiva)</option></select></label><label>Bonificación adicional a iniciativa<input type="number" data-derived="initiative" value="0"></label><label>Bonificación adicional a percepción pasiva<input type="number" data-derived="passive" value="0"></label>';
+ $('designView').prepend(details);
  details.addEventListener('change',e=>{const key=e.target.dataset.derived;if(!key)return;model.derivedAdjustments??={};model.derivedAdjustments[key]=e.target.type==='checkbox'?e.target.checked:e.target.value;recalculatePlayerSkills();change();renderCombat();});
 }
 
@@ -208,7 +212,7 @@ function syncSheetField(el){
   model.slots[level][kind==="total"?"total":"used"]=Math.max(0,Number(el.value)||0);
   renderSpellSlots();
  }
- if(key==="classLevel")recalculatePlayerSkills();
+ if(key==="classLevel"||key==="autoDerived")recalculatePlayerSkills();
  recalculateArmor();
  change();if(key==="classLevel")window.dispatchEvent(new Event("alak:player-level-changed"));if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
 }
@@ -468,7 +472,7 @@ function renderAll(){if(!model)return;
  const newLabel=model.traitsButtonName||"Rasgos";
  const tab=document.querySelector('[data-view="traits"]');if(tab)tab.textContent="✦ "+newLabel;
  const heading=document.querySelector("#traitsView h2");if(heading)heading.textContent=newLabel;
- renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog()}
+ renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog();window.alakRefreshAdventureTools?.()}
 async function activate(account){
  user=account;const requested=new URLSearchParams(location.search).get("uid");
  currentRole=await role(account.uid);
@@ -483,14 +487,14 @@ async function activate(account){
   if(snapshot.exists())model=normalize(snapshot.data());
   else if(targetUid===account.uid){model=blank(targetUid,account);await setDoc(ref,{...model,updatedAt:serverTimestamp()})}
   else {status("El jugador todavía no ha creado su hoja.");return}
-  renderAll();void loadSpellCatalog();if(user.uid===targetUid)void publishMyPortrait().catch(()=>status("Retrato de combate pendiente de sincronizar"));
+  renderAll();window.alakNavigation?.start(account.uid,targetUid);window.alakCampaignControls?.ready();void loadSpellCatalog();if(user.uid===targetUid)void publishMyPortrait().catch(()=>status("Retrato de combate pendiente de sincronizar"));
   if(unsubscribe)unsubscribe();
   unsubscribe=onSnapshot(ref,snap=>{
    if(sheetResetting||!snap.exists()||snap.metadata.hasPendingWrites)return;
    const data=snap.data();
    if((data.sheetGeneration||'')!==(model.sheetGeneration||'')){clearTimeout(timer);pending=false;queued=false;sheetResetting=true;location.reload();return;}
    if(pending||saving)return;
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null,derivedAdjustments:x.derivedAdjustments||{}});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null,derivedAdjustments:x.derivedAdjustments||{},sorcery:x.sorcery||{},appliedCampaignEvents:x.appliedCampaignEvents||{},levelReviewPending:x.levelReviewPending||false});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
@@ -503,6 +507,7 @@ window.alakRuleBridge={
  get:()=>model?{...model,editable:Boolean(user),role:currentRole,ownSheet:targetUid===user.uid}:null,
  apply:(choice)=>{
   if(!model||!user||!choice)return {ok:false,message:"Abre primero tu ficha con Google"};
+  if(choice.autoDerived!==undefined)model.sheet.autoDerived=choice.autoDerived;if(choice.autoAC!==undefined)model.sheet.acMode=choice.autoAC?"auto":"manual";
   const cat=window.ALAK_RULES_2014;if(!cat)return {ok:false,message:"Catálogo sin cargar"};
   if(model.ruleBuild&&model.traits.some(t=>t.rulesId)&&['classId','subclassId','raceId','subraceId'].some(key=>model.ruleBuild[key]&&(model.ruleBuild[key]||'')!==(choice[key]||'')))return {ok:false,message:'Esta ficha ya tiene rasgos de otra configuración. En Rasgos, usa «Eliminar todos los rasgos» antes de aplicar otra raza, clase o especialización.'};
   const race=cat.races[choice.raceId],klass=cat.classes[choice.classId];
@@ -669,7 +674,7 @@ window.alakRuleBridge={
    selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),
    resourceText:info.resource||"",updatedAt:new Date().toISOString()
   };
-  change();renderAll();if(filledAbilities===6){recalculatePlayerSkills();change()}if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
+  model.levelReviewPending=false;change();renderAll();if(filledAbilities===6){recalculatePlayerSkills();change()}if(choice.selectedSpells?.length)populateSelectedSpellsOnSheet();
   return {ok:true,added,fieldsAdded,message:"Se añadieron "+added+" rasgos y se completaron "+fieldsAdded+" campos vacíos. Lo existente quedó intacto."};
  }
 };
@@ -685,6 +690,18 @@ window.addEventListener("alak:player-level-changed",()=>{
  const selected=[...new Set([...(build.selectedFeatureIds||[]),...fresh])];
  window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
+
+window.alakAdventureSheet={
+ get:()=>model,
+ act:async action=>{if(sheetResetting)throw Error('Espera a que termine la actualización de tu hoja.');if(!model||targetUid!==user?.uid)throw Error('Abre tu propia hoja para usar estos recursos.');model=normalize(window.ALAK_ADVENTURE_RULES.apply(model,action));change();renderAll();await window.alakRuleBridge.save();if(pending)throw Error('Cambio pendiente de sincronizar; revisa tu conexión.');},
+ receive:async events=>{if(!model||targetUid!==user?.uid||sheetResetting)return;const needed=events.filter(e=>model.appliedCampaignEvents?.[e.type]!==e.id);if(!needed.length)return;
+  if(pending)await window.alakRuleBridge.save();if(pending)throw Error('Guarda tus cambios antes de recibir la acción del DM.');
+  await window.alakSheetLifecycle.pause();$('workspace').inert=true;
+  try{let next;await runTransaction(db,async tx=>{const ref=doc(db,'players',user.uid),snap=await tx.get(ref);if(!snap.exists())return;next=snap.data();for(const e of needed.sort((a,b)=>a.at-b.at)){if(next.appliedCampaignEvents?.[e.type]===e.id)continue;next=window.ALAK_ADVENTURE_RULES.apply(next,e);next.appliedCampaignEvents={...(next.appliedCampaignEvents||{}),[e.type]:e.id};}tx.set(ref,{...next,updatedAt:serverTimestamp(),updatedBy:user.uid});});if(next){model=normalize(next);renderAll();}}
+  finally{sheetResetting=false;$('workspace').inert=false;}
+ }
+};
+
 function bind(){
  bindDerivedAdjustments();
  $('clearAllTraits').onclick=()=>{
@@ -711,7 +728,7 @@ function bind(){
  $('pageTheme').onchange=e=>{model.pageTheme=e.target.value;model.pageBackground='';change();renderPageBackground();};
  $('clearPageBackground').onclick=()=>{model.pageBackground='';change();renderPageBackground();};
  $('pageBackgroundUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await changeImage(file,value=>model.pageBackground=value,true);};
- $('playerLongRest').onclick=()=>{for(const [level,slots] of Object.entries(model.slots)){slots.used=0;model.sheet['spell_slots'+level+'_spent']='0';}change();renderSpellSlots();renderSheet();renderPrepared();};
+ $('playerLongRest').onclick=()=>{if(confirm('¿Aplicar un descanso largo a tu personaje? Recuperará PG, espacios y puntos de hechicería.'))void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));};
  $('spellRulesSetup').onclick=()=>document.getElementById('openRulesWizardHome')?.click();
  for(const id of ['playerSpellClass','playerSpellOrigin','playerSpellShow'])$(id).addEventListener('change',renderSpellCatalog);
  for(const [id,klass] of Object.entries(window.ALAK_RULES_2014?.classes||{})){const opt=document.createElement('option');opt.value=id;opt.textContent=klass.name;$('playerSpellClass').append(opt);}
@@ -728,7 +745,7 @@ function bind(){
  all("[data-field]").forEach(el=>el.oninput=()=>{if(!model)return;model.fields[el.dataset.field]=el.value;change();renderCombat()});
  all("[data-stat]").forEach(el=>el.oninput=()=>{if(!model)return;model.stats[el.dataset.stat]=el.value;change()});
  $("combatNotes").oninput=()=>{model.combatNotes=$("combatNotes").value;change()};
- $("character").querySelectorAll("[data-char]").forEach(el=>el.addEventListener("input",()=>syncSheetField(el)));
+ document.querySelectorAll("[data-char]").forEach(el=>el.addEventListener("input",()=>syncSheetField(el)));
  $("playerReplicaPortraitUpload").addEventListener("change",async e=>{
   const file=e.target.files?.[0];e.target.value="";if(!file||!canChangePortrait())return;
   await changeImage(file,value=>model.portrait=value,true);
@@ -774,6 +791,7 @@ window.alakSheetLifecycle={
 };
 bind();
 onAuthStateChanged(auth,account=>{
+ window.alakNavigation?.stop();
  if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(timer);model=null;user=null;targetUid=null;pending=false;
  if(account)void activate(account);
  else{$("workspace").hidden=true;$("authWall").hidden=false;$("logoutBtn").hidden=true;status("Sin conectar");$("loginStatus").textContent=""}

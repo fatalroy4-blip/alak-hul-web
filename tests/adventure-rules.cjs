@@ -1,0 +1,12 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const context=vm.createContext({window:{},structuredClone});context.window.window=context.window;
+for(const file of ['rules-2014-catalog.js','player-rules-guidance.js','adventure-rules.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),context);
+const rules=context.window.ALAK_ADVENTURE_RULES;
+const original={fields:{className:'Hechicero',level:'5',hp:'2',maxHP:'30'},sheet:{classLevel:'Hechicero N5',hpCurrent:'2',hpMax:'30'},slots:{1:{total:4,used:1}},ruleBuild:{classId:'hechicero',subclassId:'draconic',level:5}};
+let m=rules.apply(original,{type:'create',level:1});assert.equal(m.sorcery.available,3);assert.equal(m.slots[1].total,5);assert.equal(original.slots[1].total,4);
+m=rules.apply(m,{type:'convert',level:1});assert.equal(m.sorcery.available,4);assert.equal(m.slots[1].used,2);
+assert.throws(()=>rules.apply(m,{type:'spend',amount:5}));assert.throws(()=>rules.apply(m,{type:'create',level:6}));assert.throws(()=>rules.apply({...m,sorcery:{available:5}},{type:'convert',level:1}));
+m=rules.apply(m,{type:'rest'});assert.equal(m.slots[1].total,4);assert.equal(m.slots[1].used,0);assert.equal(m.sorcery.available,5);assert.equal(m.fields.hp,'30');
+m=rules.apply(m,{type:'level',target:6});assert.equal(m.fields.level,'6');assert.equal(m.slots[3].total,3);assert.equal(m.sheet.profBonus,'+3');assert(m.levelReviewPending);assert.equal(m.ruleBuild.level,5,'Wizard review remains pending');
+assert.equal(rules.apply(m,{type:'level',target:3}).fields.level,'6');assert.throws(()=>rules.apply(m,{type:'level',target:21}));assert.throws(()=>rules.apply({...original,fields:{className:'Clérigo',level:'5'},ruleBuild:{classId:'clerigo'}},{type:'create',level:1}));
+console.log('PASS sorcery limits, temporary slots, long rest, level progression, immutable input');

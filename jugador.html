@@ -12,9 +12,12 @@
 <link rel="stylesheet" href="rules-2014-wizard.css?v=66">
 <link rel="stylesheet" href="player-grimoire.css?v=63"><link rel="stylesheet" href="new-character-sheet.css?v=68">
 <link rel="stylesheet" href="armor-class.css?v=70">
+<link rel="stylesheet" href="adventure-tools.css?v=71">
+<script src="navigation-memory.js?v=71"></script>
+<script src="adventure-rules.js?v=71"></script>
 </head><body>
 <div class="rotate"><div class="rotate-card"><span class="rotate-glyph">↻</span><h2>Gira tu dispositivo</h2><p>Tu hoja de aventurero está diseñada para usarse en horizontal.</p></div></div>
-<header class="topbar"><span class="mark">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></span><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="campaign">⚔ Campaña</button><button type="button" data-view="design">⚙ Personalizar</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
+<header class="topbar"><span class="mark">☀ <span>GRIMORIO <small>DE AVENTUREROS</small></span></span><nav class="topnav"><button type="button" data-view="home" class="active">⌂ Inicio</button><button type="button" data-view="sheet">♟ Hoja</button><button type="button" data-view="spells">✧ Conjuros</button><button type="button" data-view="traits">✦ Rasgos</button><button type="button" data-view="campaign">⚔ Campaña</button><button type="button" data-view="design">⚙ Configuración</button><span id="extraTabLinks"></span></nav><div class="session"><span id="saveIndicator">Sin conectar</span><button id="logoutBtn" hidden>Cerrar sesión</button></div></header>
 <main>
 <section id="authWall" class="auth-wall"><div class="auth-orb">✺</div><p class="eyebrow">TU HISTORIA EMPIEZA AQUÍ</p><h1>Elige tu destino</h1><p>Inicia sesión con Google para crear una hoja de personaje vacía y conservar tus datos personales en la nube, sin mezclarlos con los de otros jugadores.</p><button id="loginBtn" class="primary">Entrar con Google</button><p class="status" id="loginStatus" role="status"></p></section>
 <div id="workspace" hidden>
@@ -212,7 +215,7 @@
         <section class="ds-box allies-panel">
           <h3>Aliados y organizaciones</h3>
           <textarea data-char="allies"></textarea>
-          <div class="symbol-card"><div class="sun-symbol">☀</div><span>Símbolo personal</span></div>
+          
         </section>
 
         <section class="ds-box backstory-panel">
@@ -474,7 +477,7 @@
  <div class="mesa-compartida" data-shared-campaign></div>
  </section>
  <section id="combatView" class="screen" aria-hidden="true"><div class="section-head"><p class="eyebrow">TURNO DEL AVENTURERO</p><h2>Mi combate</h2><p>Registra tu propia vida, iniciativa y condiciones. El combate conjunto llegará en una fase posterior.</p></div><section class="panel combat-panel"><div class="combat-stats"><div><small>PG actuales</small><strong id="combatHP">—</strong></div><div><small>PG máximos</small><strong id="combatMax">—</strong></div><div><small>Iniciativa</small><strong id="combatInitiative">—</strong></div><div><small>CA</small><strong id="combatAC">—</strong></div></div><div class="combat-tools"><label>Cantidad<input type="number" id="combatAmount" min="1" max="9999" value="1"></label><button type="button" id="takeDamage">⚔ Recibir daño</button><button type="button" id="receiveHeal">☼ Curarse</button></div><label>Condiciones y notas de combate<textarea id="combatNotes" rows="4" placeholder="Caído, concentrado, inspiración, condiciones..."></textarea></label></section></section>
-<section id="designView" class="screen"><div class="section-head"><p class="eyebrow">UN SANTUARIO A TU MEDIDA</p><h2>Personalizar mi portada</h2><p>Tu portada es independiente de las demás cuentas. Puedes cambiar el fondo, el retrato y las imágenes de cada botón.</p></div>
+<section id="designView" class="screen"><div class="section-head"><p class="eyebrow">UN SANTUARIO A TU MEDIDA</p><h2>Configuración de mi personaje</h2><p>Tu portada es independiente de las demás cuentas. Puedes cambiar el fondo, el retrato y las imágenes de cada botón.</p></div>
 <div class="design-grid"><section class="panel"><h3>Nombre del botón Rasgos</h3><label>Texto del acceso de Rasgos<input id="traitsButtonName" maxlength="30" placeholder="Rasgos, Metamagia, Capacidades..."></label><p class="hint">Puedes cambiar su nombre; tus rasgos y las secciones adicionales permanecerán intactos.</p></section><section class="panel"><h3>Fondo de inicio</h3><div class="theme-picker"><button data-theme="aurora" type="button">✦ Aurora arcana</button><button data-theme="night" type="button">☾ Noche encantada</button><button data-theme="violet" type="button">✧ Violeta</button></div><label>O subir tu propia imagen<input type="file" id="coverUpload" accept="image/png,image/jpeg,image/webp"></label><button type="button" id="clearCover" class="ghost">Restaurar fondo elegido</button><p class="hint">Las imágenes se optimizan antes de guardarse, para ahorrar espacio en Firebase.</p></section>
 <section class="panel"><h3>Retrato de la hoja</h3><div class="portrait-field"><img id="portraitPreview" alt="Vista previa de retrato"><div><label>Cambiar retrato<input type="file" id="portraitUpload" accept="image/png,image/jpeg,image/webp"></label><p class="hint">Esta imagen es para tu hoja de personaje. Puede ser distinta de la imagen de combate. Solo tú puedes cambiarla.</p></div></div></section>
 <section class="panel"><h3>Imagen y miniatura del combate</h3><p class="hint">Sube la imagen completa. Encuadra el rostro para la miniatura; al tocarla, todos verán la imagen completa.</p><div class="combat-image-previews"><img id="combatImagePreview" alt="Imagen completa de combate"><img id="combatThumbnailPreview" alt="Miniatura de combate"></div><label>Cambiar imagen de combate<input id="combatImageUpload" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="adjustCombatThumbnail" type="button" class="ghost">Ajustar miniatura</button><button id="viewCombatImage" type="button" class="ghost">Ver imagen completa</button></section><section class="panel"><h3>Fondo general</h3><p class="hint">Se aplica a tus secciones. El fondo de Inicio se elige por separado.</p><label>Fondo<select id="pageTheme"><option value="purple">Morado clásico</option><option value="night">Noche encantada</option><option value="aurora">Aurora arcana</option></select></label><label>Subir fondo general<input type="file" id="pageBackgroundUpload" accept="image/png,image/jpeg,image/webp"></label><img id="pageBackgroundPreview" class="design-preview" alt="Vista previa del fondo general"><button id="clearPageBackground" type="button" class="ghost">Restaurar fondo elegido</button></section><section class="panel"><h3>Imágenes de los botones</h3><div id="tileEditors" class="tile-editors"></div></section>
@@ -487,12 +490,13 @@
 <script src="rules-2014-subclasses.js?v=50"></script>
 <script src="rules-2014-backgrounds.js?v=50"></script>
 <script src="rules-2014-spells.js?v=50"></script>
-<script src="armor-class.js?v=70"></script>
-<script type="module" src="jugador.js?v=70"></script>
+<script src="armor-class.js?v=71"></script>
+<script src="campaign-controls.js?v=71"></script>
+<script type="module" src="jugador.js?v=71"></script>
 <script src="player-rules-guidance.js?v=69"></script>
-<script src="rules-2014-wizard.js?v=69"></script>
-<script type="module" src="mesa-compartida.js?v=63"></script>
-<script src="dialogs.js?v=68"></script><script type="module" src="new-character-sheet.js?v=68"></script></body></html>
+<script src="rules-2014-wizard.js?v=71"></script>
+<script type="module" src="mesa-compartida.js?v=71"></script>
+<script src="dialogs.js?v=71"></script><script type="module" src="new-character-sheet.js?v=71"></script><script src="adventure-tools.js?v=71"></script></body></html>
 
 
 

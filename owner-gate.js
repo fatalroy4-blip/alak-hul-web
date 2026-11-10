@@ -39,20 +39,23 @@ async function startApp() {
   // El código y los controles de la ficha antigua solo se inicializan después
   // de comprobar que la sesión autenticada es la propietaria.
   await insertScript("cleric-grimoire-2014.js?v=64");
-  await insertScript("armor-class.js?v=70");
-  await insertScript("script.js?v=70");
+  await insertScript("legacy-adventure.js?v=71");
+  await insertScript("armor-class.js?v=71");
+  await insertScript("script.js?v=71");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
-  await insertScript("cloud-sync.js?v=68", true);
+  await insertScript("campaign-controls.js?v=71");
+  await insertScript("cloud-sync.js?v=71", true);
   await insertScript("encounter-bridge.js?v=60");
-  await insertScript("mesa-compartida.js?v=63", true);
+  await insertScript("mesa-compartida.js?v=71", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");
   await insertScript("rules-2014-spells.js?v=50");
   await insertScript("player-rules-guidance.js?v=69");
-  await insertScript("rules-2014-wizard.js?v=69");
-  await insertScript("new-character-sheet.js?v=68",true);
+  await insertScript("rules-2014-wizard.js?v=71");
+  await insertScript("new-character-sheet.js?v=71",true);
+  await insertScript("adventure-tools.js?v=71");
  } catch (err) {
   lock();
   message("No se pudo iniciar la hoja de Alak Hul: " + err.message);
@@ -100,7 +103,7 @@ try {
    if (roleSnapshot.exists() && roleSnapshot.data().role === "owner") {
     const previous=await getDoc(doc(db,'users',user.uid,'characters','alak-hul'));
     if(previous.exists()&&previous.data().newSheetActive){location.replace('jugador.html');return;}
-    await startApp();
+    await startApp();window.alakNavigation?.start(user.uid,'owner');
    } else {
     location.replace("jugador.html");
    }

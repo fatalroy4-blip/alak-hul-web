@@ -204,6 +204,7 @@ function init(){
  renderPreparedGroups();renderSlots();renderSpellSections();renderChannels();renderRoster();renderInitiative();bind();buildExpansionControls();setupPortraitUpload();updateSoundButton();setupHomeCloudIndicator();updateHomeIndicators();renderSheetPreparedSpells();renderCombatAdmin();renderCustomSpellAdmin();renderCustomChannelAdmin();setupAlakBackgroundChoices();
 }
 function openAlakPage(page){
+ window.alakNavigation?.move(page);
  const legacyCombat=page==='combat';
  if(legacyCombat)page='campaign';
  const section=document.getElementById(page);if(!section)return;
@@ -215,6 +216,7 @@ function openAlakPage(page){
  updateHomeIndicators();
 }
 
+window.alakNavigate=openAlakPage;
 function getHomeCloudLabel(){
  const explicit=window.alakHomeCloudStatus;
  if(typeof explicit==="string" && explicit)return explicit;
@@ -288,18 +290,7 @@ function bind(){
  setupHomeNavigation();
  const restButton=document.getElementById('longRestBtn');
  if(restButton) restButton.onclick=()=>{
-  if(!confirm('¿Realizar un descanso largo? Se borrará el daño acumulado de todos los participantes, se recuperarán todos los espacios de conjuro, se restaurarán los PG de Roger y se reiniciarán sus salvaciones contra muerte. Esta acción no se puede deshacer.'))return;
-  state.racialUses=state.racialUses||{};state.racialUses.castigoAbrasador=false;
-  Object.keys(state.slots||{}).forEach(lv=>{state.slots[lv]=Array(Number(slotCounts()[lv]||0)).fill(false);});
-  Object.keys(state.combat||{}).forEach(name=>{state.combat[name]={...state.combat[name],damage:0,dead:false};});
-  // El descanso largo recupera los PG de Roger y limpia ambas salvaciones contra muerte.
-  const hp=hpInput('hpCurrent');if(hp)hp.value=String(maxRogerHp());
-  ['deathSuccess','deathFail'].forEach(key=>{const el=hpInput(key);if(el)el.value='0';});
-  if(state.combat.Roger)state.combat.Roger.dead=false;
-  saveCharacter();renderDeathSaves();
-  state.spellUses={};
-  saveState();renderSlots();renderPreparedGroups();renderSpellSections();renderSheetPreparedSpells();renderInitiative();
-  playLongRestDawn();
+  if(confirm('¿Aplicar un descanso largo únicamente a Alak Hul? Para afectar a otros jugadores usa Campaña → Dirección.'))void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));
  };
  searchInput.addEventListener('input',renderSpellSections);
  ['grimoireLevelFilter','grimoireKindFilter'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderSpellSections));
@@ -1020,7 +1011,7 @@ const CHAR_KEY='alakHulCharacterV7';
 function loadCharacter(){
   let s={}; try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){}
   document.querySelectorAll('[data-char]').forEach(el=>{if(s[el.dataset.char]!==undefined){if(el.type==='checkbox')el.checked=(s[el.dataset.char]===true||s[el.dataset.char]==='true');else el.value=s[el.dataset.char]}});
-  window.alakArmor?.refresh();
+  window.alakArmor?.refresh();window.alakLegacyDerived?.();
   if(s.portrait){const img=document.getElementById('characterPortrait'); if(img) img.src=s.portrait;}
 }
 let charSaveTimer;
@@ -1028,7 +1019,7 @@ function saveCharacter(){
   window.alakArmor?.refresh();
   const s={}; document.querySelectorAll('[data-char]').forEach(el=>s[el.dataset.char]=(el.type==='checkbox'?el.checked:el.value));
   const current=(()=>{try{return JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){return {}}})();
-  if(current.portrait)s.portrait=current.portrait;
+  if(current.portrait)s.portrait=current.portrait;for(const key of ['sorcery','appliedCampaignEvents','levelReviewPending'])if(current[key]!==undefined)s[key]=current[key];
   localStorage.setItem(CHAR_KEY,JSON.stringify(s));
   window.alakCloud?.onLocalChange?.();
   const st=document.getElementById('charSaveStatus'); if(st){st.textContent='✓ Guardado';clearTimeout(charSaveTimer);charSaveTimer=setTimeout(()=>st.textContent='Guardado automático',1200)}

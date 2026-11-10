@@ -1,12 +1,12 @@
 /* Shared AC editor, PHB 2014. Equipment is explicit; owning armor is not wearing it. */
 (function(){
  const root=document.getElementById('character');if(!root)return;
- const field=k=>root.querySelector('[data-char="'+k+'"]');
+ const field=k=>document.querySelector('[data-char="'+k+'"]');
  const armors={none:['Sin armadura',10,'none'],padded:['Acolchada',11,'light'],leather:['Cuero',11,'light'],studded:['Cuero tachonado',12,'light'],hide:['Pieles',12,'medium'],chainshirt:['Camisote de malla',13,'medium'],scale:['Cota de escamas',14,'medium'],breastplate:['Coraza',14,'medium'],halfplate:['Semiplacas',15,'medium'],ring:['Cota de anillas',14,'heavy'],chain:['Cota de malla',16,'heavy'],splint:['Bandas',17,'heavy'],plate:['Placas',18,'heavy']};
  const details=document.createElement('details');details.className='armor-settings';
  details.innerHTML='<summary>Clase de armadura · automática / manual</summary><p>Selecciona lo que llevas equipado. Puedes escribir directamente en la casilla de CA para pasar a modo manual; el cálculo automático no reemplazará ese valor.</p><div class="armor-options"><label>Modo<select data-char="acMode"><option value="auto">Automático</option><option value="manual">Manual</option></select></label><label>Armadura equipada<select data-char="acArmor"></select></label><label>Sin armadura<select data-char="acFormula"><option value="class">Según mi clase y rasgos</option><option value="normal">Normal: 10 + Destreza</option><option value="barbarian">Bárbaro: 10 + Destreza + Constitución</option><option value="monk">Monje: 10 + Destreza + Sabiduría (sin escudo)</option><option value="draconic">Resistencia dracónica: 13 + Destreza</option><option value="mage">Armadura de mago activa: 13 + Destreza</option></select></label><label><input type="checkbox" data-char="acShield"> Escudo equipado (+2)</label><label><input type="checkbox" data-char="acDefense"> Estilo Defensa (+1 con armadura)</label><label><input type="checkbox" data-char="acMediumMaster"> Maestro en armaduras intermedias (límite de Destreza +3)</label><label>Otras bonificaciones<input type="number" step="1" data-char="acExtra" placeholder="0"></label></div><p data-ac-status role="status"></p>';
  for(const [id,[name]] of Object.entries(armors))details.querySelector('[data-char="acArmor"]').add(new Option(name,id));
- root.prepend(details);
+ (document.querySelector('#designView')||document.querySelector('#settings')).prepend(details);
  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  function refresh(traits=[]){
   const ac=field('ac');if(!ac)return {};
@@ -46,6 +46,6 @@
  }
  // Existing sheets keep their current AC until the player explicitly selects automatic mode.
  field('acMode').value=String(field('ac')?.value||'').trim()?'manual':'auto';
- root.addEventListener('input',e=>{if(e.target===field('ac'))field('acMode').value='manual';},true);
+ document.addEventListener('input',e=>{if(e.target===field('ac'))field('acMode').value='manual';},true);
  window.alakArmor={refresh};
 })();

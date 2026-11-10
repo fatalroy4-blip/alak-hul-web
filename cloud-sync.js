@@ -19,6 +19,7 @@ let ready = false, applying = false, dirty = false;
 let loading = false, conflictData = null, queue = null;
 let editCounter = 0, isWriting = false, retryNeeded = false;
 let lastCloudSignature = '';
+let lastEditSignature='';
 const storedClient = sessionStorage.getItem(CLIENT_KEY);
 const clientId = storedClient || (crypto.randomUUID ? crypto.randomUUID() : `dev-${Date.now()}-${Math.random()}`);
 if (!storedClient) sessionStorage.setItem(CLIENT_KEY, clientId);
@@ -86,7 +87,7 @@ function repaintLocal() {
   if (typeof updateSoundButton === 'function') updateSoundButton();
   if (typeof updateHomeIndicators === 'function') updateHomeIndicators();
   if (typeof window.alakBgRefresh === "function") window.alakBgRefresh();
-  if (typeof window.alakCampaignRefresh === 'function') window.alakCampaignRefresh();
+  if (typeof window.alakCampaignRefresh === 'function') window.alakCampaignRefresh();window.alakRefreshAdventureTools?.();
 }
 function useRemote(data, doBackup=true) {
   if (!data || !data.state || !data.character || typeof data.state !== 'object' || typeof data.character !== 'object') {
@@ -99,7 +100,7 @@ function useRemote(data, doBackup=true) {
     localStorage.setItem(GAME_KEY,JSON.stringify(data.state));
     localStorage.setItem(PROFILE_KEY,JSON.stringify(data.character));
     repaintLocal();
-    lastCloudSignature = signature(data);
+    lastCloudSignature = signature(data);lastEditSignature=lastCloudSignature;
   } finally {
     applying = false;
     window.alakCloud.isApplying = false;
@@ -148,14 +149,33 @@ function debounceSave(ms=1300) {
   clearTimeout(queue);queue=setTimeout(()=>{void flush();},ms);
 }
 function onLocalChange() {
-  if(applying || !account) return;
+  if(applying || resettingSheet || !account) return;
+  const nextSignature=signature(getLocal());if(nextSignature===lastEditSignature)return;lastEditSignature=nextSignature;
   ++editCounter;dirty=true;setPending();
   status(ready?'Guardando cambios…':'Cambios locales pendientes de sincronizar','warn');
   if(ready) debounceSave();
 }
 let resettingSheet=false;
 window.alakCloud={onLocalChange,isApplying:false};
-window.alakSheetLifecycle={own:()=>!!account&&ready,export:()=>getLocal(),pause:async()=>{resettingSheet=true;clearTimeout(queue);while(isWriting)await new Promise(r=>setTimeout(r,50));dirty=false;retryNeeded=false;},resume:()=>{resettingSheet=false;onLocalChange();}};
+window.alakSheetLifecycle={own:()=>!!account&&ready,export:()=>getLocal(),pause:async()=>{resettingSheet=true;clearTimeout(queue);while(isWriting)await new Promise(r=>setTimeout(r,50));dirty=false;retryNeeded=false;},resume:()=>{resettingSheet=false;lastEditSignature='';onLocalChange();}};
+
+window.alakAdventureSheet={
+ get:()=>window.alakLegacyAdventure?.toModel(getLocal()),
+ act:action=>legacyActions([action]),
+ receive:events=>legacyActions(events,true)
+};
+async function legacyActions(actions,events=false){
+ if(!ready||!account||resettingSheet)throw Error('Espera a que tu hoja termine de sincronizar.');
+ if(events&&actions.every(e=>getLocal().character?.appliedCampaignEvents?.[e.type]===e.id))return;
+ while(isWriting)await new Promise(r=>setTimeout(r,50));if(dirty)await flush(true);if(dirty)throw Error('Guarda tus cambios antes de continuar.');
+ resettingSheet=true;clearTimeout(queue);document.querySelector('main')?.setAttribute('inert','');
+ try{let next;await api.runTransaction(firestore,async tx=>{const snap=await tx.get(ref);if(!snap.exists()||snap.data().newSheetActive)throw Error('Abre tu hoja actual.');next=snap.data();
+  for(const action of [...actions].sort((a,b)=>(a.at||0)-(b.at||0))){const model=window.alakLegacyAdventure.toModel(next);if(events&&model.appliedCampaignEvents?.[action.type]===action.id)continue;let updated=window.ALAK_ADVENTURE_RULES.apply(model,action);if(events)updated.appliedCampaignEvents={...model.appliedCampaignEvents,[action.type]:action.id};next=window.alakLegacyAdventure.fromModel(next,updated,action);}
+  tx.set(ref,{...next,clientId,updatedAt:api.serverTimestamp()});
+ });useRemote(next,false);window.alakRefreshAdventureTools?.();}
+ finally{resettingSheet=false;document.querySelector('main')?.removeAttribute('inert');}
+}
+
 async function flush(force=false) {
   if(resettingSheet)return;
   if (!account || !ready || applying || loading) return;
@@ -167,7 +187,7 @@ async function flush(force=false) {
   try {
     status('Guardando en la nube…','warn');
     const data=await payload();
-    await api.runTransaction(firestore,async tx=>{const snap=await tx.get(ref);if(snap.exists()&&snap.data().newSheetActive)throw Error('Esta hoja fue reemplazada. Abre tu nueva hoja.');tx.set(ref,{...data,schemaVersion:1,clientId,updatedAt:api.serverTimestamp()});});
+    await api.runTransaction(firestore,async tx=>{const snap=await tx.get(ref);if(snap.exists()&&snap.data().newSheetActive)throw Error('Esta hoja fue reemplazada. Abre tu nueva hoja.');if(snap.exists()&&['rest','level'].some(k=>snap.data().character?.appliedCampaignEvents?.[k]!==data.character?.appliedCampaignEvents?.[k]))throw Error('Actualización del DM recibida en otra pestaña. Recarga la hoja.');tx.set(ref,{...data,schemaVersion:1,clientId,updatedAt:api.serverTimestamp()});});
     lastCloudSignature=signature(data);
     if(currentEdit===editCounter){dirty=false;clearPending();status('✓ Guardado en la nube','ok');}
     else {status('Hay cambios nuevos por subir…','warn');}
@@ -175,7 +195,7 @@ async function flush(force=false) {
     dirty=true;setPending();
     status('No se pudo subir: '+friendlyError(err),'error');
   } finally {
-    isWriting=false;
+    isWriting=false;if(!dirty)window.alakCampaignControls?.ready();
     if(retryNeeded || dirty && currentEdit!==editCounter){retryNeeded=false;debounceSave(1700);}
   }
 }
@@ -223,7 +243,7 @@ async function connectForUser(user) {
       }
       useRemote(value);
       clearPending();
-      ready=true;subscribe();status('✓ Hoja cargada y sincronizada','ok');
+      ready=true;subscribe();window.alakCampaignControls?.ready();status('✓ Hoja cargada y sincronizada','ok');
     }else{
       // Primer dispositivo: convertir su guardado local en el primer guardado cloud.
       ready=true;dirty=true;setPending();

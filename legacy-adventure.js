@@ -1,0 +1,16 @@
+(()=>{
+ const toModel=data=>{
+  const c=data.character||{},s=data.state||{},slots={};
+  for(let n=1;n<=9;n++){const total=Number(s.customSlots?.[n]??(c['spell_slots'+n+'_total']||((typeof DATA!=='undefined'?DATA.spellSlots:{} )?.[n])||0));slots[n]={total,used:(s.slots?.[n]||[]).filter(Boolean).length};}
+  return {sheet:{...c},fields:{className:String(c.classLevel||'').replace(/\s*(?:n|nivel)?\s*\d+$/i,''),level:String(c.classLevel||'').match(/\d+/)?.[0]||'1',maxHP:c.hpMax,hp:c.hpCurrent},slots,sorcery:c.sorcery||{},ruleBuild:{classId:'clerigo',subclassId:'light',level:Number(String(c.classLevel||'').match(/\d+/)?.[0])||1},levelReviewPending:c.levelReviewPending,appliedCampaignEvents:c.appliedCampaignEvents||{}};
+ };
+ const fromModel=(data,m,action)=>{const result=structuredClone(data);result.character={...m.sheet,sorcery:m.sorcery,levelReviewPending:!!m.levelReviewPending,appliedCampaignEvents:m.appliedCampaignEvents||{}};result.state??={};result.state.customSlots??={};result.state.slots??={};for(const [n,s] of Object.entries(m.slots)){result.state.customSlots[n]=s.total;result.state.slots[n]=Array.from({length:s.total},(_,i)=>i<s.used);}if(action?.type==='rest'){result.state.racialUses={};result.state.spellUses={};result.state.channelUsed=0;}return result;};
+ window.alakLegacyAdventure={toModel,fromModel,clearReview:()=>{const key='alakHulCharacterV7';try{const value=JSON.parse(localStorage.getItem(key)||'{}');value.levelReviewPending=false;localStorage.setItem(key,JSON.stringify(value));window.alakCloud?.onLocalChange();window.alakRefreshAdventureTools?.();}catch{}}};
+ const config=document.querySelector('#settings');const box=document.createElement('details');box.className='derived-adjustments';
+ box.innerHTML='<summary>Cálculos de la hoja</summary><label><input type="checkbox" data-char="autoDerived" checked> Calcular iniciativa y percepción pasiva automáticamente</label><label><input type="checkbox" data-char="perceptionExpertise"> Pericia en Percepción</label><label>Percepción<select data-char="perceptionMode"><option value="normal">Normal</option><option value="advantage">Ventaja</option><option value="disadvantage">Desventaja</option></select></label><label>Bonificación adicional a iniciativa<input type="number" data-char="initiativeExtra" value="0"></label><label>Bonificación adicional a percepción pasiva<input type="number" data-char="passiveExtra" value="0"></label>';
+ config.prepend(box);
+ window.alakLegacyDerived=()=>{const q=k=>document.querySelector('[data-char="'+k+'"]'),auto=q('autoDerived')?.checked;for(const k of ['initiative','passive'])if(q(k))q(k).readOnly=auto;if(!auto)return;const dex=q('ability_1')?.value,wis=q('ability_4')?.value,bonus=Number(q('profBonus')?.value)||0;
+  if(String(dex||'').trim())q('initiative').value=(Math.floor((Number(dex)-10)/2)+(Number(q('initiativeExtra').value)||0)>=0?'+':'')+(Math.floor((Number(dex)-10)/2)+(Number(q('initiativeExtra').value)||0));
+  if(String(wis||'').trim())q('passive').value=10+Math.floor((Number(wis)-10)/2)+(q('perceptionExpertise').checked?2*bonus:q('skillprof_11')?.checked?bonus:0)+(q('perceptionMode').value==='advantage'?5:q('perceptionMode').value==='disadvantage'?-5:0)+(Number(q('passiveExtra').value)||0);
+ };
+})();

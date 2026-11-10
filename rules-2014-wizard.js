@@ -32,6 +32,7 @@ if(intro){intro.append(launch)}else{document.body.append(launch)}
 const dlg=document.createElement("dialog");dlg.id="rulesWizard2014";
 dlg.innerHTML='<div class="rw-modal"><div class="rw-top"><div><p class="rw-kicker">MANUAL DEL JUGADOR · D&D 5E 2014</p><h2>Forja tu personaje</h2><p class="rw-note">Asistente guiado. Solo completa huecos y añade rasgos que falten; nunca sustituye datos existentes.</p></div><button id="rwClose" aria-label="Cerrar" type="button">✕</button></div><div class="rw-fields"><label>Raza<select id="rwRace"></select></label><label>Subraza / variante<select id="rwSubrace"></select></label><label>Clase<select id="rwClass"></select></label><label>Subclase / origen / dominio<select id="rwSubclass"></select></label><label>Nivel (1–20)<input id="rwLevel" type="number" min="1" max="20" value="1"></label><label>Trasfondo<select id="rwBackground"></select></label></div><div id="rwReferences" class="rw-reference"></div><section class="rw-stats"><div class="rw-titleline"><h3>Características iniciales</h3><button id="rwStandard" type="button">Usar array estándar</button></div><p>Escribe tus puntuaciones base o pulsa «Usar array estándar» para distribuir 15, 14, 13, 12, 10 y 8. Si ya completaste alguna casilla, el asistente no la modificará. Los modificadores raciales se incluyen solo al rellenar casillas vacías.</p><div id="rwAttributes" class="rw-attrs"></div><p id="rwBonuses" class="rw-bonuses"></p></section><section class="rw-feature-section"><h3>Rasgos que corresponde revisar</h3><p>Marca qué rasgos quieres incorporar. Las características ya presentes no se duplican.</p><div id="rwFeatures" class="rw-feature-list"></div></section><section class="rw-feature-section"><h3>Opciones iniciales de conjuros</h3><p>Selección orientativa del capítulo 11; no reemplaza la lista completa del manual. Para ver más conjuros, consulta tu libro.</p><div id="rwSpells" class="rw-feature-list rw-spells"></div></section><div class="rw-options"><label><input id="rwComputeHP" type="checkbox"> Calcular PG máximos por promedio según clase y Constitución (solo si no hay PG registrados)</label><label><input id="rwAutoProgress" type="checkbox" checked> Al subir de nivel, añadir los nuevos rasgos automáticamente a mi ficha de jugador</label><label><input id="rwUpdateSlots" type="checkbox"> Recalcular el total de espacios de conjuro (conservando los gastados)</label></div><p class="rw-safety">Alak Hul mantiene su linaje de Zariel y su dominio de la Luz. Zariel procede de material adicional y no se sustituirá por el linaje básico del Manual 2014. Las elecciones que requieren DM quedan pendientes de su aprobación.</p><div class="rw-actions"><button id="rwReview" type="button">Actualizar revisión</button><button id="rwApply" type="button">Añadir sin sobrescribir</button></div><p id="rwResult" role="status" aria-live="polite"></p></div>';
 document.body.append(dlg);
+ const calc=document.createElement('div');calc.className='rw-options';calc.innerHTML='<label><input type="checkbox" id="rwAutoDerived" checked> Calcular iniciativa y percepción pasiva automáticamente</label><label><input type="checkbox" id="rwAutoAC" checked> Calcular clase de armadura automáticamente (equipo en Configuración)</label>';dlg.querySelector('.rw-actions').before(calc);
 if(!owner)dlg.querySelector(".rw-safety").remove();
 const specialSection=document.createElement("section");
 specialSection.className="rw-feature-section";
@@ -61,6 +62,8 @@ function initial(){
  const data=owner?existingOwner():window.alakRuleBridge?.get?.();
  if(!data&&!owner){$("rwResult").textContent="Inicia sesión en el portal con Google antes de crear una ficha.";return false}
  const build=data?.ruleBuild;
+ $('rwAutoDerived').checked=owner?getInput('autoDerived')?.checked!==false:data?.sheet?.autoDerived!==false;
+ $('rwAutoAC').checked=owner?getInput('acMode')?.value==='auto':data?.sheet?.acMode!=='manual';
  const raceId=build?.raceId||nameToId(owner?data.raceText:data.fields?.race,book.races);
  const classId=build?.classId||nameToId(owner?data.classText:data.fields?.className,book.classes);
  raceSel.value=raceId||"";classSel.value=classId||"";dependency();
@@ -236,6 +239,7 @@ function updateSpellTally(){const p=currentPolicy(),chosen=desiredSpells().filte
 function selectedFeatures(){return [...featuresHost.querySelectorAll('input[data-feature]:checked')].map(x=>x.dataset.feature)}
 function selectedSpells(){return [...spellsHost.querySelectorAll('input[data-spell]:checked')].map(x=>{const [n,...name]=x.dataset.spell.split("|");return {...desiredSpells().find(s=>s.level===Number(n)&&s.title===name.join("|")),level:Number(n),title:name.join("|")}})}
 function ownerApply(choice){
+ for(const [key,value] of [['autoDerived',choice.autoDerived],['acMode',choice.autoAC?'auto':'manual']]){const input=getInput(key);if(input){if(input.type==='checkbox')input.checked=value;else input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));}}
  const corpus=getInput("features"),extras=getInput("additional");if(!corpus)return {ok:false,message:"No se encontró el campo de rasgos de Alak Hul"};
  const all=book.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
  const chosenBackground=window.ALAK_RULE_BACKGROUNDS?.[choice.background];
@@ -255,6 +259,7 @@ function ownerApply(choice){
   const blanks=[...document.querySelectorAll('#character input[data-char^="spell'+spell.level+'_"]')].filter(x=>/^spell\d+_\d+$/.test(x.dataset.char)&&!String(x.value).trim());
   if(blanks.length){blanks[0].value=spell.title;blanks[0].dispatchEvent(new Event("input",{bubbles:true}));addedSpells++}
  }
+ window.alakLegacyAdventure?.clearReview();
  return {ok:true,message:"Alak Hul: "+added+" rasgos complementarios y "+addedSpells+" conjuros añadidos en casillas vacías. No se modificó ningún dato anterior."}
 }
 async function apply(createNew=false){
@@ -272,7 +277,7 @@ async function apply(createNew=false){
  const abilities=inputs.map(x=>x.value===""?null:Number(x.value)),selected=abilities.filter(v=>v!==null);
  if(selected.length&&selected.length!==6){$("rwResult").textContent="Asigna las seis características, o deja todas sin completar.";return}
  if(inputs.some(x=>x.validity.badInput)||selected.some(v=>!Number.isInteger(v)||v<1||v>30)){$("rwResult").textContent="Escribe puntuaciones enteras entre 1 y 30.";return}
- const choice={edition:"2014",raceId,subraceId,classId,subclassId,level:n,background:background.value,abilities,bonuses:bonuses(),selectedFeatureIds:selectedFeatures(),selectedSpells:selectedSpells(),specialTraits:specials,computeHP:$("rwComputeHP").checked,updateSlots:$("rwUpdateSlots").checked,autoProgress:$("rwAutoProgress").checked};
+ const choice={edition:"2014",raceId,subraceId,classId,subclassId,level:n,background:background.value,abilities,bonuses:bonuses(),selectedFeatureIds:selectedFeatures(),selectedSpells:selectedSpells(),specialTraits:specials,computeHP:$("rwComputeHP").checked,updateSlots:$("rwUpdateSlots").checked,autoProgress:$("rwAutoProgress").checked,autoDerived:$("rwAutoDerived").checked,autoAC:$("rwAutoAC").checked};
  if(owner&&!confirm("¿Agregar únicamente rasgos y conjuros que faltan a Alak Hul? Sus valores actuales no se reemplazarán."))return;
  if(!owner&&!confirm("¿Agregar las opciones elegidas a tu propia hoja sin sobrescribir campos existentes?"))return;
  if(createNew){choice.computeHP=true;choice.updateSlots=true;}

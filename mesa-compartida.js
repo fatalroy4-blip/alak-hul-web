@@ -69,7 +69,7 @@ if(mountPoints.length){
  const warn=t=>{signal.textContent=t;document.querySelectorAll('.mc-combat-status').forEach(el=>{el.textContent=t;el.hidden=!/local:|No se pudo|guardado en curso|Sin acceso/.test(t)});};
  function select(name,navigate=false){
   if(name==="manage"&&!isAdmin)return;
-  active=name;
+  active=name;if(navigate)window.alakNavigation?.campaign(name);
   nav.querySelectorAll("[data-mc-view]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.mcView===name)));
   Object.values(element).forEach(p=>p.classList.toggle("active",p.dataset.mcPane===name));
   if(combatBoard&&name==='combat'&&navigate){
@@ -77,6 +77,7 @@ if(mountPoints.length){
    window.alakShowCampaignView?.('combat');
   }
  }
+ window.alakRestoreCampaignView=name=>{if(name)select(name);};
  function panel(title,parent){
   const outer=create("section","mc-surface");outer.append(create("h3","",title));parent.append(outer);return outer
  }
@@ -264,6 +265,7 @@ if(mountPoints.length){
  }
  function renderManage(){
   const box=element.manage;box.replaceChildren();if(!isAdmin)return;
+  window.alakCampaignControls?.render({host:box,players,roles:accountRoles,admitted,current,send:edit});
   const surface=panel("⚙ Dirección de campaña",box);
   const titleForm=create("form","mc-form"),title=field("Nombre de la campaña","title",info.title);
   const btn=create("button","","Guardar nombre");btn.type="submit";
@@ -284,7 +286,7 @@ if(mountPoints.length){
   }
 
  }
- function render(){if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(active)}
+ function render(){if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(window.alakNavigation?.get()?.campaign||active)}
  async function activate(account){
   const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
@@ -307,6 +309,7 @@ if(mountPoints.length){
     }else{info=parse(snap.data());warn("✓ Mesa conectada · actualizada en tiempo real")}
     window.alakApplyEncounterCatalog?.(info.participantCatalog);
     if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);
+    window.alakCampaignControls?.receive(info,current.uid);window.alakCampaignControls?.mountAudio(header);
     render();
    },e=>{warn("Sin acceso a Campaña: revisa las reglas Firestore ('campaigns/main'). "+(e.code||""))});
    };
