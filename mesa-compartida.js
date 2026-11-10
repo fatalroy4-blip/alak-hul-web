@@ -165,7 +165,7 @@ if(mountPoints.length){
      return {...s,roster,turnIndex:Math.max(0,roster.findIndex(p=>p.id===currentId))};
     });};identity.append(roll);
    }else identity.append(create('small','','Inic. '+(entry.initiative??0)));
-   if(entry.dead)identity.append(create('small','','Caído'));
+
    card.append(identity);
    const damage=Math.max(0,Number(entry.damage??(entry.maxHP!=null&&entry.hp!=null?entry.maxHP-entry.hp:0))||0);
    const max=Number(entry.maxHP)>0?Number(entry.maxHP):null, hp=max===null?null:Math.max(0,max-damage),ratio=max?Math.min(100,100*hp/max):100;
@@ -173,6 +173,9 @@ if(mountPoints.length){
    const bar=create('div','mc-life-track');bar.setAttribute('role','meter');bar.setAttribute('aria-label','Vida de '+entry.name);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax',String(max||100));bar.setAttribute('aria-valuenow',String(hp??100));bar.setAttribute('aria-valuetext',max?hp+' de '+max:'PG sin definir');const fill=create('span');fill.style.width=ratio+'%';bar.append(fill);health.append(bar);card.append(health);
    const damages=create('div','mc-damage');damages.append(create('small','','DAÑO'),create('strong','',String(damage)));card.append(damages);
    if(isAdmin){const actions=create('div','mc-actions');actions.append(makeBtn('⚔ Daño',()=>void changeHP(entry.id,-1)),makeBtn('✚ Curar',()=>void changeHP(entry.id,1)));card.append(actions);}
+   const statusActions=card.querySelector('.mc-actions');
+   if(isAdmin)statusActions.append(makeBtn('☠',()=>void window.alakPatchEncounter([{id:entry.id,dead:!entry.dead,downed:false}])));
+   window.alakCombatStatus?.mount(card,entry,statusActions,identity,isAdmin?patch=>window.alakPatchEncounter([{id:entry.id,...patch}]):null);
    list.append(card);
   });return list;
  }
@@ -238,7 +241,7 @@ if(mountPoints.length){
   const m=info.roster.find(x=>x.id===entryId);if(!m)return;
   const damage=Math.max(0,Number(m.damage??(m.maxHP!=null&&m.hp!=null?m.maxHP-m.hp:0))-direction*delta);
   const newHp=m.maxHP==null?null:Math.max(0,Number(m.maxHP)-damage);
-  await edit(s=>({...s,roster:s.roster.map(x=>x.id===entryId?{...x,hp:newHp,damage}:x)}));
+  await edit(s=>({...s,roster:s.roster.map(x=>x.id===entryId?{...x,hp:newHp,damage,downed:newHp>0?false:!!x.downed}:x)}));
   // Mantener sincronizada también la hoja de personaje individual; nunca editar su retrato.
   if(m.uid&&newHp!==null){
    try{await updateDoc(doc(db,"players",m.uid),{"fields.hp":String(newHp),"sheet.hpCurrent":String(newHp),"updatedBy":current.uid,"updatedAt":serverTimestamp()})}

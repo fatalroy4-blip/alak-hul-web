@@ -858,7 +858,7 @@ function renderInitiative(){
     <button type="button" class="avatar-button" title="Cambiar retrato de ${esc(name)}" aria-label="Cambiar retrato de ${esc(name)}"><img class="combat-avatar" alt="Retrato de ${esc(name)}" src="${getPortrait(name,enemy)}"><span class="avatar-camera" aria-hidden="true">✎</span></button>
     <div class="identity"><div class="init-name" title="${esc(name)}">${esc(name)}</div><button type="button" class="combat-side ${enemy?'is-enemy':'is-ally'}" title="Cambiar bando" aria-label="Bando de ${esc(name)}: ${enemy?'enemigo':'aliado'}">${enemy?'ENEMIGO':'ALIADO'}</button></div>
     <div class="hp-tracker" aria-label="Puntos de golpe de ${esc(name)}"><div class="hp-top"><span>Vida <strong class="hp-left-count">${hasMax?remaining:'—'}</strong> / <label class="hp-max-label"><input class="hp-max-input" type="number" min="1" max="99999" step="1" inputmode="numeric" aria-label="PG máximos de ${esc(name)}" placeholder="PG máx." value="${hasMax?max:''}"></label></span><span class="hp-percent">${hasMax?`${Math.round(ratio)}%`:'PG sin definir'}</span></div><div class="hp-track"><span class="hp-fill" style="width:${ratio}%"></span></div></div>
-    <div class="damage-box"><span class="damage-label">DAÑO <b class="damage-count">${damage}</b></span><button type="button" class="icon-btn minus" title="Restar 1 de daño">−</button><button type="button" class="icon-btn plus" title="Sumar 1 de daño">+</button><div class="damage-enter"><input type="number" min="0" step="1" inputmode="numeric" class="damage-amount" placeholder="Cantidad" aria-label="Cantidad de daño o curación de ${esc(name)}"><button type="button" class="add-damage" title="Sumar daño indicado">⚔ Daño</button><button type="button" class="subtract-damage" title="Restar daño acumulado">✚ Curar</button></div><button type="button" class="icon-btn dead-btn ${c.dead?'active':''}" title="${c.dead?'Desmarcar caído o muerto':'Marcar caído o muerto'}" aria-label="${c.dead?'Revivir':'Marcar muerto o caído a'} ${esc(name)}">☠</button></div>
+    <div class="damage-box"><span class="damage-label">DAÑO <b class="damage-count">${damage}</b></span><button type="button" class="icon-btn minus" title="Restar 1 de daño">−</button><button type="button" class="icon-btn plus" title="Sumar 1 de daño">+</button><div class="damage-enter"><input type="number" min="0" step="1" inputmode="numeric" class="damage-amount" placeholder="Cantidad" aria-label="Cantidad de daño o curación de ${esc(name)}"><button type="button" class="add-damage" title="Sumar daño indicado">⚔ Daño</button><button type="button" class="subtract-damage" title="Restar daño acumulado">✚ Curar</button></div><button type="button" class="icon-btn dead-btn ${c.dead?'active':''}" title="${c.dead?'Desmarcar muerte':'Marcar muerto'}" aria-label="${c.dead?'Revivir':'Marcar muerto a'} ${esc(name)}">☠</button></div>
     <div class="turn-arrows"><button type="button" class="icon-btn move-up" title="Subir turno" aria-label="Subir ${esc(name)}" ${index===0?'disabled':''}>↑</button><button type="button" class="icon-btn move-down" title="Bajar turno" aria-label="Bajar ${esc(name)}" ${index===names.length-1?'disabled':''}>↓</button></div>`;
   row.querySelector('.minus').onclick=()=>changeDamage(name,-1);
   row.querySelector('.plus').onclick=()=>changeDamage(name,1);
@@ -893,9 +893,7 @@ function changeDamage(name,delta){
  if(c.damage===before)return;
  const max=getParticipantMaxHp(name,c),enemy=isEnemyCombatant(name,c);
  let deathNow=false;
- if(delta>0&&enemy&&max!==null&&before<max&&c.damage>=max&&!c.dead){
-   c.dead=true;deathNow=true;
- }
+ if(max!==null&&c.damage<max)c.downed=false;
  state.combat[name]=c;saveState();
  if(name==='Roger')syncRogerHpFromCombat();
  renderInitiative();
@@ -908,7 +906,7 @@ function changeDamage(name,delta){
 function toggleDead(name){
  const c={...combatState(name)};
  const wasDead=!!c.dead;
- c.dead=!c.dead;
+ c.dead=!c.dead;if(c.dead)c.downed=false;
  state.combat[name]=c;saveState();renderInitiative();
  if(!wasDead&&c.dead)playReliableAudio('death');
 }

@@ -41,13 +41,14 @@ async function startApp() {
   await insertScript("cleric-grimoire-2014.js?v=64");
   await insertScript("legacy-adventure.js?v=71");
   await insertScript("armor-class.js?v=71");
-  await insertScript("script.js?v=71");
+  await insertScript("script.js?v=78");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
   await insertScript("campaign-controls.js?v=71");
   await insertScript("cloud-sync.js?v=71", true);
-  await insertScript("encounter-bridge.js?v=60");
-  await insertScript("mesa-compartida.js?v=71", true);
+  await insertScript("combat-status.js?v=78");
+  await insertScript("encounter-bridge.js?v=78");
+  await insertScript("mesa-compartida.js?v=78", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");
