@@ -49,7 +49,7 @@ async function startApp() {
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");
   await insertScript("rules-2014-spells.js?v=50");
-  await insertScript("rules-2014-wizard.js?v=50");
+  await insertScript("rules-2014-wizard.js?v=66");
  } catch (err) {
   lock();
   message("No se pudo iniciar la hoja de Alak Hul: " + err.message);

@@ -48,3 +48,10 @@
 #rulesWizard2014 .rw-check strong{font-size:16px;line-height:1.35;}
 #rulesWizard2014 .rw-check small{font-size:12px;line-height:1.5;}
 @media(forced-colors:active){#rulesWizard2014 .rw-check input[type="checkbox"]{appearance:auto;}}
+
+#rulesWizard2014 .rw-options{width:min(100%,760px);margin:0 auto;box-sizing:border-box;gap:14px;}
+#rulesWizard2014 .rw-options label{display:flex;align-items:flex-start;justify-content:flex-start;gap:12px;width:100%;margin:0;text-align:left;line-height:1.5;}
+#rulesWizard2014 .rw-options input[type="checkbox"]{box-sizing:border-box;flex:0 0 18px;width:18px;min-width:18px;max-width:18px;height:18px;min-height:18px;margin:1px 0 0;padding:0;}
+#rulesWizard2014 .rw-check.exists input[type="checkbox"]{display:none;}
+#rulesWizard2014 .rw-check.exists{opacity:1;background:#21172b;border-color:#65516d;}
+#rulesWizard2014 .rw-check.exists strong{color:#dbc9e0;}
