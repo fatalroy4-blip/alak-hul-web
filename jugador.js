@@ -1,7 +1,7 @@
 /* Hoja individual v47: ningún dato de Alak Hul se comparte con este editor. */
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,onSnapshot,serverTimestamp,runTransaction} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 const $=id=>document.getElementById(id), all=sel=>[...document.querySelectorAll(sel)];
 const auth=getAuth(initializeApp(window.ALAK_FIREBASE_CONFIG)),db=getFirestore();
 const stats={strength:"Fuerza",dexterity:"Destreza",constitution:"Constitución",intelligence:"Inteligencia",wisdom:"Sabiduría",charisma:"Carisma"};
@@ -12,15 +12,16 @@ const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",a
 const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,combatImage:d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatThumbnail:d.combatThumbnail??d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatCrop:d.combatCrop||null,spellPhrases:{...(d.spellPhrases||{})},fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
-function change(){if(!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
+function change(){if(sheetResetting||!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
+let sheetResetting=false;
 async function save(){
- if(!model||!user)return;
+ if(sheetResetting||!model||!user)return;
  if(saving){queued=true;return}
  clearTimeout(timer);timer=null;saving=true;status("Guardando en nube…");
  const payload={...model,ownerUid:targetUid,updatedBy:user.uid,updatedAt:serverTimestamp()};
  if(JSON.stringify({...payload,updatedAt:null}).length>760000){status("Demasiadas imágenes. Reduce su tamaño.");saving=false;return}
  try{
-  await setDoc(doc(db,"players",targetUid),payload);
+  await runTransaction(db,async tx=>{const ref=doc(db,'players',targetUid),snap=await tx.get(ref);if(snap.exists()&&(snap.data().sheetGeneration||'')!==(payload.sheetGeneration||''))throw Error('La hoja cambió desde otra ventana. Recarga la página.');tx.set(ref,payload);});
   if(user.uid===targetUid)await publishMyPortrait();
   pending=false;status("✓ Guardado en nube");
   try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify({...model,updatedAt:null}))}catch{}
@@ -437,8 +438,10 @@ async function activate(account){
   renderAll();void loadSpellCatalog();if(user.uid===targetUid)void publishMyPortrait().catch(()=>status("Retrato de combate pendiente de sincronizar"));
   if(unsubscribe)unsubscribe();
   unsubscribe=onSnapshot(ref,snap=>{
-   if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
+   if(sheetResetting||!snap.exists()||snap.metadata.hasPendingWrites)return;
    const data=snap.data();
+   if((data.sheetGeneration||'')!==(model.sheetGeneration||'')){clearTimeout(timer);pending=false;queued=false;sheetResetting=true;location.reload();return;}
+   if(pending||saving)return;
    const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
@@ -711,6 +714,12 @@ function bind(){
  };
  $("extraNotes").oninput=()=>{const e=model.extras.find(x=>x.id===editingExtra);if(e){e.notes=$("extraNotes").value;change()}};
 }
+window.alakSheetLifecycle={
+ own:()=>!!user&&targetUid===user.uid,
+ export:()=>model?structuredClone(model):null,
+ pause:async()=>{sheetResetting=true;clearTimeout(timer);queued=false;while(saving)await new Promise(r=>setTimeout(r,50));pending=false;},
+ resume:()=>{sheetResetting=false;change();},
+};
 bind();
 onAuthStateChanged(auth,account=>{
  if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(timer);model=null;user=null;targetUid=null;pending=false;

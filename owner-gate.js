@@ -42,7 +42,7 @@ async function startApp() {
   await insertScript("script.js?v=62");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
-  await insertScript("cloud-sync.js?v=48", true);
+  await insertScript("cloud-sync.js?v=68", true);
   await insertScript("encounter-bridge.js?v=60");
   await insertScript("mesa-compartida.js?v=63", true);
   await insertScript("rules-2014-catalog.js?v=50");
@@ -50,6 +50,7 @@ async function startApp() {
   await insertScript("rules-2014-backgrounds.js?v=50");
   await insertScript("rules-2014-spells.js?v=50");
   await insertScript("rules-2014-wizard.js?v=66");
+  await insertScript("new-character-sheet.js?v=68",true);
  } catch (err) {
   lock();
   message("No se pudo iniciar la hoja de Alak Hul: " + err.message);
@@ -95,6 +96,8 @@ try {
    const roleSnapshot = await getDoc(doc(db,"appRoles",user.uid));
    if (attempt !== verifying || auth.currentUser?.uid !== user.uid) return;
    if (roleSnapshot.exists() && roleSnapshot.data().role === "owner") {
+    const previous=await getDoc(doc(db,'users',user.uid,'characters','alak-hul'));
+    if(previous.exists()&&previous.data().newSheetActive){location.replace('jugador.html');return;}
     await startApp();
    } else {
     location.replace("jugador.html");

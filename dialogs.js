@@ -6,7 +6,7 @@
  const outside=(d,e)=>{const r=d.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom;};
  document.addEventListener('pointerdown',e=>{pressed=e.target instanceof HTMLDialogElement&&outside(e.target,e)?e.target:null;},true);
  document.addEventListener('pointercancel',()=>{pressed=null;},true);
- document.addEventListener('click',e=>{const d=pressed;pressed=null;if(d?.open&&e.target===d&&outside(d,e))d.close();},true);
+ document.addEventListener('click',e=>{const d=pressed;pressed=null;if(d?.open&&d.getAttribute("aria-busy")!=="true"&&e.target===d&&outside(d,e))d.close();},true);
  const d=document.createElement('dialog');d.className='portrait-viewer';d.setAttribute('aria-labelledby','portraitViewerTitle');
  const title=document.createElement('h2');title.id='portraitViewerTitle';
  const close=document.createElement('button');close.type='button';close.textContent='Cerrar';close.onclick=()=>d.close();

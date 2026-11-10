@@ -153,8 +153,11 @@ function onLocalChange() {
   status(ready?'Guardando cambios…':'Cambios locales pendientes de sincronizar','warn');
   if(ready) debounceSave();
 }
+let resettingSheet=false;
 window.alakCloud={onLocalChange,isApplying:false};
+window.alakSheetLifecycle={own:()=>!!account&&ready,export:()=>getLocal(),pause:async()=>{resettingSheet=true;clearTimeout(queue);while(isWriting)await new Promise(r=>setTimeout(r,50));dirty=false;retryNeeded=false;},resume:()=>{resettingSheet=false;onLocalChange();}};
 async function flush(force=false) {
+  if(resettingSheet)return;
   if (!account || !ready || applying || loading) return;
   if(!dirty && !force) return;
   if(isWriting) { retryNeeded=true;return; }
@@ -164,7 +167,7 @@ async function flush(force=false) {
   try {
     status('Guardando en la nube…','warn');
     const data=await payload();
-    await api.setDoc(ref,{...data,schemaVersion:1,clientId,updatedAt:api.serverTimestamp()});
+    await api.runTransaction(firestore,async tx=>{const snap=await tx.get(ref);if(snap.exists()&&snap.data().newSheetActive)throw Error('Esta hoja fue reemplazada. Abre tu nueva hoja.');tx.set(ref,{...data,schemaVersion:1,clientId,updatedAt:api.serverTimestamp()});});
     lastCloudSignature=signature(data);
     if(currentEdit===editCounter){dirty=false;clearPending();status('✓ Guardado en la nube','ok');}
     else {status('Hay cambios nuevos por subir…','warn');}
@@ -190,6 +193,7 @@ function subscribe() {
   unlisten=api.onSnapshot(ref,snap=>{
     if(!snap.exists() || snap.metadata.hasPendingWrites) return;
     const value=snap.data();
+    if(value.newSheetActive){if(resettingSheet)return;resettingSheet=true;clearTimeout(queue);dirty=false;location.replace("jugador.html");return;}
     if(value.clientId===clientId || signature(value)===lastCloudSignature) return;
     if(dirty || applying || !ready) return; // No pisar una edición local todavía sin enviar.
     try {
@@ -209,6 +213,7 @@ async function connectForUser(user) {
     loading=false;
     if(first.exists()){
       const value=first.data();
+      if(value.newSheetActive){location.replace("jugador.html");return;}
       if(pendingFor(user.uid) && signature(value)!==signature(getLocal())){
         conflictData=value;
         el('cloudConflict').hidden=false;
