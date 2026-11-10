@@ -1007,6 +1007,7 @@ function renderDeathSaves(){
 // --- Ficha digital de personaje ---
 const CHAR_KEY='alakHulCharacterV7';
 function loadCharacter(){
+  window.alakCombatEffects?.restore();
   let s={}; try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){}
   document.querySelectorAll('[data-char]').forEach(el=>{if(s[el.dataset.char]!==undefined){if(el.type==='checkbox')el.checked=(s[el.dataset.char]===true||s[el.dataset.char]==='true');else el.value=s[el.dataset.char]}});
   window.alakArmor?.refresh();window.alakLegacyDerived?.();
@@ -1014,11 +1015,12 @@ function loadCharacter(){
 }
 let charSaveTimer;
 function saveCharacter(){
+  window.alakCombatEffects?.restore();
   window.alakArmor?.refresh();
   const s={}; document.querySelectorAll('[data-char]').forEach(el=>s[el.dataset.char]=(el.type==='checkbox'?el.checked:el.value));
   const current=(()=>{try{return JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){return {}}})();
   if(current.portrait)s.portrait=current.portrait;for(const key of ['sorcery','appliedCampaignEvents','levelReviewPending'])if(current[key]!==undefined)s[key]=current[key];
-  localStorage.setItem(CHAR_KEY,JSON.stringify(s));
+  localStorage.setItem(CHAR_KEY,JSON.stringify(s));window.alakCombatEffects?.refresh();
   window.alakCloud?.onLocalChange?.();
   const st=document.getElementById('charSaveStatus'); if(st){st.textContent='✓ Guardado';clearTimeout(charSaveTimer);charSaveTimer=setTimeout(()=>st.textContent='Guardado automático',1200)}
 }
@@ -1135,7 +1137,7 @@ No funciona contra criaturas que no puedan ser cegadas.`;
   if(s.coin_pe===undefined) s.coin_pe='0';
   if(s.coin_pt===undefined) s.coin_pt='0';
 
-  localStorage.setItem(CHAR_KEY,JSON.stringify(s));
+  localStorage.setItem(CHAR_KEY,JSON.stringify(s));window.alakCombatEffects?.refresh();
   localStorage.setItem(MIGRATION_KEY,'1');
 })();
 

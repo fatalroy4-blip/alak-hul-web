@@ -92,7 +92,7 @@ function sheetFieldValue(key){
  return "";
 }
 function renderSheet(){
- if(!model)return;
+ if(!model)return;window.alakCombatEffects?.restore();
  const scope=$("character");
  document.querySelectorAll("[data-char]").forEach(el=>{
   const key=el.dataset.char,value=sheetFieldValue(key);
@@ -111,7 +111,7 @@ function renderSheet(){
 }
 // Cálculo de modificadores, salvaciones y habilidades como en la hoja de Alak Hul.
 const PLAYER_SKILL_ABILITIES=[1,4,3,0,5,3,4,5,3,4,3,4,5,5,3,1,1,4];
-function recalculateArmor(){if(!model)return;const values=window.alakArmor?.refresh(model.traits)||{};Object.assign(model.sheet,values);if(values.ac!==undefined)model.fields.ac=values.ac;}
+function recalculateArmor(){if(!model)return;window.alakCombatEffects?.restore();const values=window.alakArmor?.refresh(model.traits)||{};Object.assign(model.sheet,values);if(values.ac!==undefined)model.fields.ac=values.ac;}
 function recalculatePlayerSkills(){
  const root=$("character");if(!root||!model)return;
  if(model.sheet.autoDerived===false){for(const k of ["initiative","passive"])root.querySelector(`[data-char="${k}"]`).readOnly=false;return;}
@@ -483,7 +483,7 @@ function renderAll(){if(!model)return;
  const newLabel=model.traitsButtonName||"Rasgos";
  const tab=document.querySelector('[data-view="traits"]');if(tab)tab.textContent="✦ "+newLabel;
  const heading=document.querySelector("#traitsView h2");if(heading)heading.textContent=newLabel;
- renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog();window.alakRefreshAdventureTools?.()}
+ renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog();window.alakRefreshAdventureTools?.();window.alakCombatEffects?.refresh();}
 async function activate(account){
  user=account;const requested=new URLSearchParams(location.search).get("uid");
  currentRole=await role(account.uid);

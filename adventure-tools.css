@@ -70,3 +70,6 @@ dialog.status-description{background:#fcf6e9;color:#302c2b;border:1px solid #ae8
 .status-description .status-description-copy p{margin:0 0 9px;font:400 14px/1.6 system-ui,sans-serif;color:#302c2b}
 @media(max-width:500px){dialog.status-description{padding:18px}.status-description .status-description-heading{gap:10px}.status-description .status-description-heading img{width:54px;height:54px}.combat-state-picker{grid-template-columns:1fr}}
 .combat-state-picker .status-picker-option label{flex-direction:row!important;justify-content:flex-start!important;text-align:left}
+.effect-base-note{display:block;color:#742c42!important;font:700 10px/1.3 system-ui!important;text-transform:none!important;letter-spacing:0!important;margin:3px 0}[data-effect-value=true]{outline:2px solid #a77728!important}#sheetActiveEffects[hidden]{display:none}#sheetActiveEffects{margin:12px 0 20px;font:14px/1.6 system-ui}#sheetActiveEffects h3{font-size:18px;color:#ffe2a0}#sheetActiveEffects p{margin:8px 0;color:#eee0f1}
+
+#sheetActiveEffects .effect-base-note{color:#ffe2a0!important;font-size:13px!important;display:block}

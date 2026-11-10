@@ -1,7 +1,7 @@
 // The left-hand catalog is the source of the owner's encounter.
 function encounterEntry(name){
  const c=combatState(name),max=getParticipantMaxHp(name,c);
- return {id:'local:'+name,name,...(window.alakParticipantUid?.(name)?{uid:window.alakParticipantUid(name)}:{}),type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,damage:Math.max(0,Number(c.damage)||0),dead:!!c.dead,downed:!!c.downed,conditions:c.conditions||[],side:isEnemyCombatant(name,c)?'enemy':'ally',portrait:getPortrait(name,isEnemyCombatant(name,c)),maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
+ return {id:'local:'+name,name,...(window.alakParticipantUid?.(name)?{uid:window.alakParticipantUid(name)}:{}),type:participantKind(name)==='main'?'player':participantKind(name),initiative:Number(c.initiative)||0,damage:Math.max(0,Number(c.damage)||0),dead:!!c.dead,downed:!!c.downed,conditions:c.conditions||[],conditionSources:c.conditionSources||{},side:isEnemyCombatant(name,c)?'enemy':'ally',portrait:getPortrait(name,isEnemyCombatant(name,c)),maxHP:max,hp:max===null?null:Math.max(0,max-(Number(c.damage)||0))};
 }
 window.alakEncounterParticipants=()=>state.selectionOrder.filter(n=>state.selected[n]&&combatantNames().includes(n)).map(encounterEntry);
 window.alakEncounterCatalog=()=>combatantNames().map(encounterEntry);
@@ -16,7 +16,7 @@ function publishCombatDetails(){
  const patches=[];
  for(const entry of window.alakEncounterCatalog()){
   const previous=lastPublished.get(entry.id)||{};const changes={};
-  for(const key of ['damage','dead','downed','conditions','side','portrait','maxHP','hp','initiative'])if(JSON.stringify(entry[key])!==JSON.stringify(previous[key]))changes[key]=entry[key];
+  for(const key of ['damage','dead','downed','conditions','conditionSources','side','portrait','maxHP','hp','initiative'])if(JSON.stringify(entry[key])!==JSON.stringify(previous[key]))changes[key]=entry[key];
   if(Object.keys(changes).length)patches.push({id:entry.id,...changes});
   lastPublished.set(entry.id,entry);
  }
@@ -48,7 +48,7 @@ window.alakApplyEncounterRoster=(roster,started=false,index=0)=>{
   if(p.damage!==undefined)c.damage=p.damage;
   else if(p.hp!=null&&p.maxHP!=null)c.damage=Math.max(0,p.maxHP-p.hp);
   if(p.dead!==undefined)c.dead=p.dead;
-  c.downed=!!p.downed;c.conditions=Array.isArray(p.conditions)?p.conditions:[];
+  c.downed=!!p.downed;c.conditions=Array.isArray(p.conditions)?p.conditions:[];c.conditionSources=p.conditionSources||{};
   if(p.side)c.side=p.side;
   if(p.portrait?.startsWith('data:image/'))state.portraits[p.name]=p.portrait;
   state.combat[p.name]=c;
