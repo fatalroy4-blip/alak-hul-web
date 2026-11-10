@@ -319,6 +319,7 @@ function renderCombat(){
  if(document.activeElement!==$("combatNotes"))$("combatNotes").value=model.combatNotes||"";
 }
 function renderEntries(type){
+ if(type==="traits"){$("clearAllTraits").disabled=!model.traits.length;$("undoClearTraits").hidden=!model.traitsTrash?.traits?.length;}
  if(type==="spells")renderPrepared();
  const host=$(type==="spells"?"spellList":"traitList");host.replaceChildren();
  if(!model[type].length){const p=document.createElement("p");p.className="hint";p.textContent="Todavía no has añadido "+(type==="spells"?"conjuros.":"rasgos.");host.append(p);return}
@@ -438,7 +439,7 @@ async function activate(account){
   unsubscribe=onSnapshot(ref,snap=>{
    if(!snap.exists()||snap.metadata.hasPendingWrites||pending||saving)return;
    const data=snap.data();
-   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
+   const signature=x=>JSON.stringify({fields:x.fields||{},sheet:x.sheet||{},stats:x.stats||{},spells:x.spells||[],traits:x.traits||[],traitsTrash:x.traitsTrash||null,portrait:x.portrait||"",combatImage:x.combatImage,combatThumbnail:x.combatThumbnail,combatCrop:x.combatCrop,spellPhrases:x.spellPhrases||{},tileImages:x.tileImages||{},tileLabels:x.tileLabels||{},extras:x.extras||[],coverTheme:x.coverTheme||"",coverImage:x.coverImage||"",pageTheme:x.pageTheme||"purple",pageBackground:x.pageBackground||"",slots:x.slots||{},traitsButtonName:x.traitsButtonName||"Rasgos",ruleBuild:x.ruleBuild||null});
    if(signature(data)!==signature(model)){model=normalize(data);renderAll();status("✓ Hoja sincronizada desde Firebase")}
   },e=>status("Sincronización: "+(e.code||"error")));
   status("✓ Hoja cargada y sincronizada");
@@ -451,6 +452,7 @@ window.alakRuleBridge={
  apply:(choice)=>{
   if(!model||!user||!choice)return {ok:false,message:"Abre primero tu ficha con Google"};
   const cat=window.ALAK_RULES_2014;if(!cat)return {ok:false,message:"Catálogo sin cargar"};
+  if(model.ruleBuild&&model.traits.some(t=>t.rulesId)&&['classId','subclassId','raceId','subraceId'].some(key=>model.ruleBuild[key]&&(model.ruleBuild[key]||'')!==(choice[key]||'')))return {ok:false,message:'Esta ficha ya tiene rasgos de otra configuración. En Rasgos, usa «Eliminar todos los rasgos» antes de aplicar otra raza, clase o especialización.'};
   const race=cat.races[choice.raceId],klass=cat.classes[choice.classId];
   const features=cat.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
   const bg=window.ALAK_RULE_BACKGROUNDS?.[choice.background];
@@ -624,11 +626,29 @@ window.addEventListener("alak:player-level-changed",()=>{
  if(!n||n<=Number(model.ruleBuild.level||0))return;
  const build=model.ruleBuild;
  const catalog=window.ALAK_RULES_2014;
+ if(normalized(model.fields.className)!==normalized(catalog.classes[build.classId]?.name))return;
  const fresh=catalog.featuresFor(build.raceId,build.subraceId,build.classId,build.subclassId,n).filter(x=>x.level>Number(build.level||0)).map(x=>x.id);
  const selected=[...new Set([...(build.selectedFeatureIds||[]),...fresh])];
  window.alakRuleBridge.apply({...build,level:n,selectedFeatureIds:selected,updateSlots:true});
 });
 function bind(){
+ $('clearAllTraits').onclick=()=>{
+  if(!model?.traits.length||!confirm('¿Eliminar todos los rasgos de esta ficha? Se pausará la incorporación automática al subir de nivel. Podrás deshacerlo.'))return;
+  const generated=new Set(model.traits.filter(t=>t.rulesId).map(t=>'• '+t.title+' — '+t.description));
+  const lines=String(model.sheet.features||'').split('\n'),removed=lines.filter(line=>generated.has(line));
+  model.traitsTrash={traits:structuredClone(model.traits),lines:removed};model.traits=[];
+  model.sheet.features=lines.filter(line=>!generated.has(line)).join('\n').replace(/\[Manual del Jugador 2014 · rasgos incorporados\]\s*(?=\[Manual del Jugador 2014 · rasgos incorporados\]|$)/g,'').trim();
+  if(model.ruleBuild){model.ruleBuild.autoProgress=false;model.ruleBuild.selectedFeatureIds=[];}
+  change();renderEntries('traits');renderSheet();$('traitBulkStatus').textContent='Rasgos eliminados. La incorporación automática está pausada; revisa tu raza y clase antes de añadir nuevos rasgos.';
+ };
+ $('undoClearTraits').onclick=()=>{
+  const backup=model?.traitsTrash;if(!backup?.traits?.length)return;
+  for(const trait of backup.traits)if(!model.traits.some(t=>t.id===trait.id||(trait.rulesId&&t.rulesId===trait.rulesId)))model.traits.push(trait);
+  const lines=String(model.sheet.features||'').split('\n'),missing=(backup.lines||[]).filter(line=>!lines.includes(line));
+  if(missing.length)model.sheet.features=(model.sheet.features?model.sheet.features+'\n\n':'')+'[Manual del Jugador 2014 · rasgos incorporados]\n'+missing.join('\n');
+  delete model.traitsTrash;change();renderEntries('traits');renderSheet();$('traitBulkStatus').textContent='Rasgos restaurados. La incorporación automática continúa pausada.';
+ };
+
  $('combatImageUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file||!canChangePortrait())return;try{openCombatCrop(await optimize(file),null);}catch(error){status(error.message);}};
  $('adjustCombatThumbnail').onclick=()=>{if(canChangePortrait()&&model.combatImage)openCombatCrop(model.combatImage,model.combatCrop);};
  $('viewCombatImage').onclick=()=>window.alakViewPortrait?.(model.fields.name||'Mi personaje',model.combatImage||'assets/hero.svg',$('viewCombatImage'));

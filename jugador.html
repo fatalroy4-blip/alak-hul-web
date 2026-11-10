@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="jugador.css?v=47">
 <link rel="stylesheet" href="campaign-v42.css?v=49">
 <link rel="stylesheet" href="mesa-compartida.css?v=63">
-<link rel="stylesheet" href="jugador-v49.css?v=62">
+<link rel="stylesheet" href="jugador-v49.css?v=67">
 <link rel="stylesheet" href="rules-2014-wizard.css?v=66">
 <link rel="stylesheet" href="player-grimoire.css?v=63"></head><body>
 <div class="rotate"><div class="rotate-card"><span class="rotate-glyph">↻</span><h2>Gira tu dispositivo</h2><p>Tu hoja de aventurero está diseñada para usarse en horizontal.</p></div></div>
@@ -466,7 +466,7 @@
 <section class="prepared-panel"><div class="section-heading compact"><p class="eyebrow">ACCESO RÁPIDO</p><h2>Preparados</h2><p>Elige tus trucos y preparados en el catálogo. Registra los espacios gastados con las bolitas de cada nivel.</p></div><div id="playerPrepared" class="prepared-groups"></div></section>
 <div id="playerSpellCatalog" class="spell-sections" aria-live="polite"></div>
 <details class="player-grimoire-manage"><summary>Administrar conjuros y espacios</summary><section class="player-library"><h3>Espacios de conjuro</h3><button type="button" id="playerLongRest" class="ghost">Descanso largo · recuperar espacios</button><div id="playerSpellSlots" class="player-slot-grid"></div></section><form id="spellForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Nivel<select name="level"><option value="0">Truco</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option><option value="4">Nivel 4</option><option value="5">Nivel 5</option><option value="6">Nivel 6</option><option value="7">Nivel 7</option><option value="8">Nivel 8</option><option value="9">Nivel 9</option></select></label></div><label>Descripción<textarea name="description" rows="3"></textarea></label><button type="submit" class="primary">✧ Añadir conjuro</button></form><div id="spellList" class="entries"></div></details></section>
-<section id="traitsView" class="screen"><div class="section-head"><p class="eyebrow">TALENTOS Y CAPACIDADES</p><h2>Rasgos y habilidades</h2><p>Aquí puedes registrar rasgos raciales, de clase, dotes, metamagia u otras capacidades.</p></div><form id="traitForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Tipo<select name="type"><option>Rasgo</option><option>Metamagia</option><option>Dote</option><option>Recurso de clase</option><option>Habilidad especial</option></select></label></div><label>Detalles<textarea name="description" rows="3"></textarea></label><button class="primary" type="submit">✦ Añadir rasgo</button></form><div id="traitList" class="entries"></div></section>
+<section id="traitsView" class="screen"><div class="section-head"><p class="eyebrow">TALENTOS Y CAPACIDADES</p><h2>Rasgos y habilidades</h2><p>Aquí puedes registrar rasgos raciales, de clase, dotes, metamagia u otras capacidades.</p></div><form id="traitForm" class="panel mini-form"><div class="form-grid"><label>Nombre<input name="title" maxlength="90" required></label><label>Tipo<select name="type"><option>Rasgo</option><option>Metamagia</option><option>Dote</option><option>Recurso de clase</option><option>Habilidad especial</option></select></label></div><label>Detalles<textarea name="description" rows="3"></textarea></label><button class="primary" type="submit">✦ Añadir rasgo</button></form><div class="trait-bulk-actions"><button type="button" id="clearAllTraits">Eliminar todos los rasgos</button><button type="button" id="undoClearTraits" hidden>Deshacer eliminación</button><p id="traitBulkStatus" role="status" aria-live="polite"></p></div><div id="traitList" class="entries"></div></section>
 <section id="campaignView" class="screen">
  <div class="section-head"><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h2>Campaña</h2><p>Multijugador · Mesa sincronizada con tu DM y el propietario</p></div>
  <div class="mesa-compartida" data-shared-campaign></div>
@@ -485,7 +485,7 @@
 <script src="rules-2014-subclasses.js?v=50"></script>
 <script src="rules-2014-backgrounds.js?v=50"></script>
 <script src="rules-2014-spells.js?v=50"></script>
-<script type="module" src="jugador.js?v=63"></script>
+<script type="module" src="jugador.js?v=67"></script>
 <script src="rules-2014-wizard.js?v=66"></script>
 <script type="module" src="mesa-compartida.js?v=63"></script>
 <script src="dialogs.js?v=59"></script></body></html>
