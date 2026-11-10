@@ -11,7 +11,7 @@
  function apply(original,action){
   const m=structuredClone(original);m.fields??={};m.sheet??={};m.slots??={};m.sorcery??={};
   const p=points(m),lv=Number(action.level),slot=m.slots[lv]||{total:0,used:0};
-  if(action.type==='paper'){if(!['current','parchment','worn'].includes(action.style))throw Error('Estilo de papel inválido.');m.sheet.paperStyle=action.style;return m;}
+  if(action.type==='paper'){if(!['current','parchment','worn','notebook','textured'].includes(action.style))throw Error('Estilo de papel inválido.');m.sheet.paperStyle=action.style;return m;}
   if(action.type==='resetPoints'){if(!p.max)throw Error('Este personaje no tiene puntos de hechicería.');m.sorcery.available=p.max;return m;}
   if(action.type==='metamagic'){
    const option=metamagic.find(o=>o.id===action.option);

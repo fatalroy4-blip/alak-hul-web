@@ -5,7 +5,18 @@
 .paper-choices{display:flex;flex-wrap:wrap;gap:14px}.paper-swatch{min-height:100px;max-width:260px;flex:1 1 180px;color:#332719!important;border:2px solid #a79671!important;font-weight:700;box-shadow:inset 0 0 24px #78532322}
 .paper-swatch[aria-pressed=true]{outline:3px solid #c49ce3;outline-offset:3px}
 .paper-current{background:#f2ead3!important}
-.paper-parchment,.dnd-sheet[data-paper-style=parchment]{background: url('assets/paper-grain.svg'),radial-gradient(ellipse at center,transparent 45%,#99642755 100%),linear-gradient(110deg,#e2c895,#f3e4bc 48%,#dfc28c)!important}
-.paper-worn,.dnd-sheet[data-paper-style=worn]{background:url('assets/paper-grain.svg'),linear-gradient(90deg,transparent 49.6%,#775c2920 49.85%,#fff8d6aa 50%,transparent 50.3%),linear-gradient(0deg,transparent 33%,#896b3325 33.15%,#fff8dc99 33.3%,transparent 33.6%,transparent 66%,#896b3320 66.2%,#fff8dc88 66.4%,transparent 66.6%),radial-gradient(ellipse at 0 80%,#a9783938,transparent 23%),radial-gradient(ellipse at 95% 3%,#a0723c55,transparent 20%),radial-gradient(ellipse at 15% 98%,#9d763a55,transparent 17%),linear-gradient(115deg,#e4d7b4,#f3ead2 40%,#e5d8b7)!important;box-shadow:inset 0 0 32px #77542c40,0 28px 85px #0008!important}
+
+
 #metamagicTab[hidden],#metamagicView[hidden],#metamagic[hidden],#sorceryTools[hidden]{display:none!important}
 #metamagicView .resource-controls label,#metamagic .resource-controls label{display:grid;gap:6px}
+
+/* Original generated paper textures; only the sheet surface and previews. */
+.paper-parchment,.dnd-sheet[data-paper-style=parchment]{background: url("assets/paper-textures/parchment.webp") center / 100% 100% no-repeat #f3ecd9!important;}
+.paper-worn,.dnd-sheet[data-paper-style=worn]{background: url("assets/paper-textures/worn.webp") center / 100% 100% no-repeat #f3ecd9!important;}
+.paper-notebook,.dnd-sheet[data-paper-style=notebook]{background: url("assets/paper-textures/notebook.webp") center / 100% 100% no-repeat #f3ecd9!important;}
+.paper-textured,.dnd-sheet[data-paper-style=textured]{background: url("assets/paper-textures/textured.webp") center / 100% 100% no-repeat #f3ecd9!important;}
+#sheetPaperSettings .paper-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;padding:5px}
+#sheetPaperSettings .paper-swatch{min-height:210px;max-width:none;display:flex;align-items:end;justify-content:center;padding:12px}
+#sheetPaperSettings .paper-swatch span{display:block;background:#fffcf1eb;color:#332719;border:1px solid #aa987a88;border-radius:5px;padding:8px;font-weight:700;width:100%}
+#sheetPaperSettings .paper-swatch:focus-visible{outline:3px solid #e0b8ff;outline-offset:4px}
+@media(max-width:500px){#sheetPaperSettings .paper-choices{grid-template-columns:repeat(2,minmax(0,1fr))}#sheetPaperSettings .paper-swatch{min-height:170px;padding:8px}}
