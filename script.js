@@ -1020,10 +1020,12 @@ const CHAR_KEY='alakHulCharacterV7';
 function loadCharacter(){
   let s={}; try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){}
   document.querySelectorAll('[data-char]').forEach(el=>{if(s[el.dataset.char]!==undefined){if(el.type==='checkbox')el.checked=(s[el.dataset.char]===true||s[el.dataset.char]==='true');else el.value=s[el.dataset.char]}});
+  window.alakArmor?.refresh();
   if(s.portrait){const img=document.getElementById('characterPortrait'); if(img) img.src=s.portrait;}
 }
 let charSaveTimer;
 function saveCharacter(){
+  window.alakArmor?.refresh();
   const s={}; document.querySelectorAll('[data-char]').forEach(el=>s[el.dataset.char]=(el.type==='checkbox'?el.checked:el.value));
   const current=(()=>{try{return JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){return {}}})();
   if(current.portrait)s.portrait=current.portrait;

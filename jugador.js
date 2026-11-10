@@ -93,12 +93,13 @@ function renderSheet(){
  $("sheetPortrait").src=image;
  const uploader=$("playerReplicaPortraitUpload");if(uploader){uploader.disabled=!canChangePortrait();uploader.closest("label")?.classList.toggle("portrait-forbidden",!canChangePortrait())}
  $("portraitUpload").disabled=!canChangePortrait();
- recalculatePlayerSkills();renderSheetSpellTools();
+ recalculatePlayerSkills();recalculateArmor();renderSheetSpellTools();
  renderPlayerDeathSaves();
  const status=$("charSaveStatus");if(status)status.textContent=canChangePortrait()?"Ficha personal · guardado en la nube":"Vista de DM · retrato protegido";
 }
 // Cálculo de modificadores, salvaciones y habilidades como en la hoja de Alak Hul.
 const PLAYER_SKILL_ABILITIES=[1,4,3,0,5,3,4,5,3,4,3,4,5,5,3,1,1,4];
+function recalculateArmor(){if(!model)return;const values=window.alakArmor?.refresh(model.traits)||{};Object.assign(model.sheet,values);if(values.ac!==undefined)model.fields.ac=values.ac;}
 function recalculatePlayerSkills(){
  const root=$("character");if(!root||!model)return;
  const ability=Array.from({length:6},(_,i)=>{
@@ -208,6 +209,7 @@ function syncSheetField(el){
   renderSpellSlots();
  }
  if(key==="classLevel")recalculatePlayerSkills();
+ recalculateArmor();
  change();if(key==="classLevel")window.dispatchEvent(new Event("alak:player-level-changed"));if(["hpCurrent","hpMax","ac","initiative"].includes(key))renderCombat();
 }
 function populateSelectedSpellsOnSheet(){
@@ -367,7 +369,7 @@ function renderCombat(){
 function renderEntries(type){
  if(type==="traits"){$("clearAllTraits").disabled=!model.traits.length;$("undoClearTraits").hidden=!model.traitsTrash?.traits?.length;}
  if(type==="spells")renderPrepared();
- if(type==="traits")recalculatePlayerSkills();
+ if(type==="traits"){recalculatePlayerSkills();recalculateArmor();}
  const host=$(type==="spells"?"spellList":"traitList");host.replaceChildren();
  if(!model[type].length){const p=document.createElement("p");p.className="hint";p.textContent="Todavía no has añadido "+(type==="spells"?"conjuros.":"rasgos.");host.append(p);return}
  for(const item of model[type]){
