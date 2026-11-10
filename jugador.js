@@ -475,6 +475,39 @@ async function optimize(file){
   };image.src=url;
  });
 }
+// Portraits retain detail independently of the compact combat thumbnail.
+async function portraitImage(file,budget){
+ if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error('Elige un JPG, PNG o WebP menor de 20 MB');
+ if(budget<120000)throw Error('No hay espacio suficiente para un retrato de alta calidad. Quita alguna imagen de personalización antes de intentarlo.');
+ const url=URL.createObjectURL(file),image=new Image();
+ try{
+  await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('No se pudo leer la imagen'));image.src=url;});
+  if(image.naturalWidth*image.naturalHeight>44000000)throw Error('La imagen es demasiado grande. Usa una versión de hasta 44 megapíxeles.');
+  // Preserve the uploaded bytes, including transparency, when they fit.
+  if(Math.ceil(file.size/3)*4+50<=budget){return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('No se pudo leer la imagen'));reader.readAsDataURL(file);});}
+  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+  let edge=Math.min(2400,Math.max(image.naturalWidth,image.naturalHeight));
+  while(true){
+   const scale=Math.min(1,edge/Math.max(image.naturalWidth,image.naturalHeight));canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+   ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
+   for(const quality of [.94,.90,.88]){const value=canvas.toDataURL('image/webp',quality);if(value.length<=budget)return value;}
+   if(edge<=1200)break;edge=Math.max(1200,Math.floor(edge*.85));
+  }
+  throw Error('Esta imagen necesita más espacio para conservar su calidad. Usa otra versión del archivo o libera espacio en tus imágenes de personalización. Se conserva tu retrato anterior.');
+ }finally{URL.revokeObjectURL(url);}
+}
+async function changePortrait(file){
+ if(!canChangePortrait())return;
+ const owner=targetUid,generation=model.sheetGeneration;
+ status('Preparando retrato de alta calidad…');
+ try{
+  const room=()=>Math.min(500000,740000-JSON.stringify({...model,portrait:''}).length);
+  const value=await portraitImage(file,room());
+  if(!canChangePortrait()||targetUid!==owner||model.sheetGeneration!==generation)return;
+  if(value.length>room())throw Error('No hay espacio suficiente para guardar este retrato. Se conserva el anterior.');
+  model.portrait=value;change();renderHome();renderSheet();renderDesign();
+ }catch(e){status('Error de imagen: '+e.message);}
+}
 async function changeImage(file,callback,refresh=false){
  status("Preparando imagen…");
  try{callback(await optimize(file));change();renderHome();renderSheet();if(refresh)renderDesign()}catch(e){status("Error de imagen: "+e.message)}
@@ -760,7 +793,7 @@ function bind(){
  document.querySelectorAll("[data-char]").forEach(el=>el.addEventListener("input",()=>syncSheetField(el)));
  $("playerReplicaPortraitUpload").addEventListener("change",async e=>{
   const file=e.target.files?.[0];e.target.value="";if(!file||!canChangePortrait())return;
-  await changeImage(file,value=>model.portrait=value,true);
+  await changePortrait(file);
  });
  $("traitsButtonName").oninput=e=>{model.traitsButtonName=e.target.value.slice(0,30)||"Rasgos";change();renderHome();
   const tab=document.querySelector('[data-view="traits"]');if(tab)tab.textContent="✦ "+model.traitsButtonName;
@@ -785,7 +818,7 @@ function bind(){
  for(const b of all("[data-theme]"))b.onclick=()=>{model.coverTheme=b.dataset.theme;model.coverImage="";change();renderHome();renderDesign()};
  $("clearCover").onclick=()=>{model.coverImage="";change();renderHome()};
  $("coverUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file)await changeImage(file,value=>model.coverImage=value)};
- $("portraitUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file&&canChangePortrait())await changeImage(file,value=>model.portrait=value,true)};
+ $("portraitUpload").onchange=async event=>{const file=event.target.files?.[0];event.target.value="";if(file&&canChangePortrait())await changePortrait(file)};
  $("extraForm").onsubmit=event=>{
   event.preventDefault();if(model.extras.length>=10){alert("Límite de 10 botones adicionales.");return}
   const fd=new FormData(event.currentTarget),name=String(fd.get("name")||"").trim();
