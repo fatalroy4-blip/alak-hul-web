@@ -3,11 +3,24 @@
  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const cost=[0,2,3,5,6,7];
  function level(m){return Math.max(1,Math.min(20,Number(m.fields?.level||m.ruleBuild?.level||String(m.sheet?.classLevel||'').match(/\d+/)?.[0])||1));}
- function sorcerer(m){const k=norm(m.fields?.className||m.sheet?.classLevel);return /hechicero/.test(k)||m.ruleBuild?.classId==='hechicero'?level(m):0;}
+ function sorcerer(m){const k=norm(m.fields?.className||m.sheet?.classLevel||m.ruleBuild?.classId);return /hechicero/.test(k)?level(m):0;}
+ const metamagic=[['careful','cuidadoso',1],['distant','distante',1],['empowered','potenciado',1],['extended','extendido',1],['heightened','intensificado',3],['quickened','acelerado',2],['subtle','sutil',1],['twinned','duplicado',null]].map(([id,name,cost])=>({id,name:'Conjuro '+name,cost}));
+ const hasMetamagic=m=>sorcerer(m)>=3;
+ const knownMetamagic=m=>metamagic.filter(o=>(m.traits||[]).some(t=>t.rulesId==='special:meta-'+o.id||norm(t.title)===norm(o.name))||norm(m.sheet?.features).includes(norm(o.name))).map(o=>o.id);
  function points(m){const n=sorcerer(m),max=n>=2?n:0;return {max,available:Math.max(0,Math.min(max,Number(m.sorcery?.available??max)))};}
  function apply(original,action){
   const m=structuredClone(original);m.fields??={};m.sheet??={};m.slots??={};m.sorcery??={};
   const p=points(m),lv=Number(action.level),slot=m.slots[lv]||{total:0,used:0};
+  if(action.type==='paper'){if(!['current','parchment','worn'].includes(action.style))throw Error('Estilo de papel inválido.');m.sheet.paperStyle=action.style;return m;}
+  if(action.type==='resetPoints'){if(!p.max)throw Error('Este personaje no tiene puntos de hechicería.');m.sorcery.available=p.max;return m;}
+  if(action.type==='metamagic'){
+   const option=metamagic.find(o=>o.id===action.option);
+   if(!hasMetamagic(m)||!option||!knownMetamagic(m).includes(option.id))throw Error('Tu personaje no conoce esta opción de Metamagia.');
+   if(!Number.isInteger(lv)||lv<0||lv>9)throw Error('Selecciona el nivel al que lanzas el conjuro.');
+   const amount=option.cost??Math.max(1,lv);
+   if(amount>p.available)throw Error('No tienes suficientes puntos de hechicería.');
+   m.sorcery.available=p.available-amount;return m;
+  }
   if(['spend','create','convert'].includes(action.type)){
    if(!p.max)throw Error('Fuente de magia está disponible desde el nivel 2 de hechicero.');
    if(action.type==='spend'){const n=Number(action.amount);if(!Number.isInteger(n)||n<1||n>p.available)throw Error('No tienes suficientes puntos disponibles.');m.sorcery.available=p.available-n;}
@@ -46,5 +59,5 @@
   for(const [n,s] of Object.entries(m.slots)){m.sheet['spell_slots'+n+'_total']=String(s.total);m.sheet['spell_slots'+n+'_spent']=String(s.used);}
   return m;
  }
- window.ALAK_ADVENTURE_RULES={apply,points,level,cost};
+ window.ALAK_ADVENTURE_RULES={apply,points,level,cost,metamagic,hasMetamagic,knownMetamagic};
 })();

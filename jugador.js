@@ -412,11 +412,13 @@ function renderDesign(){
   label.append(input);
   const clear=document.createElement("button");clear.type="button";clear.className="ghost";clear.textContent="Quitar imagen";
   clear.disabled=item.id==="sheet"&&!canChangePortrait();
-  clear.onclick=()=>{if(item.id==="sheet"&&!canChangePortrait())return;delete model.tileImages[item.id];change();renderHome()};
+  clear.onclick=()=>{if(item.id==="sheet"&&!canChangePortrait())return;delete model.tileImages[item.id];change();renderHome();renderDesign()};
   const nameLabel=document.createElement('label');nameLabel.textContent='Nombre del botón';const nameInput=document.createElement('input');nameInput.maxLength=40;nameInput.value=model.tileLabels?.[item.id]?.name||item.name;nameInput.setAttribute('aria-label','Nombre del botón '+item.name);
   const descLabel=document.createElement('label');descLabel.textContent='Descripción del botón';const descInput=document.createElement('input');descInput.maxLength=80;descInput.value=model.tileLabels?.[item.id]?.subtitle||item.subtitle||item.description||'';
   const rename=()=>{model.tileLabels=model.tileLabels||{};model.tileLabels[item.id]={name:nameInput.value.trim(),subtitle:descInput.value.trim()};change();renderHome();};nameInput.oninput=rename;descInput.oninput=rename;nameLabel.append(nameInput);descLabel.append(descInput);
-  wrapper.append(title,nameLabel,descLabel,label,clear);host.append(wrapper);
+  wrapper.append(title,nameLabel,descLabel,label);
+  if(model.tileImages[item.id]){const preview=document.createElement('img');preview.src=model.tileImages[item.id];preview.alt='Imagen seleccionada para '+item.name;preview.className='tile-image-preview';wrapper.append(preview);}else{const empty=document.createElement('small');empty.textContent='Sin imagen personalizada';wrapper.append(empty);}
+  wrapper.append(clear);host.append(wrapper);
  }
  const extraHost=$("extraEditors");extraHost.replaceChildren();
  for(const item of model.extras){
