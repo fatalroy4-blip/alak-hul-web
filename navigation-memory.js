@@ -3,6 +3,8 @@
  const save=()=>{if(!key||restoring)return;try{localStorage.setItem(key,JSON.stringify(state));}catch{}};
  window.alakNavigation={
   start(uid,target){const next='alak-navigation-v1:'+uid+':'+target;if(key===next)return;key=next;let saved;try{saved=JSON.parse(localStorage.getItem(key)||'null');}catch{}state=saved||{view:'home',y:0};restoring=true;
+   const url=new URL(location.href),destination=url.searchParams.get('return');
+   if((target===uid||target==='owner')&&['character','dm'].includes(destination)){state={view:destination==='dm'?'campaign':target==='owner'?'character':'sheet',y:0,campaign:destination==='dm'?'manage':null};url.searchParams.delete('return');history.replaceState(null,'',url);try{localStorage.setItem(key,JSON.stringify(state));}catch{}}
    window.alakNavigate?.(state.view,state.extraId);window.alakRestoreCampaignView?.(state.campaign);
    const y=Number(state.y)||0;requestAnimationFrame(()=>scrollTo({top:y,behavior:'instant'}));setTimeout(()=>{scrollTo({top:y,behavior:'instant'});restoring=false;},350);
   },

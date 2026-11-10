@@ -103,7 +103,7 @@ try {
    if (attempt !== verifying || auth.currentUser?.uid !== user.uid) return;
    if (roleSnapshot.exists() && roleSnapshot.data().role === "owner") {
     const previous=await getDoc(doc(db,'users',user.uid,'characters','alak-hul'));
-    if(previous.exists()&&previous.data().newSheetActive){location.replace('jugador.html');return;}
+    if(previous.exists()&&previous.data().newSheetActive){location.replace('jugador.html'+location.search);return;}
     await startApp();window.alakNavigation?.start(user.uid,'owner');
    } else {
     location.replace("jugador.html");
@@ -120,6 +120,7 @@ try {
  lock();
  message("No es posible comprobar los permisos: " + err.message);
 }
+
 
 
 

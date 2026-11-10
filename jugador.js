@@ -12,6 +12,15 @@ const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",a
 const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,combatImage:d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatThumbnail:d.combatThumbnail??d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatCrop:d.combatCrop||null,spellPhrases:{...(d.spellPhrases||{})},fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
+function renderReturnControls(){
+ let bar=$('returnToOwnSheet');if(!bar){bar=document.createElement('nav');bar.id='returnToOwnSheet';bar.className='return-to-own-sheet';bar.setAttribute('aria-label','Volver a mi cuenta');document.querySelector('.topbar').after(bar);}
+ bar.replaceChildren();bar.hidden=!administrator||!user||targetUid===user.uid;if(bar.hidden)return;
+ const label=document.createElement('span');label.textContent='Estás consultando la hoja de otro personaje';bar.append(label);
+ for(const [title,destination] of [['← Volver a mi personaje','character'],['⚙ Volver a funciones de DM','dm']]){
+  const button=document.createElement('button');button.type='button';button.textContent=title;
+  button.onclick=async()=>{button.disabled=true;try{if(pending||saving){const ok=await window.alakRuleBridge.save();if(!ok){status('No se pudo guardar. Revisa la conexión antes de volver.');return;}}location.assign((currentRole==='owner'?'index.html':'jugador.html')+'?return='+destination);}finally{button.disabled=false;}};bar.append(button);
+ }
+}
 function change(){if(sheetResetting||!model)return;pending=true;status("Cambios pendientes");clearTimeout(timer);timer=setTimeout(save,850);updateSummary()}
 let sheetResetting=false;
 async function save(){
@@ -481,6 +490,7 @@ async function activate(account){
  administrator=["owner","dm"].includes(currentRole);
  if(requested&&requested!==account.uid&&!administrator){$("loginStatus").textContent="Esta hoja pertenece a otra persona.";return}
  targetUid=requested||account.uid;
+ renderReturnControls();
  $("authWall").hidden=true;$("workspace").hidden=false;$("logoutBtn").hidden=false;
  $("identityLine").textContent=account.displayName||account.email||"Cuenta Google";
  const ref=doc(db,"players",targetUid);
@@ -794,7 +804,7 @@ window.alakSheetLifecycle={
 bind();
 onAuthStateChanged(auth,account=>{
  window.alakNavigation?.stop();
- if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(timer);model=null;user=null;targetUid=null;pending=false;
+ if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(timer);model=null;user=null;targetUid=null;pending=false;renderReturnControls();
  if(account)void activate(account);
  else{$("workspace").hidden=true;$("authWall").hidden=false;$("logoutBtn").hidden=true;status("Sin conectar");$("loginStatus").textContent=""}
 });

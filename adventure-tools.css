@@ -45,3 +45,5 @@
 #sorceryTools .meta-conversion table{max-width:none;font-size:13px}
 #sorceryTools .meta-footnote{font-size:12px;line-height:1.6;color:#beacc7;margin:18px 0 0}
 @media(max-width:500px){#sorceryTools .meta-stats{gap:8px}#sorceryTools .meta-stats>div{padding:12px 5px}#sorceryTools .meta-option{padding:16px}#sorceryTools .meta-conversion{padding:14px 10px}#sorceryTools .meta-conversion th,#sorceryTools .meta-conversion td{padding:7px 3px}}
+.return-to-own-sheet{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;padding:12px 18px;border-bottom:1px solid #9671a5;background:#281a34;color:#ead9ef}
+.return-to-own-sheet[hidden]{display:none!important}.return-to-own-sheet span{font-size:13px;margin-right:10px}.return-to-own-sheet button{border:1px solid #b18bc5;border-radius:9px;background:#58386c;color:#fff0ce;padding:10px 16px;min-height:44px;font-weight:700;cursor:pointer}
