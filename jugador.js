@@ -477,36 +477,25 @@ async function optimize(file){
 }
 // Portraits retain detail independently of the compact combat thumbnail.
 async function portraitImage(file,budget){
- if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error('Elige un JPG, PNG o WebP menor de 20 MB');
- if(budget<120000)throw Error('No hay espacio suficiente para un retrato de alta calidad. Quita alguna imagen de personalización antes de intentarlo.');
+ if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw Error('Elige un JPG, PNG o WebP.');
+ if(Math.ceil(file.size/3)*4+50>budget)throw Error('El archivo original supera el espacio disponible de esta hoja. No se ha comprimido ni sustituido tu retrato. Para guardar originales más grandes hace falta habilitar almacenamiento de imágenes separado.');
  const url=URL.createObjectURL(file),image=new Image();
  try{
   await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('No se pudo leer la imagen'));image.src=url;});
-  if(image.naturalWidth*image.naturalHeight>44000000)throw Error('La imagen es demasiado grande. Usa una versión de hasta 44 megapíxeles.');
-  // Preserve the uploaded bytes, including transparency, when they fit.
-  if(Math.ceil(file.size/3)*4+50<=budget){return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('No se pudo leer la imagen'));reader.readAsDataURL(file);});}
-  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
-  let edge=Math.min(2400,Math.max(image.naturalWidth,image.naturalHeight));
-  while(true){
-   const scale=Math.min(1,edge/Math.max(image.naturalWidth,image.naturalHeight));canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
-   ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
-   for(const quality of [.94,.90,.88]){const value=canvas.toDataURL('image/webp',quality);if(value.length<=budget)return value;}
-   if(edge<=1200)break;edge=Math.max(1200,Math.floor(edge*.85));
-  }
-  throw Error('Esta imagen necesita más espacio para conservar su calidad. Usa otra versión del archivo o libera espacio en tus imágenes de personalización. Se conserva tu retrato anterior.');
+  return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('No se pudo leer la imagen'));reader.readAsDataURL(file);});
  }finally{URL.revokeObjectURL(url);}
 }
 async function changePortrait(file){
  if(!canChangePortrait())return;
  const owner=targetUid,generation=model.sheetGeneration;
- status('Preparando retrato de alta calidad…');
+ status('Guardando imagen original, sin compresión…');
  try{
-  const room=()=>Math.min(500000,740000-JSON.stringify({...model,portrait:''}).length);
+  const room=()=>720000-JSON.stringify({...model,portrait:''}).length;
   const value=await portraitImage(file,room());
   if(!canChangePortrait()||targetUid!==owner||model.sheetGeneration!==generation)return;
   if(value.length>room())throw Error('No hay espacio suficiente para guardar este retrato. Se conserva el anterior.');
   model.portrait=value;change();renderHome();renderSheet();renderDesign();
- }catch(e){status('Error de imagen: '+e.message);}
+ }catch(e){status('Error de imagen: '+e.message);alert(e.message);}
 }
 async function changeImage(file,callback,refresh=false){
  status("Preparando imagen…");
