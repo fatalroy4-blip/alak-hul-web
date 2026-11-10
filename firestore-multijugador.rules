@@ -1,92 +1,47 @@
 
-
-
-
-
-
-
-
 rules_version = '2';
-
-
-
-
-
-
-
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-
-
-
-
-
-
-
     function esUsuario(uid) {
       return request.auth != null
         && request.auth.uid == uid;
     }
-
-
-
-
-
-
-
-
     function tieneRol(rol) {
       return request.auth != null
         && exists(/databases/$(database)/documents/appRoles/$(request.auth.uid))
         && get(/databases/$(database)/documents/appRoles/$(request.auth.uid)).data.role == rol;
     }
-
-
-
-
-
-
-
-
     function esPropietario() {
       return tieneRol('owner');
     }
-
-
-
-
-
-
-
-
     function esAdministrador() {
       return esPropietario() || tieneRol('dm');
     }
-
-
-
-
-
-
-
-
+    function esMiembro() {
+      return request.auth != null && (
+        exists(/databases/$(database)/documents/adventureMembers/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/adventureMembers/$(request.auth.uid)).data.active == true
+        : tieneRol('player')
+      );
+    }
+    match /adventureMembers/{userId} {
+      allow get: if esUsuario(userId) || esAdministrador();
+      allow list: if esAdministrador();
+      allow create, update: if esAdministrador()
+        && request.resource.data.keys().hasOnly(['active', 'updatedBy', 'updatedAt'])
+        && request.resource.data.active is bool
+        && request.resource.data.updatedBy == request.auth.uid;
+    }
     // Combate compartido: propietario y DM editan; jugadores consultan.
     match /campaigns/main {
-      allow get: if esAdministrador() || tieneRol('player');
+      allow get: if esAdministrador() || esMiembro();
       allow create, update: if esAdministrador();
       allow delete: if esPropietario();
     }
-
-
-
-
     // Miniaturas públicas de la mesa: solo su jugador puede modificarlas.
     match /combatPortraits/{userId} {
-      allow get: if esAdministrador() || tieneRol('player');
+      allow get: if esUsuario(userId) || esAdministrador() || esMiembro();
       allow create, update: if esUsuario(userId)
-        && (esAdministrador() || tieneRol('player'))
         && request.resource.data.keys().hasOnly(['portrait', 'thumbnail', 'name', 'updatedAt'])
         && request.resource.data.portrait is string
         && request.resource.data.portrait.size() <= 82000
@@ -95,43 +50,17 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() <= 200;
     }
-
-
     // Hoja original de Alak Hul: conservar su protección.
     match /users/{userId}/characters/{characterId} {
       allow read, write: if esUsuario(userId)
         && characterId == 'alak-hul';
     }
-
-
-
-
-
-
-
-
     // Hojas nuevas, independientes para cada jugador.
     match /players/{userId} {
       allow get: if esUsuario(userId) || esAdministrador();
       allow list: if esAdministrador();
-
-
-
-
-
-
-
-
       allow create: if esUsuario(userId)
         && request.resource.data.ownerUid == userId;
-
-
-
-
-
-
-
-
       allow update: if (esUsuario(userId) || esAdministrador())
         && resource.data.ownerUid == userId
         && request.resource.data.ownerUid == userId
@@ -142,48 +71,16 @@ service cloud.firestore {
 && request.resource.data.get('combatCrop', null) == resource.data.get('combatCrop', null)
 && request.resource.data.get('tileImages', {}).get('sheet', '') == resource.data.get('tileImages', {}).get('sheet', '')
         ));
-
-
-
-
-
-
-
-
       allow delete: if esPropietario();
     }
-
-
-
-
-
-
-
-
     // Permisos de propietario, Dungeon Master y jugador.
     match /appRoles/{userId} {
-      allow get: if esUsuario(userId) || esPropietario();
-      allow list: if esPropietario();
-
-
-
-
-
-
-
-
+      allow get: if esUsuario(userId) || esAdministrador();
+      allow list: if esAdministrador();
       allow create, update: if esPropietario()
         && userId != request.auth.uid
         && request.resource.data.keys().hasOnly(['role'])
         && request.resource.data.role in ['dm', 'player'];
-
-
-
-
-
-
-
-
       allow delete: if esPropietario()
         && userId != request.auth.uid;
     }

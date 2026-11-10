@@ -44,7 +44,7 @@ async function startApp() {
   await insertScript("background-upload.js?v=41");
   await insertScript("cloud-sync.js?v=48", true);
   await insertScript("encounter-bridge.js?v=60");
-  await insertScript("mesa-compartida.js?v=62", true);
+  await insertScript("mesa-compartida.js?v=63", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");
@@ -97,7 +97,7 @@ try {
    if (roleSnapshot.exists() && roleSnapshot.data().role === "owner") {
     await startApp();
    } else {
-    message("Esta cuenta no tiene permiso para abrir Alak Hul. Abre tu hoja individual en el portal de jugadores.");
+    location.replace("jugador.html");
    }
   } catch (err) {
    if (attempt !== verifying) return;

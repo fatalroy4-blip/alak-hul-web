@@ -4,7 +4,7 @@ import "./combat-actions.js?v=58";
    Permisos reales requieren reglas Firestore publicadas para campaigns/main. */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { getFirestore,doc,collection,getDoc,updateDoc,onSnapshot,runTransaction,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore,doc,collection,getDoc,setDoc,updateDoc,onSnapshot,runTransaction,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 const mountPoints=[...document.querySelectorAll("[data-shared-campaign]")];
 if(mountPoints.length){
  const app=initializeApp(window.ALAK_FIREBASE_CONFIG),auth=getAuth(app),db=getFirestore(app);
@@ -16,6 +16,9 @@ if(mountPoints.length){
  const parse=d=>({...defaults(),...(d||{}),roster:Array.isArray(d?.roster)?d.roster:[],diary:Array.isArray(d?.diary)?d.diary:[]});
  const uid=()=>crypto.randomUUID?.()||String(Date.now())+"-"+Math.random().toString(36).slice(2);
  let current=null,role="player",isAdmin=false,info=defaults(),players=[],cancelCampaign=null,cancelPlayers=null,active="table",saving=false;
+ let hasCampaign=false,cancelAccess=null,accessStops=[];const memberStates=new Map(),accountRoles=new Map();
+ const admitted=id=>memberStates.has(id)?memberStates.get(id).active===true:accountRoles.get(id)==='player';
+ function clearCampaign(){if(cancelCampaign){cancelCampaign();cancelCampaign=null;}hasCampaign=false;info=defaults();for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();Object.values(element).forEach(p=>p.replaceChildren());nav.hidden=true;}
  const portraitProfiles=new Map(),portraitSubscriptions=new Map();
  const participant=name=>[...info.roster,...(info.participantCatalog||[])].find(p=>p.name===name);
  window.alakParticipantUid=name=>participant(name)?.uid||null;
@@ -266,9 +269,22 @@ if(mountPoints.length){
   const btn=create("button","","Guardar nombre");btn.type="submit";
   titleForm.append(title,btn);titleForm.onsubmit=e=>{e.preventDefault();const name=title.querySelector("input").value.trim();if(name)void edit(s=>({...s,title:name.slice(0,80)}))};surface.append(titleForm);
   const open=makeBtn('Agregar / quitar participantes',()=>select('combat',true));surface.append(open);
+  const members=panel('Jugadores registrados',box);members.append(create('p','','Quienes se registran pueden preparar su hoja. Solo el propietario y el DM deciden quién entra a esta aventura.'));
+  if(!players.length)empty(members,'Todavía no hay hojas registradas.');
+  for(const player of players){const id=player.ownerUid;if(id===current?.uid||['owner','dm'].includes(accountRoles.get(id)))continue;
+   const row=create('div','mc-member-row'),name=player.fields?.name||player.accountName||'Nuevo jugador';row.append(create('strong','',name),create('span','',player.accountName||'Cuenta registrada'));
+   const activeMember=admitted(id);row.append(create('small','',activeMember?'En la aventura':'Pendiente de admisión'));
+   const button=makeBtn(activeMember?'Retirar acceso':'Agregar a la aventura',async()=>{button.disabled=true;try{
+    await runTransaction(db,async tx=>{const snapshot=await tx.get(ref),data=parse(snapshot.exists()?snapshot.data():{});const catalog=[...(data.participantCatalog||[])];
+     if(!activeMember&&!catalog.some(p=>p.uid===id)){const existing=catalog.find(p=>p.name===name&&!p.uid&&p.type==='player');if(existing)existing.uid=id;else{let label=name;let suffix=2;while(catalog.some(p=>p.name===label))label=name+' ('+(suffix++)+')';catalog.push({id:'local:'+label,name:label,uid:id,type:'player',side:'ally',initiative:0,damage:0,dead:false,maxHP:null,hp:null});}}
+     tx.set(doc(db,'adventureMembers',id),{active:!activeMember,updatedBy:current.uid,updatedAt:serverTimestamp()});
+     tx.set(ref,{...data,participantCatalog:catalog,roster:data.roster.map(entry=>{const linked=catalog.find(c=>c.id===entry.id);return linked?.uid?{...entry,uid:linked.uid}:entry;}),updatedBy:current.uid,updatedAt:serverTimestamp()});
+    });memberStates.set(id,{active:!activeMember});renderManage();warn(activeMember?'Acceso retirado. Su hoja personal se conserva.':'Jugador admitido. Ya puede ver la aventura y aparece en Participantes.');
+   }catch(e){warn('No se pudo cambiar el acceso: '+(e.code||e.message));button.disabled=false;}});row.append(button);members.append(row);
+  }
 
  }
- function render(){watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(active)}
+ function render(){if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(active)}
  async function activate(account){
   const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
@@ -280,6 +296,7 @@ if(mountPoints.length){
    nav.querySelector('[data-mc-view="manage"]').hidden=!isAdmin;
    if(!isAdmin&&active==="manage")active="table";
    if(cancelCampaign)cancelCampaign();
+   const connectCampaign=()=>{if(hasCampaign)return;hasCampaign=true;
    cancelCampaign=onSnapshot(ref,async snap=>{
     if(localCombat)return;
     if(!snap.exists()){
@@ -292,11 +309,15 @@ if(mountPoints.length){
     if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);
     render();
    },e=>{warn("Sin acceso a Campaña: revisa las reglas Firestore ('campaigns/main'). "+(e.code||""))});
+   };
+   if(isAdmin)connectCampaign();else cancelAccess=onSnapshot(doc(db,'adventureMembers',account.uid),snap=>{if(current?.uid!==account.uid)return;const allowed=snap.exists()?snap.data().active===true:roleDoc.exists()&&role==='player';if(allowed)connectCampaign();else{clearCampaign();warn('Tu hoja está lista. El propietario o el DM te agregará a la aventura.');}},()=>{clearCampaign();warn('No se pudo consultar tu acceso a la aventura.');});
    if(cancelPlayers)cancelPlayers();
    if(isAdmin){
     cancelPlayers=onSnapshot(collection(db,"players"),snap=>{
-     players=snap.docs.map(d=>({...d.data(),ownerUid:d.id||d.data().ownerUid}));renderPlayerLinks();
+     players=snap.docs.map(d=>({...d.data(),ownerUid:d.id||d.data().ownerUid}));renderManage();renderPlayerLinks();
     },e=>warn("Mesa disponible; no se pueden consultar personajes: "+(e.code||"")));
+    accessStops.push(onSnapshot(collection(db,'adventureMembers'),snap=>{memberStates.clear();snap.docs.forEach(d=>memberStates.set(d.id,d.data()));renderManage();}));
+    accessStops.push(onSnapshot(collection(db,'appRoles'),snap=>{accountRoles.clear();snap.docs.forEach(d=>accountRoles.set(d.id,d.data().role));renderManage();}));
    }else players=[];
    if(isAdmin&&window.alakEncounterCatalog){
     const catalog=localCatalog||window.alakEncounterCatalog(),selected=window.alakEncounterParticipants();
@@ -309,6 +330,8 @@ if(mountPoints.length){
   }catch(e){warn("No se pudo verificar rol: "+(e.code||e.message))}
  }
  onAuthStateChanged(auth,account=>{
+  clearCampaign();
+  if(cancelAccess){cancelAccess();cancelAccess=null;}accessStops.forEach(stop=>stop());accessStops=[];memberStates.clear();accountRoles.clear();hasCampaign=false;nav.hidden=true;
   if(cancelCampaign){cancelCampaign();cancelCampaign=null}
   if(cancelPlayers){cancelPlayers();cancelPlayers=null}
   for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();

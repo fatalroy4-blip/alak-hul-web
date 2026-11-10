@@ -88,3 +88,5 @@
 }
 
 .mc-player-links{margin:18px 0;padding:14px;border:1px solid #765681;border-radius:12px}.mc-player-links label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}.mc-player-links select{max-width:100%;padding:8px;background:#21142d;color:#f5dfbb;border:1px solid #a385ae;border-radius:6px}
+
+.mc-member-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #64506e}.mc-member-row button{margin-left:auto}.mc-member-row small{color:#dbc68e}
