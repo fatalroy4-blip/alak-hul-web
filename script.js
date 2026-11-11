@@ -226,7 +226,7 @@ function getHomeCloudLabel(){
 }
 function paintHomeCloudLabel(){
  const el=document.getElementById("homeCloudOverlay");
- if(el){el.textContent=getHomeCloudLabel();el.hidden=false;}
+ if(el){el.textContent=getHomeCloudLabel();el.hidden=false;const button=el.closest("button");if(button)button.dataset.syncState=window.alakHomeCloudState||"local";el.setAttribute("role","status");el.setAttribute("aria-live","polite");}
 }
 function setupHomeCloudIndicator(){
  window.addEventListener("alak-home-cloud-status",paintHomeCloudLabel);
@@ -240,7 +240,7 @@ function updateHomeIndicators(){
  if(mobileLevel)mobileLevel.textContent="Nivel actual: "+lv;
  const isOn=state.soundEnabled!==false;
  const sound=document.getElementById("homeSoundOverlay");
- if(sound){sound.textContent="Sonidos: "+(isOn?"ON":"OFF");sound.hidden=false;}
+ if(sound){sound.textContent="Sonidos: "+(isOn?"ON":"OFF");sound.hidden=false;sound.closest("button")?.setAttribute("data-sound",isOn?"on":"off");}
  const mobileSound=document.getElementById("homeMobileSound");
  if(mobileSound)mobileSound.textContent=(isOn?"🔊":"🔇")+" Sonidos: "+(isOn?"ON":"OFF");
  paintHomeCloudLabel();

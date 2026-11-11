@@ -41,11 +41,11 @@ async function startApp() {
   await insertScript("cleric-grimoire-2014.js?v=64");
   await insertScript("legacy-adventure.js?v=71");
   await insertScript("armor-class.js?v=71");
-  await insertScript("script.js?v=80");
+  await insertScript("script.js?v=86");
   await insertScript("campaign-v42.js?v=42");
   await insertScript("background-upload.js?v=41");
   await insertScript("campaign-controls.js?v=71");
-  await insertScript("cloud-sync.js?v=71", true);
+  await insertScript("cloud-sync.js?v=86", true);
   await insertScript("combat-effects.js?v=80");
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");

@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="campaign-v42.css?v=42">
 <link rel="stylesheet" href="mesa-compartida.css?v=83">
 <link rel="stylesheet" href="rules-2014-wizard.css?v=66">
-<link rel="stylesheet" href="home-v46.css?v=85">
+<link rel="stylesheet" href="home-v46.css?v=86">
 
 <style>
 /* V48: la portada y la hoja antiguas no se muestran hasta confirmar el rol owner. */
@@ -95,16 +95,16 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     </div>
     <header class="home-heading"><p>EL SANTUARIO DE PELOR</p><h1>Alak Hul</h1><span>Hoja de Aventurero</span></header>
     <div class="home-card-grid">
-    <button class="home-hit home-character" type="button" data-home-target="character" aria-label="Abrir la hoja de personaje" title="Personaje"><span class="home-tile-copy"><strong>Personaje</strong><small>Hoja de personaje</small></span></button>
-    <button class="home-hit home-spells" type="button" data-home-target="spells" aria-label="Abrir la sección Conjuros" title="Conjuros"><span class="home-tile-copy"><strong>Conjuros</strong><small>Grimorio y espacios</small></span></button>
-    <button class="home-hit home-channel" type="button" data-home-target="channel" aria-label="Abrir Canalizar Divinidad" title="Canalizar Divinidad"><span class="home-tile-copy"><strong>Canalizar <span class="home-title-break">Divinidad</span></strong><small>Poderes de Pelor</small></span></button>
-    <button class="home-hit home-combat" type="button" data-home-target="campaign" aria-label="Abrir Campaña multijugador" title="Campaña · Multijugador"><span class="home-tile-copy"><strong>Campaña</strong><small>Multijugador</small></span></button>
+    <button class="home-hit home-character" type="button" data-home-target="character" aria-label="Abrir la hoja de personaje" title="Personaje"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Personaje</strong><small>Hoja de personaje</small></span></button>
+    <button class="home-hit home-spells" type="button" data-home-target="spells" aria-label="Abrir la sección Conjuros" title="Conjuros"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Conjuros</strong><small>Grimorio y espacios</small></span></button>
+    <button class="home-hit home-channel" type="button" data-home-target="channel" aria-label="Abrir Canalizar Divinidad" title="Canalizar Divinidad"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Canalizar <span class="home-title-break">Divinidad</span></strong><small>Poderes de Pelor</small></span></button>
+    <button class="home-hit home-combat" type="button" data-home-target="campaign" aria-label="Abrir Campaña multijugador" title="Campaña · Multijugador"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Campaña</strong><small>Multijugador</small></span></button>
     </div>
     <div class="home-bottom-actions">
-    <button class="home-hit home-level" type="button" data-home-action="level" aria-label="Subir de nivel" title="Subir de nivel"><span class="home-action-copy">Subir de Nivel</span></button>
-    <button class="home-hit home-rest" type="button" data-home-action="rest" aria-label="Realizar descanso largo" title="Descanso largo"><span class="home-action-copy">Descanso Largo</span></button>
-    <button class="home-hit home-roster" type="button" data-home-action="roster" aria-label="Abrir participantes" title="Participantes"><span class="home-action-copy">Participantes</span></button>
-    <button class="home-hit home-sound" type="button" data-home-action="sound" aria-label="Activar o desactivar sonidos" title="Sonidos"><span class="home-action-copy" id="homeSoundOverlay">Sonidos: ON</span></button>
+    <button class="home-hit home-level" type="button" data-home-action="level" aria-label="Subir de nivel" title="Subir de nivel"><svg class="home-small-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7M5 20l7-7 7 7"/></svg><span class="home-action-copy">Subir de Nivel</span></button>
+    <button class="home-hit home-rest" type="button" data-home-action="rest" aria-label="Realizar descanso largo" title="Descanso largo"><svg class="home-small-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v16M3 16h18v5M3 10h6v6M9 9h10a2 2 0 0 1 2 2v5"/><circle cx="6" cy="8" r="2"/></svg><span class="home-action-copy">Descanso Largo</span></button>
+    <button class="home-hit home-roster" type="button" data-home-action="roster" aria-label="Abrir participantes" title="Participantes"><svg class="home-small-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><circle cx="4" cy="9" r="2"/><circle cx="20" cy="9" r="2"/><path d="M7 21v-5a5 5 0 0 1 10 0v5M1 20v-4a3 3 0 0 1 4-3M23 20v-4a3 3 0 0 0-4-3"/></svg><span class="home-action-copy">Participantes</span></button>
+    <button class="home-hit home-sound" type="button" data-home-action="sound" aria-label="Activar o desactivar sonidos" title="Sonidos"><svg class="home-small-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l5 5V5l-5 5H3M16 8q4 4 0 8M19 4q8 8 0 16"/></svg><span class="home-action-copy" id="homeSoundOverlay">Sonidos: ON</span></button>
     <button class="home-hit home-current" type="button" data-home-target="character" aria-label="Consultar nivel actual del personaje" title="Nivel actual"><span class="home-action-copy" id="homeLevelOverlay">Nivel Actual: 3</span></button>
   </div>
   </div>
@@ -896,7 +896,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
 <script src="firebase-config.js"></script>
-<script type="module" src="owner-gate.js?v=83"></script>
+<script type="module" src="owner-gate.js?v=86"></script>
 <script src="dialogs.js?v=71"></script></body>
 </html>
 
