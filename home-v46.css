@@ -75,3 +75,5 @@ body.home-active{overflow-x:hidden}
 .home-foreground-preview{background:repeating-conic-gradient(#35233f 0% 25%,#493353 0% 50%) 50%/20px 20px}
 .home-foreground-preview img{display:block;max-width:100%;height:100%;object-fit:contain}
 .home-original-icon-preview{display:block;height:100%;aspect-ratio:3/4;background-image:url('assets/home-button-icons.svg');background-size:400% 100%;background-repeat:no-repeat}
+
+.home-upload-status{margin:0;font:12px/1.45 system-ui;color:#ffe0a0;overflow-wrap:anywhere}
