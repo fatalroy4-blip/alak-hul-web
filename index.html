@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="campaign-v42.css?v=42">
 <link rel="stylesheet" href="mesa-compartida.css?v=83">
 <link rel="stylesheet" href="rules-2014-wizard.css?v=66">
-<link rel="stylesheet" href="home-v46.css?v=87">
+<link rel="stylesheet" href="home-v46.css?v=88">
 
 <style>
 /* V48: la portada y la hoja antiguas no se muestran hasta confirmar el rol owner. */
@@ -93,7 +93,7 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <button class="home-hit home-settings" type="button" data-home-action="settings" aria-label="Abrir Ajustes" title="Ajustes"><span aria-hidden="true">⚙</span></button>
     <button class="home-hit home-help" type="button" data-home-action="help" aria-label="Abrir Ayuda" title="Ayuda"><span aria-hidden="true">?</span></button>
     </div>
-    <header class="home-heading"><p>EL SANTUARIO DE PELOR</p><h1>Alak Hul</h1><span>Hoja de Aventurero</span></header>
+    <header class="home-heading home-fixed-heading"><img class="home-fixed-logo" src="assets/home-fixed-logo.webp" width="1536" height="1024" alt="Alak Hul — Hoja de Aventurero" fetchpriority="high"></header>
     <div class="home-card-grid">
     <button class="home-hit home-character" type="button" data-home-target="character" aria-label="Abrir la hoja de personaje" title="Personaje"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Personaje</strong><small>Hoja de personaje</small></span></button>
     <button class="home-hit home-spells" type="button" data-home-target="spells" aria-label="Abrir la sección Conjuros" title="Conjuros"><span class="home-card-art" aria-hidden="true"></span><span class="home-tile-copy"><strong>Conjuros</strong><small>Grimorio y espacios</small></span></button>
@@ -751,7 +751,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
     <a href="#settings-channel-editor">☼ Poderes</a>
   </div>
   <div class="settings-layout">
-    <section id="settings-home-design" class="v34-editor settings-card"><h3>✦ Personalizar Inicio</h3><p>Cambia el título, el subtítulo y los fondos. Los iconos de los botones se conservan.</p><div id="homeDesignEditor"></div><p id="homeDesignStatus" role="status" aria-live="polite"></p></section>
+    <section id="settings-home-design" class="v34-editor settings-card"><h3>✦ Personalizar Inicio</h3><p>Cambia el fondo de Inicio y de los botones. El logotipo y los iconos se conservan.</p><div id="homeDesignEditor"></div><p id="homeDesignStatus" role="status" aria-live="polite"></p></section>
     <div id="settings-players">
       <section class="v34-editor settings-card" aria-labelledby="settingsPlayersTitle">
         <h3 id="settingsPlayersTitle">♟ Administración de jugadores</h3>
@@ -897,7 +897,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
 <script src="firebase-config.js"></script>
-<script type="module" src="owner-gate.js?v=87"></script>
+<script type="module" src="owner-gate.js?v=88"></script>
 <script src="dialogs.js?v=71"></script></body>
 </html>
 

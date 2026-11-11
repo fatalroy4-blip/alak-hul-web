@@ -67,3 +67,7 @@ body.home-active{overflow-x:hidden}
 .home-design-preview{height:110px;background:radial-gradient(#633174,#21102e);background-position:center;background-size:cover;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#f5dfbb;font-size:12px}
 #homeDesignStatus{min-height:1.5em;color:#ffe0a0}
 @media(max-width:650px){.home-design-text-fields{grid-template-columns:1fr}#home .home-heading{margin-top:54px}#home .home-sun-emblem{width:104px;height:104px;top:-66px}}
+
+#home .home-heading.home-fixed-heading{margin:0;width:min(480px,70vw);max-width:100%;line-height:0}
+#home .home-fixed-logo{display:block;width:100%;height:auto;object-fit:contain;filter:none}
+@media(max-height:650px){#home .home-heading.home-fixed-heading{width:min(340px,60vw)}}
