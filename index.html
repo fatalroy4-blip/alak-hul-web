@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="campaign-v42.css?v=42">
 <link rel="stylesheet" href="mesa-compartida.css?v=83">
 <link rel="stylesheet" href="rules-2014-wizard.css?v=66">
-<link rel="stylesheet" href="home-v46.css?v=84">
+<link rel="stylesheet" href="home-v46.css?v=85">
 
 <style>
 /* V48: la portada y la hoja antiguas no se muestran hasta confirmar el rol owner. */
@@ -87,20 +87,26 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 <main>
 <section id="home" class="panel active home-page" aria-label="Inicio de Alak Hul">
   <div class="home-stage" aria-label="Santuario de Pelor: menú principal">
-    <img src="assets/home-santuario-v46.svg?v=46" alt="Santuario luminoso de Pelor con los accesos a Personaje, Conjuros, Canalizar Divinidad y Campaña" class="home-art" draggable="false">
+    <div class="home-toolbar">
     <button class="home-hit home-status" type="button" data-home-action="cloud" aria-label="Estado del guardado y nube" title="Guardado / nube"><span class="home-action-copy" id="homeCloudOverlay">Guardado local</span></button>
-    <button class="home-hit home-cloud" type="button" data-home-action="cloud" aria-label="Abrir Nube" title="Nube"></button>
-    <button class="home-hit home-settings" type="button" data-home-action="settings" aria-label="Abrir Ajustes" title="Ajustes"></button>
-    <button class="home-hit home-help" type="button" data-home-action="help" aria-label="Abrir Ayuda" title="Ayuda"></button>
+    <button class="home-hit home-cloud" type="button" data-home-action="cloud" aria-label="Abrir Nube" title="Nube"><span aria-hidden="true">☁</span></button>
+    <button class="home-hit home-settings" type="button" data-home-action="settings" aria-label="Abrir Ajustes" title="Ajustes"><span aria-hidden="true">⚙</span></button>
+    <button class="home-hit home-help" type="button" data-home-action="help" aria-label="Abrir Ayuda" title="Ayuda"><span aria-hidden="true">?</span></button>
+    </div>
+    <header class="home-heading"><p>EL SANTUARIO DE PELOR</p><h1>Alak Hul</h1><span>Hoja de Aventurero</span></header>
+    <div class="home-card-grid">
     <button class="home-hit home-character" type="button" data-home-target="character" aria-label="Abrir la hoja de personaje" title="Personaje"><span class="home-tile-copy"><strong>Personaje</strong><small>Hoja de personaje</small></span></button>
     <button class="home-hit home-spells" type="button" data-home-target="spells" aria-label="Abrir la sección Conjuros" title="Conjuros"><span class="home-tile-copy"><strong>Conjuros</strong><small>Grimorio y espacios</small></span></button>
     <button class="home-hit home-channel" type="button" data-home-target="channel" aria-label="Abrir Canalizar Divinidad" title="Canalizar Divinidad"><span class="home-tile-copy"><strong>Canalizar <span class="home-title-break">Divinidad</span></strong><small>Poderes de Pelor</small></span></button>
     <button class="home-hit home-combat" type="button" data-home-target="campaign" aria-label="Abrir Campaña multijugador" title="Campaña · Multijugador"><span class="home-tile-copy"><strong>Campaña</strong><small>Multijugador</small></span></button>
+    </div>
+    <div class="home-bottom-actions">
     <button class="home-hit home-level" type="button" data-home-action="level" aria-label="Subir de nivel" title="Subir de nivel"><span class="home-action-copy">Subir de Nivel</span></button>
     <button class="home-hit home-rest" type="button" data-home-action="rest" aria-label="Realizar descanso largo" title="Descanso largo"><span class="home-action-copy">Descanso Largo</span></button>
     <button class="home-hit home-roster" type="button" data-home-action="roster" aria-label="Abrir participantes" title="Participantes"><span class="home-action-copy">Participantes</span></button>
     <button class="home-hit home-sound" type="button" data-home-action="sound" aria-label="Activar o desactivar sonidos" title="Sonidos"><span class="home-action-copy" id="homeSoundOverlay">Sonidos: ON</span></button>
     <button class="home-hit home-current" type="button" data-home-target="character" aria-label="Consultar nivel actual del personaje" title="Nivel actual"><span class="home-action-copy" id="homeLevelOverlay">Nivel Actual: 3</span></button>
+  </div>
   </div>
   <div class="home-mobile" aria-label="Menú del Santuario de Pelor">
     <p class="home-mobile-eyebrow">✦ EL SANTUARIO DE PELOR ✦</p>
