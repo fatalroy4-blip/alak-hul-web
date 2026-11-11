@@ -49,7 +49,7 @@ async function startApp() {
   await insertScript("combat-effects.js?v=80");
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");
-  await insertScript("encounter-bridge.js?v=80");
+  await insertScript("encounter-bridge.js?v=83");
   await insertScript("mesa-compartida.js?v=80", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");

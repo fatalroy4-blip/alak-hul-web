@@ -64,7 +64,7 @@ document.getElementById('rosterList')?.addEventListener('click',()=>{
 });
 const rosterPanel=document.querySelector('.roster-panel');
 const manage=document.createElement('button');manage.type='button';manage.textContent='Editar lista';manage.title='Agregar un personaje nuevo o quitarlo de la lista';
-const catalogDialog=document.createElement('dialog');catalogDialog.className='combat-actions-dialog';catalogDialog.setAttribute('aria-label','Editar lista de participantes');
+const catalogDialog=document.createElement('dialog');catalogDialog.className='combat-actions-dialog combat-catalog-dialog';catalogDialog.setAttribute('aria-label','Editar lista de participantes');
 catalogDialog.addEventListener('close',()=>window.alakSetEncounterSelection?.(window.alakEncounterParticipants(),window.alakEncounterCatalog()));
 const close=document.createElement('button');close.type='button';close.textContent='Cerrar';close.onclick=()=>catalogDialog.close();catalogDialog.append(close);
 const editor=document.getElementById('combatAdmin');if(editor)catalogDialog.append(editor);

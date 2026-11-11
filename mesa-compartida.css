@@ -90,3 +90,22 @@
 .mc-player-links{margin:18px 0;padding:14px;border:1px solid #765681;border-radius:12px}.mc-player-links label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}.mc-player-links select{max-width:100%;padding:8px;background:#21142d;color:#f5dfbb;border:1px solid #a385ae;border-radius:6px}
 
 .mc-member-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #64506e}.mc-member-row button{margin-left:auto}.mc-member-row small{color:#dbc68e}
+
+/* The participant editor lives in a dialog outside #campaign. */
+dialog.combat-catalog-dialog{width:min(1180px,calc(100vw - 32px));max-width:none;max-height:92dvh;padding:24px;overflow-y:auto;overflow-x:hidden}
+.combat-catalog-dialog #combatAdmin{margin:16px 0;padding:20px;min-width:0}
+.combat-catalog-dialog .expansion-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:12px}
+.combat-catalog-dialog .expansion-fields label{min-width:0}
+.combat-catalog-dialog .expansion-fields input,.combat-catalog-dialog .expansion-fields select{box-sizing:border-box;width:100%;min-width:0}
+.combat-catalog-dialog .combat-admin-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.combat-catalog-dialog .combat-admin-group{min-width:0;max-height:52dvh;overflow-y:auto;overflow-x:hidden;padding:12px;scrollbar-gutter:stable}
+.combat-catalog-dialog .combat-admin-entry{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:10px;padding:12px 0}
+.combat-catalog-dialog .campaign-admin-avatar{width:44px;height:44px;min-width:0;object-fit:cover;border-radius:10px;border:1px solid #b18eac}
+.combat-catalog-dialog .campaign-admin-name{min-width:0;font:700 15px/1.4 system-ui;white-space:normal;overflow-wrap:anywhere}
+.combat-catalog-dialog .campaign-admin-actions{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;min-width:0}
+.combat-catalog-dialog .campaign-admin-actions select{grid-column:1/-1;grid-row:1;background:#1e1829;color:#f2e8f3;border:1px solid #805e83;border-radius:8px}
+.combat-catalog-dialog .campaign-admin-actions button,.combat-catalog-dialog .campaign-admin-actions select{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:7px 8px;font:12px/1.4 system-ui;white-space:normal}
+.combat-catalog-dialog .mc-player-links label{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,2fr);gap:12px}
+.combat-catalog-dialog .mc-player-links select{width:100%;min-width:0}
+@media(max-width:820px){dialog.combat-catalog-dialog{padding:14px}.combat-catalog-dialog #combatAdmin{padding:12px}.combat-catalog-dialog .combat-admin-groups{grid-template-columns:1fr}.combat-catalog-dialog .combat-admin-group{max-height:none;overflow:visible}.combat-catalog-dialog .expansion-fields{grid-template-columns:1fr 1fr}.combat-catalog-dialog #addCombatant{grid-column:1/-1}}
+@media(max-width:480px){.combat-catalog-dialog .expansion-fields,.combat-catalog-dialog .mc-player-links label{grid-template-columns:1fr}}
