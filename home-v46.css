@@ -2,10 +2,10 @@
 /* v46 · Rótulos accesibles dentro de sus propios botones, no placas sobrepuestas.
    Los porcentajes se basan en la imagen 1672 × 941 y el texto usa unidades de contenedor. */
 body.home-active{overflow-x:hidden}
-#home.home-page{overflow:hidden}
+#home.home-page{overflow:hidden;min-height:100dvh}
 #home .home-stage{
-  width:min(100vw, 1672px, 177.68dvh);
-  max-width:100vw;
+  width:100%;
+  max-width:none;
   aspect-ratio:1672 / 941;
   height:auto;
   margin:0 auto;
@@ -52,15 +52,15 @@ body.home-active{overflow-x:hidden}
   text-shadow:0 1px 2px #22112c,0 2px 5px #090515,0 0 6px #241127;
 }
 #home .home-tile-copy strong{
-  font:500 clamp(9px,1.71cqw,29px)/1.03 Georgia,"Times New Roman",serif;
+  font:500 clamp(9px,1.71cqw,58px)/1.03 Georgia,"Times New Roman",serif;
   letter-spacing:-.025em;white-space:nowrap;
 }
 #home .home-tile-copy small{
-  font:500 clamp(6px,.94cqw,16px)/1.13 Georgia,"Times New Roman",serif;
+  font:500 clamp(6px,.94cqw,32px)/1.13 Georgia,"Times New Roman",serif;
   white-space:nowrap;
 }
 #home .home-channel .home-tile-copy strong{
-  font-size:clamp(9px,1.56cqw,26px);line-height:1.03;
+  font-size:clamp(9px,1.56cqw,52px);line-height:1.03;
 }
 #home .home-title-break{display:block}
 /* Textos de los botones inferiores, sin fondo ni bordes de relleno. */
@@ -68,7 +68,7 @@ body.home-active{overflow-x:hidden}
   position:absolute;top:67%;left:24%;right:4%;width:auto;height:auto;
   display:block;transform:translateY(-50%);
   margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
-  font:600 clamp(7px,1.02cqw,18px)/1.1 Georgia,"Times New Roman",serif;
+  font:600 clamp(7px,1.02cqw,36px)/1.1 Georgia,"Times New Roman",serif;
   color:#fff0dd;text-align:center;white-space:nowrap;pointer-events:none;
   letter-spacing:-.012em;
   text-shadow:0 1px 2px #170e1a,0 2px 4px #090510;
@@ -80,7 +80,7 @@ body.home-active{overflow-x:hidden}
 #home .home-current .home-action-copy{left:3%;right:3%}
 #home .home-status .home-action-copy{
   top:50%;left:32%;right:3%;
-  font-size:clamp(6px,.76cqw,13px);
+  font-size:clamp(6px,.76cqw,26px);
   font-weight:600;
   text-align:left;
   letter-spacing:-.02em;
