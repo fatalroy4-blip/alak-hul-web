@@ -87,6 +87,7 @@ function repaintLocal() {
   if (typeof updateSoundButton === 'function') updateSoundButton();
   if (typeof updateHomeIndicators === 'function') updateHomeIndicators();
   if (typeof window.alakBgRefresh === "function") window.alakBgRefresh();
+  window.alakHomeDesignRefresh?.();
   if (typeof window.alakCampaignRefresh === 'function') window.alakCampaignRefresh();window.alakRefreshAdventureTools?.();
 }
 function useRemote(data, doBackup=true) {
