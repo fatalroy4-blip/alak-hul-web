@@ -71,3 +71,7 @@ body.home-active{overflow-x:hidden}
 #home .home-heading.home-fixed-heading{margin:0;width:min(480px,70vw);max-width:100%;line-height:0}
 #home .home-fixed-logo{display:block;width:100%;height:auto;object-fit:contain;filter:none}
 @media(max-height:650px){#home .home-heading.home-fixed-heading{width:min(340px,60vw)}}
+#home .home-card-art.has-custom-icon{background-size:contain;background-position:center;background-repeat:no-repeat;mask-image:none;-webkit-mask-image:none}
+.home-foreground-preview{background:repeating-conic-gradient(#35233f 0% 25%,#493353 0% 50%) 50%/20px 20px}
+.home-foreground-preview img{display:block;max-width:100%;height:100%;object-fit:contain}
+.home-original-icon-preview{display:block;height:100%;aspect-ratio:3/4;background-image:url('assets/home-button-icons.svg');background-size:400% 100%;background-repeat:no-repeat}
