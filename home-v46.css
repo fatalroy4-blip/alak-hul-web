@@ -77,3 +77,6 @@ body.home-active{overflow-x:hidden}
 .home-original-icon-preview{display:block;height:100%;aspect-ratio:3/4;background-image:url('assets/home-button-icons.svg');background-size:400% 100%;background-repeat:no-repeat}
 
 .home-upload-status{margin:0;font:12px/1.45 system-ui;color:#ffe0a0;overflow-wrap:anywhere}
+
+/* Fixed shared artwork for the four main menu cards. */
+#home .home-card-grid .home-hit{background-image:url("assets/home-card-magic.webp");background-position:center;background-size:cover;background-repeat:no-repeat}
