@@ -618,6 +618,10 @@ function renderCombatAdmin(){
     saveState();renderCombatAdmin();renderRoster();renderInitiative();
    };
    controls.append(photo,select,remove);
+   if(kind!=='main'&&!window.alakParticipantUid?.(name)){
+    const reset=document.createElement('button');reset.type='button';reset.textContent='Restablecer imagen';reset.style.gridColumn='1 / -1';reset.disabled=!state.portraits?.[name];reset.title='Restaurar el retrato original de '+name;
+    reset.onclick=()=>{if(window.alakParticipantUid?.(name))return;delete state.portraits[name];saveState();renderCombatAdmin();renderRoster();renderInitiative();window.alakCampaignRefresh?.();};controls.append(reset);
+   }
    row.append(avatar,title,controls);group.appendChild(row);
   });
   host.appendChild(group);
