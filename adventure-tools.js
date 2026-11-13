@@ -3,20 +3,24 @@
  const button=(text,fn)=>{const b=make('button',text);b.type='button';b.onclick=fn;return b;};
  const nav=document.querySelector('.topnav')||document.querySelector('.tabs');
  const dice=make('dialog',null,'adventure-dialog');dice.id='diceDialog';dice.setAttribute('aria-label','Dados digitales');
- dice.innerHTML='<h2>Dados digitales</h2><form><label>Cantidad<input name="count" type="number" min="1" max="50" value="2" required></label><label>Tipo de dado<select name="sides"></select></label><button type="submit">Lanzar dados</button></form><p role="status" data-result></p><div class="digital-dice"></div>';
+ dice.innerHTML='<h2>Dados digitales</h2><form><label>Cantidad<input name="count" type="number" min="1" max="50" value="2" required></label><label>Tipo de dado<select name="sides"></select></label><fieldset class="dice-roll-modes" hidden><legend>Tirada de d20</legend><label><input type="radio" name="rollMode" value="normal" checked>Normal</label><label class="dice-advantage"><input type="radio" name="rollMode" value="advantage">Ventaja</label><label class="dice-disadvantage"><input type="radio" name="rollMode" value="disadvantage">Desventaja</label></fieldset><button type="submit">Lanzar dados</button></form><p role="status" data-result></p><div class="digital-dice"></div>';
  for(const sides of [3,4,6,8,10,12,20,100])dice.querySelector('select').add(new Option('d'+sides,sides));
+ const countInput=dice.querySelector('[name="count"]'),sidesInput=dice.querySelector('[name="sides"]'),modeField=dice.querySelector('.dice-roll-modes');let normalCount=countInput.value;
+ const getMode=()=>Number(sidesInput.value)===20?dice.querySelector('[name="rollMode"]:checked').value:'normal';
+ function syncMode(){const d20=Number(sidesInput.value)===20;modeField.hidden=!d20;if(!d20)dice.querySelector('[value="normal"]').checked=true;const paired=getMode()!=='normal';if(paired){if(countInput.dataset.paired!=='true')normalCount=countInput.value;countInput.value='2';}else if(countInput.dataset.paired==='true')countInput.value=normalCount;countInput.dataset.paired=String(paired);countInput.disabled=paired;}
+ sidesInput.addEventListener('change',syncMode);modeField.addEventListener('change',syncMode);
  dice.append(button('Cerrar',()=>dice.close()));document.body.append(dice);
  const openDice=button('⚄ Dados',()=>dice.showModal());openDice.id='openDigitalDice';(nav||document.querySelector('.character-intro')||document.body).append(openDice);
  let rolling=null,frame=null,soundEnabled=true;
  try{soundEnabled=localStorage.getItem('alak-dice-sound')!=='off';}catch{}
  const mute=button('',()=>{soundEnabled=!soundEnabled;try{localStorage.setItem('alak-dice-sound',soundEnabled?'on':'off');}catch{}if(!soundEnabled)window.AlakDice3D.stopSound();updateMute();});
  function updateMute(){mute.textContent='♪ Sonido de dados: '+(soundEnabled?'activado':'desactivado');mute.setAttribute('aria-pressed',String(soundEnabled));}updateMute();dice.querySelector('form').after(mute);
- function finish(){if(!rolling)return;cancelAnimationFrame(frame);const {models,summary}=rolling;models.forEach(m=>m.draw(1));dice.querySelector('[data-result]').textContent=summary;dice.querySelector('form').querySelectorAll('input,select,button').forEach(e=>e.disabled=false);dice.removeAttribute('data-rolling');dice.querySelector('form').removeAttribute('aria-busy');rolling=null;}
+ function finish(){if(!rolling)return;cancelAnimationFrame(frame);const {models,summary}=rolling;models.forEach(m=>m.draw(1));dice.querySelector('[data-result]').textContent=summary;dice.querySelector('form').querySelectorAll('input,select,button').forEach(e=>e.disabled=false);dice.removeAttribute('data-rolling');dice.querySelector('form').removeAttribute('aria-busy');rolling=null;syncMode();}
  dice.addEventListener('close',()=>{finish();window.AlakDice3D.stopSound();});
- dice.querySelector('form').onsubmit=e=>{e.preventDefault();if(rolling)return;const count=Number(dice.querySelector('input').value),sides=Number(dice.querySelector('select').value);if(!Number.isInteger(count)||count<1||count>50)return;
-  const values=Array.from({length:count},()=>window.AlakDice3D.random(sides)+1),host=dice.querySelector('.digital-dice');host.replaceChildren();const models=[];
-  values.forEach((value,i)=>{const face=make('div',null,'digital-die');face.dataset.result=String(value);const group=make('div',null,'die-model-group');const diceModels=sides===100?[window.AlakDice3D.create(10,value,'tens'),window.AlakDice3D.create(10,value,'units')]:[window.AlakDice3D.create(sides,value)];diceModels.forEach(model=>{models.push(model);group.append(model.canvas);});face.append(group,make('small','Dado '+(i+1)+' · d'+sides),make('strong',String(value),'die-result'));host.append(face);});
-  const summary=count+'d'+sides+' → '+values.join(' + ')+' = '+values.reduce((a,b)=>a+b,0)+(sides===3?' · d6 numerado del 1 al 3, dos veces':sides===100?' · Decenas + unidades; 00 y 0 = 100':'');
+ dice.querySelector('form').onsubmit=e=>{e.preventDefault();if(rolling)return;const mode=getMode(),paired=mode!=='normal',count=paired?2:Number(countInput.value),sides=Number(sidesInput.value);if(!Number.isInteger(count)||count<1||count>50)return;
+  const values=Array.from({length:count},()=>window.AlakDice3D.random(sides)+1),host=dice.querySelector('.digital-dice');host.replaceChildren();const models=[];const kept=paired?values.indexOf(mode==='advantage'?Math.max(...values):Math.min(...values)):-1;
+  values.forEach((value,i)=>{const face=make('div',null,'digital-die');face.dataset.result=String(value);face.dataset.mode=mode;if(paired)face.dataset.kept=String(i===kept);const group=make('div',null,'die-model-group');const diceModels=sides===100?[window.AlakDice3D.create(10,value,'tens'),window.AlakDice3D.create(10,value,'units')]:[window.AlakDice3D.create(sides,value,undefined,mode)];diceModels.forEach(model=>{models.push(model);group.append(model.canvas);});face.append(group,make('small','Dado '+(i+1)+' · d'+sides),make('strong',String(value),'die-result'));if(paired)face.append(make('small',i===kept?'Se conserva':'Se descarta','die-keep-label'));host.append(face);});
+  const summary=paired?(mode==='advantage'?'Ventaja':'Desventaja')+' · 2d20 → '+values.join(' y ')+' · Resultado: '+values[kept]:count+'d'+sides+' → '+values.join(' + ')+' = '+values.reduce((a,b)=>a+b,0)+(sides===3?' · d6 numerado del 1 al 3, dos veces':sides===100?' · Decenas + unidades; 00 y 0 = 100':'');
   rolling={models,summary};dice.setAttribute('data-rolling','true');dice.querySelector('form').setAttribute('aria-busy','true');dice.querySelector('[data-result]').textContent='Lanzando '+count+'d'+sides+'…';dice.querySelector('form').querySelectorAll('input,select,button').forEach(e=>e.disabled=true);
   if(soundEnabled)window.AlakDice3D.sound(count);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
@@ -68,5 +72,6 @@
  resource.querySelectorAll('button,input,select').forEach(e=>e.disabled=resourceBusy||!p.max);renderMetamagic(model);review.hidden=!model.levelReviewPending;}
  window.alakRefreshAdventureTools=refresh;refresh();
 })();
+
 
 

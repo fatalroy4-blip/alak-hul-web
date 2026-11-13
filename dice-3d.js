@@ -15,7 +15,7 @@
  function turn(v,axis,angle){const c=Math.cos(angle),s=Math.sin(angle);return add(add(mul(v,c),mul(cross(axis,v),s)),mul(axis,dot(axis,v)*(1-c)));}
  function align(v,n){const axis=cross(n,[0,0,1]),length=Math.hypot(...axis);return length<1e-7?(n[2]>0?v:turn(v,[1,0,0],Math.PI)):turn(v,mul(axis,1/length),Math.acos(Math.max(-1,Math.min(1,n[2]))));}
  const palette=[{name:'amatista',h:275},{name:'rubí',h:350},{name:'zafiro',h:219},{name:'esmeralda',h:155},{name:'ámbar',h:34},{name:'turquesa',h:184},{name:'rosa',h:320},{name:'cobre',h:18}];
- function create(sides,value,kind){const canvas=document.createElement('canvas');canvas.className='die-model';canvas.width=360;canvas.height=360;canvas.setAttribute('role','img');const mesh=meshes[sides===3?6:sides],color=palette[random(palette.length)],target=kind==='tens'?Math.floor((value%100)/10):kind==='units'?value%10:value;
+ function create(sides,value,kind,mode){const canvas=document.createElement('canvas');canvas.className='die-model';canvas.width=360;canvas.height=360;canvas.setAttribute('role','img');const mesh=meshes[sides===3?6:sides],color=sides===20&&mode==='advantage'?{name:'verde · ventaja',h:135}:sides===20&&mode==='disadvantage'?{name:'rojo · desventaja',h:0}:palette[random(palette.length)],target=kind==='tens'?Math.floor((value%100)/10):kind==='units'?value%10:value;
   const labels=mesh.faces.map((_,i)=>sides===3?i%3+1:kind?(i===9?0:i+1):i+1),face=labels.indexOf(target),normal=mesh.faces[face].normal;
   const text=n=>kind==='tens'?String(n*10).padStart(2,'0'):String(n);
   canvas.dataset.result=String(target);canvas.dataset.color=color.name;canvas.setAttribute('aria-label',(kind==='tens'?'Decenas':kind==='units'?'Unidades':'d'+sides)+': '+text(target)+' · '+color.name);
