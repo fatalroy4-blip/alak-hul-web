@@ -568,8 +568,8 @@ function renderChannels(){
   const picture=safeCustomImage(c.image);
   const image=picture?`<img src="${picture}" alt="">`:glyph;
   const summary=c.custom?`Clérigo nivel ${c.level} · Poder personalizado`:(i===0?'Una plegaria que hace retroceder a los muertos vivientes.':'Un amanecer radiante que disipa las sombras y hiere a tus enemigos.');
-  row.innerHTML=`<span class="channel-art ${picture?'with-picture':''}" aria-hidden="true">${image}</span><div class="channel-copy"><span class="eyebrow">CANALIZAR DIVINIDAD${c.custom?` · NIVEL ${c.level}`:''}</span><h3>${esc(c.name)}</h3><p>${esc(summary)}</p></div><div class="channel-actions"><button type="button" class="channel-open">Ver poder <span aria-hidden="true">↗</span></button></div>`;
-  row.querySelector('.channel-open').onclick=()=>{
+  row.innerHTML=`<span class="channel-art ${picture?'with-picture':''}" aria-hidden="true">${image}</span><div class="channel-copy"><span class="eyebrow">CANALIZAR DIVINIDAD${c.custom?` · NIVEL ${c.level}`:''}</span><h3><button type="button" class="power-name" aria-haspopup="dialog">${esc(c.name)}</button></h3><p>${esc(summary)}</p></div>`;
+  row.querySelector('.power-name').onclick=()=>{
    dialogContent.innerHTML=`<div class="spell-modal-banner">${picture?`<span class="modal-glyph"><span class="spell-thumb has-image"><img src="${picture}" alt=""></span></span>`:`<span class="modal-glyph"><span class="spell-thumb theme-light">${glyph}</span></span>`}<p class="eyebrow">CANALIZAR DIVINIDAD${c.custom?` · NIVEL ${c.level}`:''}</p><h2>${esc(c.name)}</h2></div><div class="fulltext">${esc(c.description)}</div>`;
    spellDialog.showModal();
   };

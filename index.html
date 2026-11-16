@@ -40,9 +40,15 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 .flare-line,#fulgorUsos{display:flex;align-items:center;gap:.4rem}
 .flare-frame{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:1.25rem}
 @media(max-width:950px){.flare-frame{grid-template-columns:1fr}}
-.flare-line{box-sizing:border-box;border:1px solid #674c66;border-radius:10px;background:#201525;padding:5px 12px}
-#fulgorAbrir{border:0;background:none;box-shadow:none;padding:0;color:#f2cf90;font:600 1rem Georgia,serif;text-decoration:none;cursor:pointer}
-#fulgorAbrir:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+#channel .channel-card{min-height:0;padding:12px 14px;gap:12px}
+#channel .channel-card::before{content:none}
+#channel .channel-art{width:44px;height:44px;flex-basis:44px;font-size:32px}
+#channel .channel-copy h3{font-size:18px;margin:2px 0!important}
+#channel .channel-copy p{margin:4px 0 0}
+#channel .power-name{background:none;border:0;box-shadow:none;padding:0;font:inherit;color:inherit;text-align:left;text-decoration:none;cursor:pointer}
+#channel .power-name:hover{color:#fff3c9}
+#channel .power-name:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.flare-line{flex-wrap:wrap}
 #fulgorUsos .flare-dot{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #e6bd76;background:#291b32}
 #fulgorUsos .flare-dot[aria-pressed="true"]{background:#e6bd76;box-shadow:inset 0 0 0 3px #291b32}
 </style></head>
@@ -170,10 +176,18 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <p class="eyebrow">RECURSOS SAGRADOS</p>
     <h2>Canalizar Divinidad</h2>
   </div>
-  <div class="flare-frame wide"><div class="flare-line">
-    <button type="button" id="fulgorAbrir" aria-haspopup="dialog">Fulgor Protector</button>
-    <div id="fulgorUsos" role="group" aria-label="Usos gastados"></div>
-  </div>
+  <div class="flare-frame wide">
+    <article class="channel-card">
+      <span class="channel-art" aria-hidden="true">☀</span>
+      <div class="channel-copy">
+        <span class="eyebrow">DOMINIO DE LA LUZ · NIVEL 1</span>
+        <div class="flare-line">
+          <h3><button type="button" class="power-name" id="fulgorAbrir" aria-haspopup="dialog">Fulgor Protector</button></h3>
+          <div id="fulgorUsos" role="group" aria-label="Usos gastados"></div>
+        </div>
+        <p>Usa tu reacción para deslumbrar a quien te ataca e imponer desventaja en su tirada de ataque.</p>
+      </div>
+    </article>
   </div>
   <template id="fulgorDescripcion">
     <div class="spell-modal-banner"><p class="eyebrow">Dominio de la Luz · Nivel 1</p><h2>Fulgor Protector</h2></div>
@@ -918,7 +932,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
 <script src="firebase-config.js"></script>
-<script type="module" src="owner-gate.js?v=95"></script>
+<script type="module" src="owner-gate.js?v=96"></script>
 <script src="dialogs.js?v=71"></script></body>
 </html>
 
