@@ -37,7 +37,10 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 <script src="navigation-memory.js?v=77"></script>
 <script src="adventure-rules.js?v=75"></script>
 <style>
-.flare-line,#fulgorUsos{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.flare-line,#fulgorUsos{display:flex;align-items:center;gap:.4rem}
+.flare-line{margin:.5rem 0 .85rem}
+#fulgorAbrir{border:0;background:none;box-shadow:none;padding:0;color:#f2cf90;font:600 1rem Georgia,serif;text-decoration:underline;text-underline-offset:.18em;cursor:pointer}
+#fulgorAbrir:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 #fulgorUsos .flare-dot{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #e6bd76;background:#291b32}
 #fulgorUsos .flare-dot[aria-pressed="true"]{background:#e6bd76;box-shadow:inset 0 0 0 3px #291b32}
 </style></head>
@@ -165,14 +168,10 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <p class="eyebrow">RECURSOS SAGRADOS</p>
     <h2>Canalizar Divinidad</h2>
   </div>
-  <article class="channel-card" aria-labelledby="fulgorTitulo">
-    <span class="channel-art" aria-hidden="true">☼</span>
-    <div class="channel-copy"><span class="eyebrow">Dominio de la Luz · Nivel 1</span>
-      <div class="flare-line"><h3 id="fulgorTitulo">Fulgor Protector</h3><div id="fulgorUsos" role="group" aria-label="Usos gastados"></div></div>
-      <p>Reacción · Recuperas los usos con un descanso largo.</p>
-    </div>
-    <div class="channel-actions"><button type="button" class="channel-open" id="fulgorAbrir">Ver poder ↗</button></div>
-  </article>
+  <div class="flare-line">
+    <button type="button" id="fulgorAbrir" aria-haspopup="dialog">Fulgor Protector</button>
+    <div id="fulgorUsos" role="group" aria-label="Usos gastados"></div>
+  </div>
   <template id="fulgorDescripcion">
     <div class="spell-modal-banner"><p class="eyebrow">Dominio de la Luz · Nivel 1</p><h2>Fulgor Protector</h2></div>
     <div class="fulltext"><p>A nivel 1 puedes interponer una luz divina entre ti y un enemigo que te ataque.</p>
