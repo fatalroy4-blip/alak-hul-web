@@ -1023,7 +1023,7 @@ function saveCharacter(){
   window.alakArmor?.refresh();
   const s={}; document.querySelectorAll('[data-char]').forEach(el=>s[el.dataset.char]=(el.type==='checkbox'?el.checked:el.value));
   const current=(()=>{try{return JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){return {}}})();
-  if(current.portrait)s.portrait=current.portrait;for(const key of ['sorcery','appliedCampaignEvents','levelReviewPending'])if(current[key]!==undefined)s[key]=current[key];
+  if(current.portrait)s.portrait=current.portrait;for(const key of ['sorcery','appliedCampaignEvents','levelReviewPending','paperStyle'])if(current[key]!==undefined)s[key]=current[key];
   localStorage.setItem(CHAR_KEY,JSON.stringify(s));window.alakCombatEffects?.refresh();
   window.alakCloud?.onLocalChange?.();
   const st=document.getElementById('charSaveStatus'); if(st){st.textContent='✓ Guardado';clearTimeout(charSaveTimer);charSaveTimer=setTimeout(()=>st.textContent='Guardado automático',1200)}

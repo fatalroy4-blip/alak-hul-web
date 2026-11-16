@@ -41,7 +41,7 @@ async function startApp() {
   await insertScript("cleric-grimoire-2014.js?v=64");
   await insertScript("legacy-adventure.js?v=95");
   await insertScript("armor-class.js?v=71");
-  await insertScript("script.js?v=96");
+  await insertScript("script.js?v=98");
   await insertScript("warding-flare.js?v=1");
   await insertScript("campaign-v42.js?v=97");
   await insertScript("background-upload.js?v=92");
