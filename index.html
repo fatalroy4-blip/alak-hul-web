@@ -51,7 +51,12 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 .flare-line{flex-wrap:wrap}
 #fulgorUsos .flare-dot{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #e6bd76;background:#291b32}
 #fulgorUsos .flare-dot[aria-pressed="true"]{background:#e6bd76;box-shadow:inset 0 0 0 3px #291b32}
-</style></head>
+</style><link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/app-icon/alak-180.png">
+<meta name="apple-mobile-web-app-title" content="Alak Hul">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/app-install.js" defer></script>
+</head>
 <body class="landscape-only">
 <section id="ownerAccessGate" role="region" aria-label="Acceso privado de Alak Hul">
   <div class="owner-box">
@@ -769,7 +774,8 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
     <a href="#settings-channel-editor">☼ Poderes</a>
   </div>
   <div class="settings-layout">
-    <section id="settings-home-design" class="v34-editor settings-card"><h3>✦ Personalizar Inicio</h3><p>Personaliza por separado el logotipo, los iconos y los fondos de Inicio.</p><div id="homeDesignEditor"></div><p id="homeDesignStatus" role="status" aria-live="polite"></p></section>
+    <div data-app-install><button type="button" class="primary" aria-describedby="installHint">Instalar Alak Hul</button><p id="installHint" role="status"></p></div>
+<section id="settings-home-design" class="v34-editor settings-card"><h3>✦ Personalizar Inicio</h3><p>Personaliza por separado el logotipo, los iconos y los fondos de Inicio.</p><div id="homeDesignEditor"></div><p id="homeDesignStatus" role="status" aria-live="polite"></p></section>
     <div id="settings-players">
       <section class="v34-editor settings-card" aria-labelledby="settingsPlayersTitle">
         <h3 id="settingsPlayersTitle">♟ Administración de jugadores</h3>
