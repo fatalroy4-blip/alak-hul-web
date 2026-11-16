@@ -1,5 +1,5 @@
 [data-app-install] button.install-icon {
-  display:inline-grid; place-items:center; padding:4px; width:44px; height:44px;
+  display:inline-flex; align-items:center; gap:7px; padding:4px 10px 4px 4px; width:auto; white-space:nowrap; color:#ffe4b1; font-size:13px; height:44px;
   min-width:44px; border:1px solid #bc9558; border-radius:11px; background:#21142c;
 }
 .install-icon img {display:block; width:34px; height:34px; border-radius:7px}
