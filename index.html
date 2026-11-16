@@ -203,20 +203,10 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 
 <section id="campaign" class="panel campaign-page" aria-label="Campaña de Dungeons and Dragons">
 <div class="mesa-compartida" data-shared-campaign></div>
-<details class="legacy-campaign"><summary>Herramientas locales de Alak Hul · Combate y ajustes anteriores</summary>
-
-  <div class="redesign-heading campaign-hero"><div class="redesign-eyebrow">⚔ AVENTURAS EN BAROVIA</div><h2>Nuestra <em>campaña</em></h2><p>Organiza tu mesa, gestiona encuentros y conserva las memorias de la aventura.</p></div>
-  <nav class="campaign-subnav" aria-label="Secciones de campaña" role="tablist">
-    <button class="campaign-tab active" type="button" data-campaign-view="table" role="tab" aria-selected="true" aria-controls="campaign-table">♟ Mi mesa</button>
-    <button class="campaign-tab" type="button" data-campaign-view="combat" role="tab" aria-selected="false" aria-controls="campaign-combat">⚔ Combate</button>
-    <button class="campaign-tab" type="button" data-campaign-view="diary" role="tab" aria-selected="false" aria-controls="campaign-diary">✒ Diario de aventura</button>
-    <button class="campaign-tab" type="button" data-campaign-view="admin" role="tab" aria-selected="false" aria-controls="campaign-admin">⚙ Administración</button>
-  </nav>
   <section id="campaign-table" class="campaign-view active" role="tabpanel">
-    <div class="campaign-section-head"><div><p class="eyebrow">LOS QUE COMPARTEN EL CAMINO</p><h3>Mi mesa</h3><p>Personajes registrados en tu tablero actual. <span id="campaignCurrentName"></span></p></div><button type="button" id="campaignGoAdmin" class="campaign-accent-btn">Administrar mesa</button></div>
-    <p class="campaign-notice">La organización de esta mesa funciona actualmente con tu guardado personal. Las invitaciones de Google y el combate compartido en tiempo real se habilitarán cuando estén listas las reglas de seguridad.</p>
+    <details><summary>Catálogo de personajes de la mesa</summary>
     <div id="campaignTableSummary" class="campaign-table-summary" aria-live="polite"></div>
-    <div id="campaignTableList" class="campaign-table-list" aria-live="polite"></div>
+    <div id="campaignTableList" class="campaign-table-list" aria-live="polite"></div></details>
   </section>
   <section id="campaign-combat" class="campaign-view" role="tabpanel" hidden>
     <div id="combat" class="campaign-combat-board">
@@ -253,6 +243,7 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <div class="campaign-diary-grid">
       <form id="campaignDiaryForm" class="campaign-surface" autocomplete="off">
         <h4>✒ Registrar una sesión</h4>
+        <label>Visibilidad <select id="campaignDiaryScope"><option value="private">Solo yo</option><option value="shared">Compartir con la mesa</option></select></label>
         <label>Fecha <input id="campaignDiaryDate" type="date" required></label>
         <label>Título <input id="campaignDiaryTitle" type="text" maxlength="90" placeholder="Ej. La noche de los cuervos" required></label>
         <label>Notas <textarea id="campaignDiaryText" rows="5" maxlength="12000" placeholder="¿Qué ocurrió durante la aventura?" required></textarea></label>
@@ -263,20 +254,12 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     </div>
   </section>
   <section id="campaign-admin" class="campaign-view" role="tabpanel" hidden>
-    <div class="campaign-section-head"><div><p class="eyebrow">EL CONSEJO DE LA MESA</p><h3>Administración</h3><p>Personajes, enemigos, aliados y herramientas de dirección.</p></div></div>
-    <div class="campaign-admin-overview">
-      <article class="campaign-surface"><h4>♟ Gestión de la mesa</h4><p>Añade o quita participantes, asígnales un tipo y cambia sus imágenes. Los retratos pueden recortarse y centrarse antes de guardarlos.</p><p class="campaign-note">Estos participantes pertenecen a tu tablero actual. Las cuentas individuales de Google se agregarán en una fase posterior.</p></article>
-      <article class="campaign-surface campaign-setup-card"><h4>⚙ Configuración de campaña</h4><label for="campaignNameInput">Nombre de la campaña</label><input id="campaignNameInput" maxlength="80" placeholder="Ej. Las nieblas de Barovia"><button id="campaignSaveName" type="button">Guardar nombre</button><p id="campaignNameStatus" role="status" aria-live="polite"></p></article>
-      <article class="campaign-surface"><h4>☼ Permisos del Dungeon Master</h4><p>Propietario, Dungeon Master y jugadores con hojas privadas: este control se habilitará tras publicar las reglas de Firebase y probar los accesos.</p><span class="campaign-soon">Próxima etapa · Multijugador seguro</span></article>
-      <article class="campaign-surface"><h4>⚔ Herramientas de dirección</h4><div class="campaign-tool-actions"><button type="button" id="campaignOpenCombat">Ver combate</button><button type="button" id="campaignNewCombat">Nuevo combate</button><button type="button" id="campaignOpenCloud">Guardado y respaldo</button></div></article>
-    </div>
     <div id="campaign-participants">  <details class="combat-admin v34-editor" id="combatAdmin" open><summary>⚙ Participantes · personajes, aliados NPC y enemigos</summary>
     <p>Crea personajes principales, aliados NPC o enemigos. Asigna nombres y tipos, cambia retratos y conserva la información de combate.</p>
     <div class="expansion-fields"><label>Nombre <input id="newCombatantName" maxlength="65" placeholder="Nombre del participante"></label><label>Tipo <select id="newCombatantKind"><option value="main">Personaje principal</option><option value="ally">Aliado NPC</option><option value="enemy">Enemigo</option></select></label><button type="button" id="addCombatant">✦ Añadir participante</button></div>
     <p id="combatAdminMessage" role="status" aria-live="polite"></p><div id="combatAdminList" class="combat-admin-groups"></div>
   </details></div>
   </section>
-</details>
 </section>
 <section id="character" class="panel">
   <div class="character-intro">
@@ -932,7 +915,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
 <script src="firebase-config.js"></script>
-<script type="module" src="owner-gate.js?v=96"></script>
+<script type="module" src="owner-gate.js?v=97"></script>
 <script src="dialogs.js?v=71"></script></body>
 </html>
 

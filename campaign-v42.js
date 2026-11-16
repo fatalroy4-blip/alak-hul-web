@@ -24,7 +24,10 @@ function show(view=null){
  if(active==="table")renderTable();
  if(active==="diary")renderDiary();
 }
-window.alakShowCampaignView=show;
+window.alakShowCampaignView=view=>{
+ if(window.alakSelectOwnerCampaign){if(view)window.alakSelectOwnerCampaign(view);return;}
+ show(view);
+};
 document.querySelectorAll("[data-campaign-view]").forEach(button=>button.addEventListener("click",()=>show(button.dataset.campaignView)));
 $("campaignGoAdmin")?.addEventListener("click",()=>show("admin"));
 $("campaignOpenCombat")?.addEventListener("click",()=>show("combat"));
@@ -84,6 +87,8 @@ function renderDiary(){
   const edit=document.createElement("button");edit.type="button";edit.textContent="Editar";
   edit.onclick=()=>{
    editingDiaryId=entry.id;
+   $("campaignDiaryScope").value="private";
+   $("campaignDiaryScope").disabled=true;
    $("campaignDiaryDate").value=entry.date||todayLocal();
    $("campaignDiaryTitle").value=entry.title||"";
    $("campaignDiaryText").value=entry.text||"";
@@ -103,16 +108,27 @@ function renderDiary(){
 }
 function resetDiaryForm(){
  editingDiaryId=null;
+ $("campaignDiaryScope").disabled=false;
  $("campaignDiaryForm")?.reset();
  $("campaignDiaryDate").value=todayLocal();
  $("campaignDiarySave").textContent="Guardar entrada";
  $("campaignDiaryCancel").hidden=true;
 }
-$("campaignDiaryForm")?.addEventListener("submit",event=>{
+$("campaignDiaryForm")?.addEventListener("submit",async event=>{
  event.preventDefault();
  const date=$("campaignDiaryDate").value,title=$("campaignDiaryTitle").value.trim(),notes=$("campaignDiaryText").value.trim();
  const status=$("campaignDiaryMessage");
  if(!date||!title||!notes){if(status)status.textContent="Completa la fecha, el título y las notas.";return;}
+ if(!editingDiaryId && $("campaignDiaryScope").value==="shared"){
+  const save=$("campaignDiarySave");if(save.disabled)return;
+  save.disabled=true;
+  try{
+   const ok=await window.alakAddSharedDiary?.({date,title,text:notes});
+   if(ok)resetDiaryForm();
+   status.textContent=ok?"Entrada compartida con la mesa.":"No se pudo compartir. Tu texto sigue en el formulario.";
+  }finally{save.disabled=false;}
+  return;
+ }
  const list=Array.isArray(state.campaignDiary)?state.campaignDiary:[];
  const id=editingDiaryId||(crypto.randomUUID?.()||String(Date.now()));
  const entry={id,date,title,text:notes};

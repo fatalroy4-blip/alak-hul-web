@@ -72,10 +72,17 @@ if(mountPoints.length){
   active=name;if(navigate)window.alakNavigation?.campaign(name);
   nav.querySelectorAll("[data-mc-view]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.mcView===name)));
   Object.values(element).forEach(p=>p.classList.toggle("active",p.dataset.mcPane===name));
-  if(combatBoard&&name==='combat'&&navigate){
-   document.querySelector('.legacy-campaign').open=true;
-   window.alakShowCampaignView?.('combat');
+  if(combatBoard){
+   for(const [key,id] of [['table','table'],['combat','combat'],['diary','diary'],['manage','admin']]){
+    const pane=document.getElementById('campaign-'+id);
+    pane.hidden=name!==key;
+    pane.classList.toggle('active',name===key);
+   }
   }
+ }
+ if(combatBoard){
+  window.alakSelectOwnerCampaign=view=>select(view==='admin'?'manage':view,true);
+  window.alakAddSharedDiary=entry=>edit(s=>({...s,diary:[{...entry,id:uid(),author:current.displayName||'Dirección'},...s.diary].slice(0,45)}));
  }
  window.alakRestoreCampaignView=name=>{if(name)select(name);};
  function panel(title,parent){
@@ -251,8 +258,9 @@ if(mountPoints.length){
  }
  function renderDiary(){
   const box=element.diary;box.replaceChildren();
-  const surface=panel("📖 Diario de campaña",box);
-  if(isAdmin){
+  if(combatBoard&&!info.diary.length)return;
+  const surface=panel(combatBoard?"Entradas compartidas con la mesa":"📖 Diario de campaña",box);
+  if(isAdmin&&!combatBoard){
    const form=create("form","mc-form");
    const title=field("Título","title");const date=field("Fecha","date",new Date().toISOString().slice(0,10),"date");
    const note=create("label","","Crónica");const area=create("textarea");area.name="text";area.rows=3;area.maxLength=4000;note.append(area);
@@ -274,7 +282,11 @@ if(mountPoints.length){
   const titleForm=create("form","mc-form"),title=field("Nombre de la campaña","title",info.title);
   const btn=create("button","","Guardar nombre");btn.type="submit";
   titleForm.append(title,btn);titleForm.onsubmit=e=>{e.preventDefault();const name=title.querySelector("input").value.trim();if(name)void edit(s=>({...s,title:name.slice(0,80)}))};surface.append(titleForm);
-  const open=makeBtn('Agregar / quitar participantes',()=>select('combat',true));surface.append(open);
+  const open=makeBtn('Agregar / quitar participantes',()=>{
+   if(combatBoard)document.querySelector('dialog.combat-catalog-dialog')?.showModal();
+   else select('combat',true);
+  });surface.append(open);
+  if(combatBoard)surface.append(makeBtn('Guardado y respaldo',()=>document.getElementById('cloudOpenBtn')?.click()));
   const members=panel('Jugadores registrados',box);members.append(create('p','','Quienes se registran pueden preparar su hoja. Solo el propietario y el DM deciden quién entra a esta aventura.'));
   if(!players.length)empty(members,'Todavía no hay hojas registradas.');
   for(const player of players){const id=player.ownerUid;if(id===current?.uid||['owner','dm'].includes(accountRoles.get(id)))continue;
