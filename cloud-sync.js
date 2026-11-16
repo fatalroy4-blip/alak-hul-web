@@ -76,6 +76,7 @@ function repaintLocal() {
   if (typeof renderPreparedGroups === 'function') renderPreparedGroups();
   if (typeof renderSlots === 'function') renderSlots();
   if (typeof renderSpellSections === 'function') renderSpellSections();
+  window.alakRenderWardingFlare?.();
   if (typeof renderChannels === 'function') renderChannels();
   if (typeof renderSheetPreparedSpells === 'function') renderSheetPreparedSpells();
   if (typeof renderCombatAdmin === 'function') renderCombatAdmin();

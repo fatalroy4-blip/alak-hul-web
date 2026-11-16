@@ -36,7 +36,11 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 <link rel="stylesheet" href="adventure-tools.css?v=91">
 <script src="navigation-memory.js?v=77"></script>
 <script src="adventure-rules.js?v=75"></script>
-</head>
+<style>
+.flare-line,#fulgorUsos{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+#fulgorUsos .flare-dot{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #e6bd76;background:#291b32}
+#fulgorUsos .flare-dot[aria-pressed="true"]{background:#e6bd76;box-shadow:inset 0 0 0 3px #291b32}
+</style></head>
 <body class="landscape-only">
 <section id="ownerAccessGate" role="region" aria-label="Acceso privado de Alak Hul">
   <div class="owner-box">
@@ -161,6 +165,21 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <p class="eyebrow">RECURSOS SAGRADOS</p>
     <h2>Canalizar Divinidad</h2>
   </div>
+  <article class="channel-card" aria-labelledby="fulgorTitulo">
+    <span class="channel-art" aria-hidden="true">☼</span>
+    <div class="channel-copy"><span class="eyebrow">Dominio de la Luz · Nivel 1</span>
+      <div class="flare-line"><h3 id="fulgorTitulo">Fulgor Protector</h3><div id="fulgorUsos" role="group" aria-label="Usos gastados"></div></div>
+      <p>Reacción · Recuperas los usos con un descanso largo.</p>
+    </div>
+    <div class="channel-actions"><button type="button" class="channel-open" id="fulgorAbrir">Ver poder ↗</button></div>
+  </article>
+  <template id="fulgorDescripcion">
+    <div class="spell-modal-banner"><p class="eyebrow">Dominio de la Luz · Nivel 1</p><h2>Fulgor Protector</h2></div>
+    <div class="fulltext"><p>A nivel 1 puedes interponer una luz divina entre ti y un enemigo que te ataque.</p>
+    <p>Cuando eres atacado por una criatura que puedas ver a 30 pies (9 metros) o menos de ti, puedes utilizar tu reacción para imponer desventaja en su tirada de ataque, haciendo que la luz deslumbre al atacante antes de que se determine si impacta o falla.</p>
+    <p>Un atacante que no pueda ser cegado es inmune a este efecto.</p>
+    <p>Puedes usar este rasgo tantas veces como tu modificador de Sabiduría (mínimo una vez). Recuperas todos los usos gastados cuando finalizas un descanso largo.</p></div>
+  </template>
   <div id="channelList" class="spell-list wide"></div>
 
 </section>
@@ -897,7 +916,7 @@ No funciona contra criaturas que no puedan ser cegadas.</textarea>
   <div class="level-dialog-actions"><button type="button" id="cancelLevelUp">Cancelar</button><button type="button" id="confirmLevelUp" class="confirm-level">Confirmar subida</button></div>
 </dialog>
 <script src="firebase-config.js"></script>
-<script type="module" src="owner-gate.js?v=93"></script>
+<script type="module" src="owner-gate.js?v=95"></script>
 <script src="dialogs.js?v=71"></script></body>
 </html>
 
