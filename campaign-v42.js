@@ -103,7 +103,14 @@ function renderDiary(){
    if(editingDiaryId===entry.id)resetDiaryForm();
    saveState();
   };
-  article.append(time,h,p,edit,del);host.appendChild(article);
+  const share=document.createElement('button');share.type='button';share.textContent='Compartir con la mesa';
+  share.onclick=async()=>{
+   share.disabled=true;
+   const ok=await window.alakAddSharedDiary?.({...entry,id:'personal-'+entry.id});
+   if(ok){state.campaignDiary=state.campaignDiary.filter(e=>e.id!==entry.id);saveState();renderDiary();}
+   else share.disabled=false;
+  };
+  article.append(time,h,p,edit,share,del);host.appendChild(article);
  }
 }
 function resetDiaryForm(){

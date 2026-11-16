@@ -43,7 +43,7 @@ async function startApp() {
   await insertScript("armor-class.js?v=71");
   await insertScript("script.js?v=98");
   await insertScript("warding-flare.js?v=1");
-  await insertScript("campaign-v42.js?v=97");
+  await insertScript("campaign-v42.js?v=99");
   await insertScript("background-upload.js?v=92");
   await insertScript("home-design.js?v=93");
   await insertScript("campaign-controls.js?v=71");
@@ -52,7 +52,7 @@ async function startApp() {
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");
   await insertScript("encounter-bridge.js?v=83");
-  await insertScript("mesa-compartida.js?v=97", true);
+  await insertScript("mesa-compartida.js?v=99", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");

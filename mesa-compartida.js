@@ -82,7 +82,7 @@ if(mountPoints.length){
  }
  if(combatBoard){
   window.alakSelectOwnerCampaign=view=>select(view==='admin'?'manage':view,true);
-  window.alakAddSharedDiary=entry=>edit(s=>({...s,diary:[{...entry,id:uid(),author:current.displayName||'Dirección'},...s.diary].slice(0,45)}));
+  window.alakAddSharedDiary=entry=>saveDiary(entry);
  }
  window.alakRestoreCampaignView=name=>{if(name)select(name);};
  function panel(title,parent){
@@ -256,23 +256,62 @@ if(mountPoints.length){
    catch(e){warn("Mesa guardada; no se pudo sincronizar la hoja individual: "+(e.code||"error"))}
   }
  }
+ async function saveDiary(entry,original=null){
+  if(!current||!hasCampaign)return false;
+  try{
+   const id=original?.id||entry.id||uid();
+   await runTransaction(db,async tx=>{
+    const snapshot=await tx.get(ref);
+    if(!snapshot.exists())throw Error('La mesa aún no está disponible.');
+    const data=snapshot.data(),diary=[...(data.diary||[])];
+    const index=diary.findIndex(item=>item.id===id);
+    if(original){
+     if(index<0||['title','date','text'].some(key=>diary[index][key]!==original[key]))
+      throw Error('La entrada cambió. Abre la versión actual antes de editarla.');
+     diary[index]={...diary[index],title:entry.title,date:entry.date,text:entry.text};
+    }else{
+     if(index>=0)return;
+     if(diary.length>=45)throw Error('El diario ya tiene 45 entradas.');
+     diary.unshift({...entry,id,author:current.displayName||'Aventurero'});
+    }
+    tx.set(ref,{...data,diary});
+   });
+   return true;
+  }catch(e){warn('No se pudo guardar el diario: '+(e.message||e.code));return false;}
+ }
+ function openDiaryEditor(original=null){
+  const dialog=create('dialog','mc-surface'),form=create('form','mc-form');
+  const title=field('Título','title',original?.title||''),date=field('Fecha','date',original?.date||new Date().toISOString().slice(0,10),'date');
+  title.lastChild.maxLength=80;title.lastChild.required=true;date.lastChild.required=true;
+  const note=create('label','','Crónica'),area=create('textarea');
+  area.rows=5;area.required=true;area.maxLength=4000;area.value=original?.text||'';note.append(area);
+  const save=create('button','','Guardar entrada');save.type='submit';
+  const status=create('p','');status.setAttribute('role','status');
+  form.append(date,title,note,save,makeBtn('Cancelar',()=>dialog.close()),status);
+  const heading=create('h3','',original?'Editar entrada':'Añadir al diario');
+  dialog.setAttribute('aria-label',heading.textContent);dialog.append(heading,form);document.body.append(dialog);
+  dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+  form.onsubmit=async event=>{
+   event.preventDefault();
+   const entry={title:title.lastChild.value.trim(),date:date.lastChild.value,text:area.value.trim()};
+   if(!entry.title||!entry.text){status.textContent='Completa el título y la crónica.';return;}
+   save.disabled=true;
+   if(await saveDiary(entry,original))dialog.close();
+   else status.textContent='No se pudo guardar. Tu texto sigue aquí. Consulta el aviso de la mesa.';
+   save.disabled=false;
+  };
+ }
  function renderDiary(){
   const box=element.diary;box.replaceChildren();
   if(combatBoard&&!info.diary.length)return;
-  const surface=panel(combatBoard?"Entradas compartidas con la mesa":"📖 Diario de campaña",box);
-  if(isAdmin&&!combatBoard){
-   const form=create("form","mc-form");
-   const title=field("Título","title");const date=field("Fecha","date",new Date().toISOString().slice(0,10),"date");
-   const note=create("label","","Crónica");const area=create("textarea");area.name="text";area.rows=3;area.maxLength=4000;note.append(area);
-   const add=create("button","","Añadir al diario");add.type="submit";form.append(date,title,note,add);
-   form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),name=String(fd.get("title")||"").trim(),text=String(fd.get("text")||"").trim();if(!name||!text)return;
-    void edit(s=>({...s,diary:[{id:uid(),date:String(fd.get("date")),title:name.slice(0,80),text:text.slice(0,4000),author:current.displayName||"Dirección"},...s.diary].slice(0,45)}));form.reset()};
-   surface.append(form);
-  }
-  const entries=create("div","mc-diary-entries");
-  if(!info.diary.length)empty(entries,"Aún no hay entradas de campaña.");
+  const surface=panel(combatBoard?'Entradas compartidas con la mesa':'📖 Diario de campaña',box);
+  if(!combatBoard)surface.append(makeBtn('Añadir al diario',()=>openDiaryEditor()));
+  const entries=create('div','mc-diary-entries');
+  if(!info.diary.length)empty(entries,'Aún no hay entradas de campaña.');
   for(const item of info.diary){
-   const block=create("article","mc-diary-item");block.append(create("h4","",item.title),create("small","",item.date+" · "+(item.author||"Dirección")),create("p","",item.text));entries.append(block);
+   const block=create('article','mc-diary-item');
+   block.append(create('h4','',item.title),create('small','',item.date+' · '+(item.author||'Dirección')),create('p','',item.text),makeBtn('Editar',()=>openDiaryEditor(item)));
+   entries.append(block);
   }surface.append(entries);
  }
  function renderManage(){

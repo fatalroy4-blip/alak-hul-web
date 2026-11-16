@@ -36,6 +36,11 @@ service cloud.firestore {
     match /campaigns/main {
       allow get: if esAdministrador() || esMiembro();
       allow create, update: if esAdministrador();
+      allow update: if esMiembro()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['diary'])
+        && request.resource.data.diary is list
+        && request.resource.data.diary.size() <= 45
+        && request.resource.data.diary.size() >= resource.data.get('diary', []).size();
       allow delete: if esPropietario();
     }
     // Miniaturas públicas de la mesa: solo su jugador puede modificarlas.

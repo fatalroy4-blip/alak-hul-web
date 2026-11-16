@@ -1,0 +1,14 @@
+[data-app-install] button.install-icon {
+  display:inline-grid; place-items:center; padding:4px; width:44px; height:44px;
+  min-width:44px; border:1px solid #bc9558; border-radius:11px; background:#21142c;
+}
+.install-icon img {display:block; width:34px; height:34px; border-radius:7px}
+[data-install-home] {position:relative; z-index:2}
+[data-install-home] [role=status]:not(:empty) {position:absolute; inset-inline-end:0; top:100%; z-index:4; width:240px; padding:12px; color:#fff0df; background:#291b30; border-radius:8px}
+[data-install-home] [role=status]:empty {display:none}
+[data-sheet-lock] {margin:0 0 12px; padding:8px 14px; border:1px solid #aa865a; border-radius:8px; background:#312035; color:#ffe3aa; cursor:pointer}
+@media (display-mode:standalone) and (orientation:portrait) {
+  html:root, html body {overflow:auto!important}
+  html body > :not(.portrait-turn-notice):not(.rotate) {visibility:visible!important;pointer-events:auto!important}
+  html body .rotate, html body.landscape-only .portrait-turn-notice {display:none!important}
+}

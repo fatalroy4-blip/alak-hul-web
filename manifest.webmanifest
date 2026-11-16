@@ -6,23 +6,24 @@
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "theme_color": "#171022",
   "background_color": "#171022",
   "icons": [
     {
-      "src": "/assets/app-icon/alak-192.png",
+      "src": "/assets/app-icon/alak-v2-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/app-icon/alak-512.png",
+      "src": "/assets/app-icon/alak-v2-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/app-icon/alak-512-maskable.png",
+      "src": "/assets/app-icon/alak-v2-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

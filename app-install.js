@@ -1,23 +1,22 @@
 (() => {
-  const panel = document.querySelector('[data-app-install]');
-  if (!panel) return;
-  const button = panel.querySelector('button');
-  const hint = panel.querySelector('[role="status"]');
+  const panels = [...document.querySelectorAll('[data-app-install]')];
+  if (!panels.length) return;
   const standalone = matchMedia('(display-mode: standalone)');
   let pendingPrompt;
-  const update = () => { panel.hidden = standalone.matches || navigator.standalone === true; };
+  const update = () => { panels.forEach(panel => panel.hidden = standalone.matches || navigator.standalone === true); };
   update();
   standalone.addEventListener('change', update);
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     pendingPrompt = event;
-    hint.textContent = '';
+    panels.forEach(panel => panel.querySelector('[role=status]').textContent = '');
   });
   window.addEventListener('appinstalled', () => {
     pendingPrompt = null;
-    panel.hidden = true;
+    panels.forEach(panel => panel.hidden = true);
   });
-  button.addEventListener('click', async () => {
+  for (const panel of panels) panel.querySelector('button').addEventListener('click', async () => {
+    const hint = panel.querySelector('[role=status]');
     const prompt = pendingPrompt;
     if (prompt) {
       pendingPrompt = null;
