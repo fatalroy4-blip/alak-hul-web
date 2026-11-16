@@ -38,8 +38,10 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
 <script src="adventure-rules.js?v=75"></script>
 <style>
 .flare-line,#fulgorUsos{display:flex;align-items:center;gap:.4rem}
-.flare-line{margin:.5rem 0 .85rem}
-#fulgorAbrir{border:0;background:none;box-shadow:none;padding:0;color:#f2cf90;font:600 1rem Georgia,serif;text-decoration:underline;text-underline-offset:.18em;cursor:pointer}
+.flare-frame{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:1.25rem}
+@media(max-width:950px){.flare-frame{grid-template-columns:1fr}}
+.flare-line{box-sizing:border-box;border:1px solid #674c66;border-radius:10px;background:#201525;padding:5px 12px}
+#fulgorAbrir{border:0;background:none;box-shadow:none;padding:0;color:#f2cf90;font:600 1rem Georgia,serif;text-decoration:none;cursor:pointer}
 #fulgorAbrir:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 #fulgorUsos .flare-dot{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #e6bd76;background:#291b32}
 #fulgorUsos .flare-dot[aria-pressed="true"]{background:#e6bd76;box-shadow:inset 0 0 0 3px #291b32}
@@ -168,9 +170,10 @@ html.owner-locked body #ownerAccessGate{display:flex!important;visibility:visibl
     <p class="eyebrow">RECURSOS SAGRADOS</p>
     <h2>Canalizar Divinidad</h2>
   </div>
-  <div class="flare-line">
+  <div class="flare-frame wide"><div class="flare-line">
     <button type="button" id="fulgorAbrir" aria-haspopup="dialog">Fulgor Protector</button>
     <div id="fulgorUsos" role="group" aria-label="Usos gastados"></div>
+  </div>
   </div>
   <template id="fulgorDescripcion">
     <div class="spell-modal-banner"><p class="eyebrow">Dominio de la Luz · Nivel 1</p><h2>Fulgor Protector</h2></div>
