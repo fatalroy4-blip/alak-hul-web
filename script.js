@@ -290,7 +290,7 @@ function bind(){
  setupHomeNavigation();
  const restButton=document.getElementById('longRestBtn');
  if(restButton) restButton.onclick=()=>{
-  if(confirm('¿Aplicar un descanso largo únicamente a Alak Hul? Para afectar a otros jugadores usa Campaña → Dirección.'))void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));
+  if(confirm('¿Aplicar un descanso largo únicamente a Alak Hul? Para afectar a otros jugadores usa Campaña → Dirección.')){playLongRestDawn();void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));}
  };
  searchInput.addEventListener('input',renderSpellSections);
  ['grimoireLevelFilter','grimoireKindFilter'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderSpellSections));

@@ -1,11 +1,11 @@
-import {appendRoll,rollViewer} from "./roll-history.js";
+import {appendRoll,rollViewer} from "./roll-history.js?v=102";
 import "./combat-actions.js?v=58";
 /* V49: Mesa compartida de Alak Hul.
    MISMA interfaz y MISMO documento Firestore en owner, DM y jugadores.
    Permisos reales requieren reglas Firestore publicadas para campaigns/main. */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { getFirestore,doc,collection,getDoc,setDoc,updateDoc,onSnapshot,runTransaction,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore,doc,collection,getDoc,setDoc,onSnapshot,runTransaction,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 const mountPoints=[...document.querySelectorAll("[data-shared-campaign]")];
 if(mountPoints.length){
  const app=initializeApp(window.ALAK_FIREBASE_CONFIG),auth=getAuth(app),db=getFirestore(app);
@@ -38,7 +38,38 @@ if(mountPoints.length){
    if(notice)notice.textContent='La tirada es válida, pero no se pudo guardar en el historial de la mesa.';
   }
  });
- function clearCampaign(){viewer?.destroy();viewer=null;if(cancelCampaign){cancelCampaign();cancelCampaign=null;}hasCampaign=false;info=defaults();for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();Object.values(element).forEach(p=>p.replaceChildren());nav.hidden=true;}
+ let swords=null,quickDialog=null;
+ function mountQuickCombat(){
+  quickDialog=create('dialog','mesa-compartida quick-combat');
+  quickDialog.setAttribute('aria-label','Combate en curso');
+  const body=create('div');quickDialog.append(makeBtn('Cerrar',()=>quickDialog.close()),body);
+  quickDialog.addEventListener('click',event=>{
+   if(event.target!==quickDialog)return;
+   const r=quickDialog.getBoundingClientRect();
+   if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)quickDialog.close();
+  });
+  swords=makeBtn('⚔',()=>{renderCombat(body,true);quickDialog.showModal();});
+  swords.className='quick-swords';swords.title='Ver combate';swords.setAttribute('aria-label','Ver combate');
+  swords.setAttribute('aria-haspopup','dialog');
+  if(viewer)document.querySelector('.roll-d20').before(swords);
+  else{ swords.classList.add('quick-swords-solo');document.body.append(swords); }
+  document.body.append(quickDialog);
+ }
+ async function clearRolls(ids){
+  if(!isAdmin||!current)throw Error('Sin permiso');
+  const grouped=new Map();
+  for(const id of ids){const [player,key]=id.split('/');if(!grouped.has(player))grouped.set(player,new Set());grouped.get(player).add(key);}
+  for(const [player,keys] of grouped){
+   const ref=doc(db,'players',player);
+   await runTransaction(db,async tx=>{
+    const snap=await tx.get(ref);if(!snap.exists())return;
+    const data=snap.data(),history={...data.diceHistory};
+    for(const key of keys)delete history[key];
+    tx.update(ref,{diceHistory:history});
+   });
+  }
+ }
+ function clearCampaign(){swords?.remove();quickDialog?.remove();swords=null;quickDialog=null;viewer?.destroy();viewer=null;if(cancelCampaign){cancelCampaign();cancelCampaign=null;}hasCampaign=false;info=defaults();for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();Object.values(element).forEach(p=>p.replaceChildren());nav.hidden=true;}
  const portraitProfiles=new Map(),portraitSubscriptions=new Map();
  const participant=name=>[...info.roster,...(info.participantCatalog||[])].find(p=>p.name===name);
  window.alakParticipantUid=name=>participant(name)?.uid||null;
@@ -126,7 +157,7 @@ if(mountPoints.length){
    await runTransaction(db,async transaction=>{
     const old=await transaction.get(ref);
     const data=parse(old.exists()?old.data():{});
-    let next=changeFn(data);
+    let next=await changeFn(data,transaction);
     if(!next)return;
     next=window.alakCombatEffects?.normalize(next,data)||next;
     committed=next;
@@ -174,7 +205,7 @@ if(mountPoints.length){
   const value=entry.portrait||info.participantCatalog?.find(p=>p.id===entry.id)?.portrait;
   return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
  }
- function combatList(){
+ function combatList(quick=false){
   const list=create('div','mc-combat-list');
   if(!info.roster.length){empty(list,'No hay participantes seleccionados.');return list;}
   info.roster.forEach((entry,i)=>{
@@ -185,7 +216,7 @@ if(mountPoints.length){
    const photo=makeBtn('',()=>window.alakViewPortrait?.(entry.name,portrait(entry,true),photo));photo.className='mc-portrait';photo.setAttribute('aria-label','Ver retrato de '+entry.name);
    const img=create('img');img.src=portrait(entry);img.alt='Retrato de '+entry.name;photo.append(img);card.append(photo);
    const identity=create('div','mc-identity');identity.append(create('strong','',entry.name),create('small','mc-badge',enemy?'ENEMIGO':entry.type==='player'?'JUGADOR':'ALIADO'));
-   if(isAdmin){
+   if(isAdmin&&!quick){
     const roll=field('Inic.','initiative',entry.initiative??0,'number');const input=roll.querySelector('input');input.min='-99';input.setAttribute('aria-label','Tirada de iniciativa de '+entry.name);
     input.onchange=()=>{const value=input.valueAsNumber;if(Number.isFinite(value))void edit(s=>{
      const currentId=s.roster[s.turnIndex]?.id;
@@ -202,7 +233,7 @@ if(mountPoints.length){
    const damages=create('div','mc-damage');damages.append(create('small','','DAÑO'),create('strong','',String(damage)));card.append(damages);
    if(isAdmin){const actions=create('div','mc-actions');actions.append(makeBtn('⚔ Daño',()=>void changeHP(entry.id,-1)),makeBtn('✚ Curar',()=>void changeHP(entry.id,1)));card.append(actions);}
    const statusActions=card.querySelector('.mc-actions');
-   if(isAdmin)statusActions.append(makeBtn('☠',()=>void window.alakPatchEncounter([{id:entry.id,dead:!entry.dead,downed:false}])));
+   if(isAdmin&&!quick)statusActions.append(makeBtn('☠',()=>void window.alakPatchEncounter([{id:entry.id,dead:!entry.dead,downed:false}])));
    window.alakCombatStatus?.mount(card,entry,statusActions,identity,isAdmin?patch=>window.alakPatchEncounter([{id:entry.id,...patch}]):null);
    list.append(card);
   });return list;
@@ -226,9 +257,9 @@ if(mountPoints.length){
   const index=roster.findIndex(p=>p.id===currentId);
   return {...s,roster,participantCatalog:catalog,selectionInitialized:true,turnIndex:index>=0?index:0,started:roster.length?s.started:false};
  });
- function renderCombat(){
-  const box=element.combat;box.replaceChildren();
-  if(!combatBoard&&isAdmin){
+ function renderCombat(box=element.combat,quick=false){
+  box.replaceChildren();
+  if(!quick&&!combatBoard&&isAdmin){
    const picker=panel('Participantes',box);
    const list=create('div','mc-participant-picker');
    for(const entry of info.participantCatalog||info.roster){
@@ -251,30 +282,32 @@ if(mountPoints.length){
   if(isAdmin){
    controls.append(
     makeBtn("▶",()=>{const selected=window.alakEncounterParticipants?.()||[];if(!selected.length&&!info.roster.length){warn("Selecciona participantes antes de iniciar el combate.");return}if(info.started&& !confirm("¿Reiniciar el combate desde el primer participante?"))return;void editCombat(s=>({...s,roster:(selected.length?selected.map(p=>({...s.roster.find(old=>old.id===p.id||old.name===p.name),...p})):s.roster).slice(),selectionInitialized:true,started:true,round:1,turnIndex:0}))}),
-    makeBtn("Siguiente turno",()=>void editCombat(s=>{
+    makeBtn("Siguiente turno",()=>void (quick?edit:editCombat)(s=>{
      if(!s.roster.length||s.started===false)return null;
      const next=(Number(s.turnIndex||0)+1)%Math.max(1,s.roster.length);
      const id=s.roster[next]?.id;return {...s,turnIndex:next,effectTurns:{...(s.effectTurns||{}),[id]:(s.effectTurns?.[id]||0)+1},round:next===0?Number(s.round||1)+1:Number(s.round||1)};
     }))
    );
   }
-  if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
+  if(controls.childElementCount){const play=controls.firstElementChild;play.title="Iniciar / reiniciar combate";play.setAttribute("aria-label","Iniciar / reiniciar combate");if(quick)play.remove();controls.lastElementChild.disabled=!info.roster.length||info.started===false;surface.append(controls);}
   if(!info.roster.length&&!window.alakEncounterParticipants?.().length){empty(surface,"Selecciona participantes de la lista para iniciar el combate.");return}
-  surface.append(combatList());
+  surface.append(combatList(quick));
   if(!isAdmin)surface.append(create("p","mc-info","Los cambios de vida, turnos y rondas se actualizan automáticamente desde la cuenta del DM o del propietario."));
  }
  async function changeHP(entryId,direction){
   const delta=Number(prompt(direction<0?"¿Cuántos puntos de daño?":"¿Cuántos puntos de curación?","1"));
   if(!Number.isFinite(delta)||delta<=0||delta>9999)return;
-  const m=info.roster.find(x=>x.id===entryId);if(!m)return;
-  const damage=Math.max(0,Number(m.damage??(m.maxHP!=null&&m.hp!=null?m.maxHP-m.hp:0))-direction*delta);
-  const newHp=m.maxHP==null?null:Math.max(0,Number(m.maxHP)-damage);
-  await edit(s=>({...s,roster:s.roster.map(x=>x.id===entryId?{...x,hp:newHp,damage,downed:newHp>0?false:!!x.downed}:x)}));
-  // Mantener sincronizada también la hoja de personaje individual; nunca editar su retrato.
-  if(m.uid&&newHp!==null){
-   try{await updateDoc(doc(db,"players",m.uid),{"fields.hp":String(newHp),"sheet.hpCurrent":String(newHp),"updatedBy":current.uid,"updatedAt":serverTimestamp()})}
-   catch(e){warn("Mesa guardada; no se pudo sincronizar la hoja individual: "+(e.code||"error"))}
-  }
+  await edit(async (data,tx)=>{
+   const member=data.roster.find(x=>x.id===entryId);if(!member)return null;
+   const damage=Math.max(0,Number(member.damage??(member.maxHP!=null&&member.hp!=null?member.maxHP-member.hp:0))-direction*delta);
+   const hp=member.maxHP==null?null:Math.max(0,Number(member.maxHP)-damage);
+   const patch=rows=>rows.map(x=>x.id===entryId?{...x,hp,damage,downed:hp>0?false:!!x.downed}:x);
+   if(member.uid&&hp!==null){
+    const playerRef=doc(db,'players',member.uid),sheet=await tx.get(playerRef);
+    if(sheet.exists())tx.update(playerRef,{'fields.hp':String(hp),'sheet.hpCurrent':String(hp),updatedBy:current.uid,updatedAt:serverTimestamp()});
+   }
+   return {...data,roster:patch(data.roster),...(data.participantCatalog?{participantCatalog:patch(data.participantCatalog)}:{})};
+  });
  }
  async function saveDiary(entry,original=null){
   if(!current||!hasCampaign)return false;
@@ -362,7 +395,7 @@ if(mountPoints.length){
   }
 
  }
- function render(){window.alakCombatEffects?.set(hasCampaign?info:null,current?.uid);if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();renderDiary();renderManage();renderPlayerLinks();select(window.alakNavigation?.get()?.campaign||active)}
+ function render(){window.alakCombatEffects?.set(hasCampaign?info:null,current?.uid);if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();if(quickDialog?.open)renderCombat(quickDialog.lastElementChild,true);renderDiary();renderManage();renderPlayerLinks();select(window.alakNavigation?.get()?.campaign||active)}
  async function activate(account){
   const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
@@ -376,7 +409,8 @@ if(mountPoints.length){
    if(!isAdmin&&active==="manage")active="table";
    if(cancelCampaign)cancelCampaign();
    const connectCampaign=()=>{if(hasCampaign||current?.uid!==account.uid)return;hasCampaign=true;
-   if(isAdmin)viewer=rollViewer(account.uid);
+   if(isAdmin)viewer=rollViewer(account.uid,clearRolls);
+   mountQuickCombat();
    cancelCampaign=onSnapshot(ref,async snap=>{
     if(localCombat)return;
     if(!snap.exists()){

@@ -64,3 +64,9 @@
   background-size:calc(100% - 24px) 1px;
   background-repeat:no-repeat;
 }
+
+button.quick-swords {width:44px;height:44px;padding:0;pointer-events:auto;border:1px solid #b28c52;border-radius:50%;background:#32223f;color:#ffda90;font:26px Georgia,serif;cursor:pointer}
+.quick-swords-solo {position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:900}
+dialog.quick-combat {width:min(920px,94vw);max-height:85dvh;overflow:auto;box-sizing:border-box;padding:14px;color:#f6e7d1;background:#21172b;border:1px solid #a88761;border-radius:14px}
+.quick-combat > button {display:block;margin:0 0 8px auto}
+.quick-combat::backdrop {background:#100a18aa}

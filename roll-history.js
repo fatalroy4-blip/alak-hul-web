@@ -38,7 +38,7 @@ function describe(row) {
   return line;
 }
 
-export function rollViewer(uid) {
+export function rollViewer(uid,clearRolls) {
   const key = 'alak-roll-alerts-'+uid;
   let enabled = true;
   try { enabled = localStorage.getItem(key) !== 'off'; } catch {}
@@ -49,7 +49,17 @@ export function rollViewer(uid) {
   const panel = document.createElement('section'); panel.className='roll-history'; panel.hidden=true;
   panel.id='rollHistoryPanel';
   const heading=document.createElement('strong'); heading.textContent='Historial de tiradas';
-  const list=document.createElement('div'); panel.append(heading,list);
+  const list=document.createElement('div'); const clear=document.createElement('button');clear.type='button';clear.textContent='Borrar historial';clear.disabled=true;
+  const message=document.createElement('small');message.setAttribute('role','status');
+  let clearing=false;
+  clear.onclick=async()=>{
+    if(clearing||!rows.length||!confirm('¿Borrar estas tiradas del historial compartido de la mesa?'))return;
+    clearing=true;clear.disabled=true;
+    try{await clearRolls(rows.map(r=>r.id));message.textContent='Historial borrado.';}
+    catch{message.textContent='No se completó el borrado. Puedes volver a intentarlo.';}
+    finally{clearing=false;clear.disabled=!rows.length;}
+  };
+  panel.append(heading,clear,message,list);
   const button=document.createElement('button'); button.type='button'; button.className='roll-d20';
   button.title='Historial de tiradas'; button.setAttribute('aria-label',button.title);
   button.setAttribute('aria-controls',panel.id);button.setAttribute('aria-expanded','false');
@@ -65,6 +75,8 @@ export function rollViewer(uid) {
       .map(([id,r])=>({...r,id:p.ownerUid+'/'+id,name:String(r.name||p.accountName||'Jugador'),time:milliseconds(r.at)})))
       .sort((a,b)=>b.time-a.time||a.id.localeCompare(b.id));
     const fresh=seen && rows.filter(r=>!seen.has(r.id));seen=new Set(rows.map(r=>r.id));
+    clear.disabled=clearing||!rows.length;
+    if(!rows.length)toast.hidden=true;
     list.replaceChildren();
     for(const row of rows){
       const article=describe(row),stamp=document.createElement('small');

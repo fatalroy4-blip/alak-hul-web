@@ -762,7 +762,7 @@ function bind(){
  $('pageTheme').onchange=e=>{model.pageTheme=e.target.value;model.pageBackground='';change();renderPageBackground();};
  $('clearPageBackground').onclick=()=>{model.pageBackground='';change();renderPageBackground();};
  $('pageBackgroundUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await changeImage(file,value=>model.pageBackground=value,true);};
- $('playerLongRest').onclick=()=>{if(confirm('¿Aplicar un descanso largo a tu personaje? Recuperará PG, espacios y puntos de hechicería.'))void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));};
+ $('playerLongRest').onclick=()=>{if(confirm('¿Aplicar un descanso largo a tu personaje? Recuperará PG, espacios y puntos de hechicería.')){if(localStorage.getItem('alak-campaign-audio:'+user.uid)!=='off')void new Audio('assets/descanso-v27-amanecer.wav').play().catch(()=>{});void window.alakAdventureSheet.act({type:'rest'}).catch(e=>alert(e.message));}};
  $('spellRulesSetup').onclick=()=>document.getElementById('openRulesWizardHome')?.click();
  for(const id of ['playerSpellClass','playerSpellOrigin','playerSpellShow'])$(id).addEventListener('change',renderSpellCatalog);
  for(const [id,klass] of Object.entries(window.ALAK_RULES_2014?.classes||{})){const opt=document.createElement('option');opt.value=id;opt.textContent=klass.name;$('playerSpellClass').append(opt);}

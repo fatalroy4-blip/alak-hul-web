@@ -5,7 +5,12 @@
  function notice(text){banner.replaceChildren(el('span',text));const close=el('button','Cerrar');close.type='button';close.onclick=()=>banner.hidden=true;banner.append(close);banner.hidden=false;}
  function unlock(){if(!enabled)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();void audio.resume();}catch{}}
  document.addEventListener('pointerdown',unlock,{passive:true});document.addEventListener('keydown',unlock);
- function sound(type){if(!enabled||!audio||audio.state!=='running')return;const notes=type==='rest'?[392,330,262]:[392,494,587,784];notes.forEach((hz,i)=>{const tone=audio.createOscillator(),gain=audio.createGain(),start=audio.currentTime+i*.18;tone.frequency.value=hz;tone.type='sine';gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.12,start+.025);gain.gain.exponentialRampToValueAtTime(.001,start+.38);tone.connect(gain);gain.connect(audio.destination);tone.start(start);tone.stop(start+.4);});}
+ function sound(type){
+  if(!enabled)return;
+  if(type==='rest'){new Audio('assets/descanso-v27-amanecer.wav').play().catch(()=>signalNotes(type));return;}
+  signalNotes(type);
+ }
+ function signalNotes(type){if(!enabled||!audio||audio.state!=='running')return;const notes=type==='rest'?[392,330,262]:[392,494,587,784];notes.forEach((hz,i)=>{const tone=audio.createOscillator(),gain=audio.createGain(),start=audio.currentTime+i*.18;tone.frequency.value=hz;tone.type='sine';gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.12,start+.025);gain.gain.exponentialRampToValueAtTime(.001,start+.38);tone.connect(gain);gain.connect(audio.destination);tone.start(start);tone.stop(start+.4);});}
  async function process(){if(processing){again=true;return;}if(!latest||!window.alakAdventureSheet)return;const entries=Object.values(latest.data.sheetCommands?.[latest.uid]||{}).filter(e=>['rest','level'].includes(e.type)&&e.id&&e.at>=(window.alakAdventureSheet.get()?.sheetResetAt||0));if(!entries.length)return;processing=true;
   try{await window.alakAdventureSheet.receive(entries);}catch(e){notice('Acción del DM pendiente: '+e.message);}
   finally{processing=false;if(again){again=false;void process();}}
