@@ -27,3 +27,40 @@
 .roll-history div div strong,.roll-toast div div strong {display:inline;color:#ffdc8d}
 .roll-toast {max-height:8em;overflow:hidden}
 .roll-dock [hidden]{display:none!important}
+
+/* Keep the paper continuous through the modifier. Cut its silhouette out of
+   the frame and its decorative rules, leaving the input itself untouched. */
+#character .dnd-sheet .ability-box {
+  --modifier-width:64px;
+  --modifier-height:41px;
+  --modifier-overhang:19px;
+  --frame-width:2px;
+  border-color:transparent;
+}
+#character .dnd-sheet .ability-box .ability-mod {
+  width:var(--modifier-width);
+  height:var(--modifier-height);
+  bottom:calc(0px - var(--modifier-overhang));
+}
+#character .dnd-sheet .ability-box::before,
+#character .dnd-sheet .ability-box::after {
+  inset:calc(0px - var(--frame-width));
+  height:auto;
+  pointer-events:none;
+  mask-image:radial-gradient(ellipse calc(var(--modifier-width) / 2) calc(var(--modifier-height) / 2)
+    at 50% calc(100% + var(--modifier-overhang) - var(--frame-width) - var(--modifier-height) / 2),
+    transparent 99%, black 100%);
+}
+#character .dnd-sheet .ability-box::before {
+  border:var(--frame-width) solid #332c23;
+  border-radius:inherit;
+}
+#character .dnd-sheet .ability-box::after {
+  border:0;
+  background:linear-gradient(#5b5141,#5b5141) center 9px,
+             linear-gradient(#5b5141,#5b5141) center 12px,
+             linear-gradient(#5b5141,#5b5141) center calc(100% - 12px),
+             linear-gradient(#5b5141,#5b5141) center calc(100% - 9px);
+  background-size:calc(100% - 24px) 1px;
+  background-repeat:no-repeat;
+}
