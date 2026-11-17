@@ -70,3 +70,21 @@ button.quick-swords {width:44px;height:44px;padding:0;pointer-events:auto;border
 dialog.quick-combat {width:min(920px,94vw);max-height:85dvh;overflow:auto;box-sizing:border-box;padding:14px;color:#f6e7d1;background:#21172b;border:1px solid #a88761;border-radius:14px}
 .quick-combat > button {display:block;margin:0 0 8px auto}
 .quick-combat::backdrop {background:#100a18aa}
+
+.quick-combat .mc-combat-list {gap:5px}
+dialog.quick-combat .mc-combat-row {grid-template-columns:26px 34px minmax(94px,1fr) minmax(90px,1.2fr) 38px;gap:7px;padding:5px 8px}
+dialog.quick-combat .mc-combat-row:has(>.mc-actions) {grid-template-columns:26px 34px minmax(94px,1fr) minmax(90px,1.2fr) 38px auto}
+dialog.quick-combat .mc-combat-row>.mc-actions {grid-column:auto;align-items:center;gap:4px;margin:0}
+dialog.quick-combat .mc-actions button {padding:5px 7px}
+dialog.quick-combat .mc-combat-row .mc-portrait {height:34px;width:34px}
+.quick-combat .mc-identity small {display:inline-block;margin:1px 5px 0 0}
+.quick-combat .mc-identity strong {font-size:15px}
+.quick-combat .mc-life-track {margin-top:4px}
+.quick-combat .mc-order {padding:3px}
+.quick-combat .mc-actions button[aria-pressed=true] {border-color:#f8a3ae;background:#72344d}
+@media(max-width:760px){
+ dialog.quick-combat .mc-combat-row,dialog.quick-combat .mc-combat-row:has(>.mc-actions) {grid-template-columns:24px 32px minmax(0,1fr) 40px}
+ dialog.quick-combat .mc-damage {grid-row:1;grid-column:4}
+ dialog.quick-combat .mc-health {grid-row:2;grid-column:1/-1}
+ dialog.quick-combat .mc-combat-row>.mc-actions {grid-column:1/-1;justify-content:flex-end}
+}

@@ -41,7 +41,7 @@ async function startApp() {
   await insertScript("cleric-grimoire-2014.js?v=64");
   await insertScript("legacy-adventure.js?v=95");
   await insertScript("armor-class.js?v=71");
-  await insertScript("script.js?v=102");
+  await insertScript("script.js?v=103");
   await insertScript("warding-flare.js?v=1");
   await insertScript("campaign-v42.js?v=99");
   await insertScript("background-upload.js?v=92");
@@ -52,7 +52,7 @@ async function startApp() {
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");
   await insertScript("encounter-bridge.js?v=83");
-  await insertScript("mesa-compartida.js?v=102", true);
+  await insertScript("mesa-compartida.js?v=103", true);
   await insertScript("rules-2014-catalog.js?v=50");
   await insertScript("rules-2014-subclasses.js?v=50");
   await insertScript("rules-2014-backgrounds.js?v=50");

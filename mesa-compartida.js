@@ -231,9 +231,14 @@ if(mountPoints.length){
    const health=create('div','mc-health');health.append(create('div','','Vida '+(hp??'—')+' / '+(max??'—')+(max?' · '+Math.round(ratio)+'%':' · PG sin definir')));
    const bar=create('div','mc-life-track');bar.setAttribute('role','meter');bar.setAttribute('aria-label','Vida de '+entry.name);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax',String(max||100));bar.setAttribute('aria-valuenow',String(hp??100));bar.setAttribute('aria-valuetext',max?hp+' de '+max:'PG sin definir');const fill=create('span');fill.style.width=ratio+'%';bar.append(fill);health.append(bar);card.append(health);
    const damages=create('div','mc-damage');damages.append(create('small','','DAÑO'),create('strong','',String(damage)));card.append(damages);
-   if(isAdmin){const actions=create('div','mc-actions');actions.append(makeBtn('⚔ Daño',()=>void changeHP(entry.id,-1)),makeBtn('✚ Curar',()=>void changeHP(entry.id,1)));card.append(actions);}
+   if(isAdmin){const actions=create('div','mc-actions');actions.append(makeBtn('⚔ Daño',()=>void changeHP(entry.id,-1,quick)),makeBtn('✚ Curar',()=>void changeHP(entry.id,1,quick)));card.append(actions);}
    const statusActions=card.querySelector('.mc-actions');
-   if(isAdmin&&!quick)statusActions.append(makeBtn('☠',()=>void window.alakPatchEncounter([{id:entry.id,dead:!entry.dead,downed:false}])));
+   if(isAdmin){
+    const death=makeBtn('☠',()=>void window.alakPatchEncounter([{id:entry.id,dead:!entry.dead,downed:false}]));
+    death.title=(entry.dead?'Quitar marca de muerte de ':'Marcar como muerto a ')+entry.name;
+    death.setAttribute('aria-label',death.title);
+    death.setAttribute('aria-pressed',String(!!entry.dead));statusActions.append(death);
+   }
    window.alakCombatStatus?.mount(card,entry,statusActions,identity,isAdmin?patch=>window.alakPatchEncounter([{id:entry.id,...patch}]):null);
    list.append(card);
   });return list;
@@ -294,9 +299,14 @@ if(mountPoints.length){
   surface.append(combatList(quick));
   if(!isAdmin)surface.append(create("p","mc-info","Los cambios de vida, turnos y rondas se actualizan automáticamente desde la cuenta del DM o del propietario."));
  }
- async function changeHP(entryId,direction){
+ async function changeHP(entryId,direction,quick){
   const delta=Number(prompt(direction<0?"¿Cuántos puntos de daño?":"¿Cuántos puntos de curación?","1"));
   if(!Number.isFinite(delta)||delta<=0||delta>9999)return;
+  if(quick){
+   const kind=direction<0?'damage':'heal';
+   if(typeof window.playCombatSound==='function')window.playCombatSound(kind);
+   else if(localStorage.getItem('alak-campaign-audio:'+current.uid)!=='off')window.alakPlayCombatEffect(kind);
+  }
   await edit(async (data,tx)=>{
    const member=data.roster.find(x=>x.id===entryId);if(!member)return null;
    const damage=Math.max(0,Number(member.damage??(member.maxHP!=null&&member.hp!=null?member.maxHP-member.hp:0))-direction*delta);
