@@ -9,7 +9,7 @@ const builtins=[{id:"sheet",name:"Personaje",subtitle:"Mi hoja",symbol:"♟",tar
 let currentRole="player",spellLibrary=[],user=null,targetUid=null,model=null,unsubscribe=null,pending=false,saving=false,queued=false,timer=null,editingExtra=null,administrator=false;
 const genId=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);
 const blank=(uid,account)=>({ownerUid:uid,accountName:account?.displayName||"",accountEmail:account?.email||"",updatedBy:uid,fields:{},stats:{},spells:[],traits:[],sheet:{},slots:{},traitsButtonName:"Rasgos",combatNotes:"",pageTheme:"purple",pageBackground:"",coverTheme:"aurora",coverImage:"",portrait:"",combatImage:"",combatThumbnail:"",combatCrop:null,spellPhrases:{},tileImages:{},tileLabels:{},extras:[],ruleBuild:null});
-const normalize=d=>({...blank(targetUid,user),...d,ownerUid:targetUid,combatImage:d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatThumbnail:d.combatThumbnail??d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatCrop:d.combatCrop||null,spellPhrases:{...(d.spellPhrases||{})},fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
+const normalize=({diceHistory,...d})=>({...blank(targetUid,user),...d,ownerUid:targetUid,combatImage:d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatThumbnail:d.combatThumbnail??d.combatImage??(targetUid===user?.uid?d.portrait:"")??"",combatCrop:d.combatCrop||null,spellPhrases:{...(d.spellPhrases||{})},fields:{...(d.fields||{})},stats:{...(d.stats||{})},sheet:{...(d.sheet||{})},slots:{...(d.slots||{})},traitsButtonName:d.traitsButtonName||"Rasgos",spells:Array.isArray(d.spells)?d.spells:[],traits:Array.isArray(d.traits)?d.traits:[],extras:Array.isArray(d.extras)?d.extras:[],tileImages:{...(d.tileImages||{})},tileLabels:{...(d.tileLabels||{})},ruleBuild:d.ruleBuild||null});
 const role=async uid=>{try{const snap=await getDoc(doc(db,"appRoles",uid));return snap.exists()?snap.data().role:"player"}catch{return "player"}};
 const status=message=>$("saveIndicator").textContent=message;
 function renderReturnControls(){
@@ -30,7 +30,7 @@ async function save(){
  const payload={...model,ownerUid:targetUid,updatedBy:user.uid,updatedAt:serverTimestamp()};
  if(JSON.stringify({...payload,updatedAt:null}).length>760000){status("Demasiadas imágenes. Reduce su tamaño.");saving=false;return}
  try{
-  await runTransaction(db,async tx=>{const ref=doc(db,'players',targetUid),snap=await tx.get(ref);if(snap.exists()&&(snap.data().sheetGeneration||'')!==(payload.sheetGeneration||''))throw Error('La hoja cambió desde otra ventana. Recarga la página.');if(snap.exists()&&['rest','level'].some(k=>snap.data().appliedCampaignEvents?.[k]!==payload.appliedCampaignEvents?.[k]))throw Error('Hay una actualización del DM. Recarga la hoja antes de guardar.');tx.set(ref,payload);});
+  await runTransaction(db,async tx=>{const ref=doc(db,'players',targetUid),snap=await tx.get(ref);if(snap.exists()&&(snap.data().sheetGeneration||'')!==(payload.sheetGeneration||''))throw Error('La hoja cambió desde otra ventana. Recarga la página.');if(snap.exists()&&['rest','level'].some(k=>snap.data().appliedCampaignEvents?.[k]!==payload.appliedCampaignEvents?.[k]))throw Error('Hay una actualización del DM. Recarga la hoja antes de guardar.');const latest=snap.data()||{};delete payload.diceHistory;tx.set(ref,latest.diceHistory?{...payload,diceHistory:latest.diceHistory}:payload);});
   if(user.uid===targetUid)await publishMyPortrait();
   pending=false;status("✓ Guardado en nube");
   try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify({...model,updatedAt:null}))}catch{}
@@ -519,7 +519,7 @@ async function activate(account){
  try{
   const snapshot=await getDoc(ref);
   if(snapshot.exists())model=normalize(snapshot.data());
-  else if(targetUid===account.uid){model=blank(targetUid,account);await setDoc(ref,{...model,updatedAt:serverTimestamp()})}
+  else if(targetUid===account.uid){model=blank(targetUid,account);await setDoc(ref,{...model,updatedAt:serverTimestamp()},{merge:true})}
   else {status("El jugador todavía no ha creado su hoja.");return}
   renderAll();window.alakNavigation?.start(account.uid,targetUid);window.alakCampaignControls?.ready();void loadSpellCatalog();if(user.uid===targetUid)void publishMyPortrait().catch(()=>status("Retrato de combate pendiente de sincronizar"));
   if(unsubscribe)unsubscribe();

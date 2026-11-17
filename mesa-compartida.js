@@ -1,3 +1,4 @@
+import {appendRoll,rollViewer} from "./roll-history.js";
 import "./combat-actions.js?v=58";
 /* V49: Mesa compartida de Alak Hul.
    MISMA interfaz y MISMO documento Firestore en owner, DM y jugadores.
@@ -18,7 +19,26 @@ if(mountPoints.length){
  let current=null,role="player",isAdmin=false,info=defaults(),players=[],cancelCampaign=null,cancelPlayers=null,active="table",saving=false;
  let hasCampaign=false,cancelAccess=null,accessStops=[];const memberStates=new Map(),accountRoles=new Map();
  const admitted=id=>memberStates.has(id)?memberStates.get(id).active===true:accountRoles.get(id)==='player';
- function clearCampaign(){if(cancelCampaign){cancelCampaign();cancelCampaign=null;}hasCampaign=false;info=defaults();for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();Object.values(element).forEach(p=>p.replaceChildren());nav.hidden=true;}
+ let viewer=null;
+ window.addEventListener('alak-dice-roll',async event=>{
+  const account=current;
+  if(!account||!hasCampaign)return;
+  const id=uid(),detail=event.detail,profile=doc(db,'players',account.uid);
+  try{
+   await runTransaction(db,async tx=>{
+    const snap=await tx.get(profile),data=snap.data()||{};
+    const name=String(account.displayName||data.accountName||data.fields?.name||'Jugador').slice(0,120);
+    const history=appendRoll(data.diceHistory,id,detail,name,serverTimestamp());
+    tx.set(profile,{...data,ownerUid:account.uid,diceHistory:history});
+   });
+  }catch(e){
+   const dialog=document.getElementById('diceDialog');
+   let notice=dialog?.querySelector('[data-share-error]');
+   if(dialog&&!notice){notice=create('p');notice.dataset.shareError='';notice.setAttribute('role','status');dialog.append(notice);}
+   if(notice)notice.textContent='La tirada es válida, pero no se pudo guardar en el historial de la mesa.';
+  }
+ });
+ function clearCampaign(){viewer?.destroy();viewer=null;if(cancelCampaign){cancelCampaign();cancelCampaign=null;}hasCampaign=false;info=defaults();for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();Object.values(element).forEach(p=>p.replaceChildren());nav.hidden=true;}
  const portraitProfiles=new Map(),portraitSubscriptions=new Map();
  const participant=name=>[...info.roster,...(info.participantCatalog||[])].find(p=>p.name===name);
  window.alakParticipantUid=name=>participant(name)?.uid||null;
@@ -318,6 +338,7 @@ if(mountPoints.length){
   const box=element.manage;box.replaceChildren();if(!isAdmin)return;
   window.alakCampaignControls?.render({host:box,players,roles:accountRoles,admitted,current,send:edit});
   const surface=panel("⚙ Dirección de campaña",box);
+  viewer?.mount(surface);
   const titleForm=create("form","mc-form"),title=field("Nombre de la campaña","title",info.title);
   const btn=create("button","","Guardar nombre");btn.type="submit";
   titleForm.append(title,btn);titleForm.onsubmit=e=>{e.preventDefault();const name=title.querySelector("input").value.trim();if(name)void edit(s=>({...s,title:name.slice(0,80)}))};surface.append(titleForm);
@@ -347,13 +368,15 @@ if(mountPoints.length){
   current=account;warn("⏳ Verificando acceso…");
   try{
    const roleDoc=await getDoc(doc(db,"appRoles",account.uid));
+   if(current?.uid!==account.uid)return;
    role=roleDoc.exists()?roleDoc.data().role:"player";
    if(!["owner","dm","player"].includes(role)){warn("Tu cuenta necesita un rol para ver la campaña.");return}
    isAdmin=role==="owner"||role==="dm";
    nav.querySelector('[data-mc-view="manage"]').hidden=!isAdmin;
    if(!isAdmin&&active==="manage")active="table";
    if(cancelCampaign)cancelCampaign();
-   const connectCampaign=()=>{if(hasCampaign)return;hasCampaign=true;
+   const connectCampaign=()=>{if(hasCampaign||current?.uid!==account.uid)return;hasCampaign=true;
+   if(isAdmin)viewer=rollViewer(account.uid);
    cancelCampaign=onSnapshot(ref,async snap=>{
     if(localCombat)return;
     if(!snap.exists()){
@@ -371,8 +394,12 @@ if(mountPoints.length){
    if(isAdmin)connectCampaign();else cancelAccess=onSnapshot(doc(db,'adventureMembers',account.uid),snap=>{if(current?.uid!==account.uid)return;const allowed=snap.exists()?snap.data().active===true:roleDoc.exists()&&role==='player';if(allowed)connectCampaign();else{clearCampaign();warn('Tu hoja está lista. El propietario o el DM te agregará a la aventura.');}},()=>{clearCampaign();warn('No se pudo consultar tu acceso a la aventura.');});
    if(cancelPlayers)cancelPlayers();
    if(isAdmin){
+    let rosterSignature;
     cancelPlayers=onSnapshot(collection(db,"players"),snap=>{
-     players=snap.docs.map(d=>({...d.data(),ownerUid:d.id||d.data().ownerUid}));renderManage();renderPlayerLinks();
+     if(current?.uid!==account.uid)return;
+     players=snap.docs.map(d=>({...d.data(),ownerUid:d.id||d.data().ownerUid}));viewer?.update(players);
+     const signature=JSON.stringify(players.map(p=>[p.ownerUid,p.fields?.name,p.accountName]));
+     if(signature!==rosterSignature){rosterSignature=signature;renderManage();renderPlayerLinks();}
     },e=>warn("Mesa disponible; no se pueden consultar personajes: "+(e.code||"")));
     accessStops.push(onSnapshot(collection(db,'adventureMembers'),snap=>{memberStates.clear();snap.docs.forEach(d=>memberStates.set(d.id,d.data()));renderManage();}));
     accessStops.push(onSnapshot(collection(db,'appRoles'),snap=>{accountRoles.clear();snap.docs.forEach(d=>accountRoles.set(d.id,d.data().role));renderManage();}));

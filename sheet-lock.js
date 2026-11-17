@@ -10,6 +10,16 @@
   // Keep native disabled/readonly flags under the control of the sheet and its permissions.
   function sync(element) {
     if (!protectedField(element)) return;
+    if (element.matches('textarea')) {
+      if (locked && !element.readOnly) {
+        element.dataset.sheetReadonly = '';
+        element.readOnly = true;
+      } else if (!locked && element.hasAttribute('data-sheet-readonly')) {
+        element.removeAttribute('data-sheet-readonly');
+        element.readOnly = false;
+      }
+      return;
+    }
     if (locked && !element.inert) {
       element.setAttribute('data-sheet-protected', '');
       element.inert = true;
@@ -20,8 +30,9 @@
   }
   function refresh() {
     sheet.querySelectorAll(controls).forEach(sync);
-    toggle.textContent = locked ? '🔒 Desbloquear escritura' : '🔓 Bloquear escritura';
-    toggle.setAttribute('aria-label', 'Bloqueo de escritura');
+    toggle.textContent = locked ? '🔒 Solo lectura' : '🔓 Edición activa';
+    toggle.title = locked ? 'Desbloquear escritura' : 'Bloquear escritura';
+    toggle.setAttribute('aria-label', toggle.textContent + '. ' + toggle.title);
     toggle.setAttribute('aria-pressed', String(locked));
   }
   toggle.addEventListener('click', () => { locked = !locked; refresh(); });
@@ -29,7 +40,7 @@
   sheet.addEventListener('click', event => {
     if (!locked || event.target.closest('button, a')) return;
     const field = event.target.closest('label')?.control;
-    if (field && protectedField(field)) event.preventDefault();
+    if (field && !field.matches("textarea") && protectedField(field)) event.preventDefault();
   }, true);
   new MutationObserver(records => {
     for (const record of records) for (const node of record.addedNodes) {

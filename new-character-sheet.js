@@ -34,8 +34,8 @@ if(host){
     await window.alakSheetLifecycle.pause();if(account?.uid!==capturedUid)throw Error('La cuenta cambió; no se borró la hoja.');
     const generation=crypto.randomUUID();
     await runTransaction(db,async tx=>{
-     const playerRef=doc(db,'players',capturedUid),legacyRef=doc(db,'users',capturedUid,'characters','alak-hul'),legacy=await tx.get(legacyRef);
-     tx.set(playerRef,{ownerUid:capturedUid,accountName:account.displayName||'',accountEmail:account.email||'',updatedBy:capturedUid,updatedAt:serverTimestamp(),sheetGeneration:generation,sheetResetAt:Date.now(),fields:{},sheet:{},stats:{},traits:[],spells:[],slots:{},extras:[],ruleBuild:null,portrait:'',combatImage:'',combatThumbnail:'',combatCrop:null,spellPhrases:{},tileImages:{},tileLabels:{},coverImage:'',pageBackground:''});
+     const playerRef=doc(db,'players',capturedUid),legacyRef=doc(db,'users',capturedUid,'characters','alak-hul'),legacy=await tx.get(legacyRef),history=(await tx.get(playerRef)).data()?.diceHistory;
+     tx.set(playerRef,{...(history?{diceHistory:history}:{}),ownerUid:capturedUid,accountName:account.displayName||'',accountEmail:account.email||'',updatedBy:capturedUid,updatedAt:serverTimestamp(),sheetGeneration:generation,sheetResetAt:Date.now(),fields:{},sheet:{},stats:{},traits:[],spells:[],slots:{},extras:[],ruleBuild:null,portrait:'',combatImage:'',combatThumbnail:'',combatCrop:null,spellPhrases:{},tileImages:{},tileLabels:{},coverImage:'',pageBackground:''});
      tx.set(doc(db,'combatPortraits',capturedUid),{portrait:'',thumbnail:'',name:'',updatedAt:serverTimestamp()});
      if(legacy.exists())tx.set(legacyRef,{newSheetActive:true,sheetGeneration:generation,state:{},character:{},updatedAt:serverTimestamp()});
     });

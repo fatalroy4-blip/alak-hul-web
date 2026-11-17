@@ -12,3 +12,18 @@
   html body > :not(.portrait-turn-notice):not(.rotate) {visibility:visible!important;pointer-events:auto!important}
   html body .rotate, html body.landscape-only .portrait-turn-notice {display:none!important}
 }
+
+#character .dnd-sheet :is(input:not([type=checkbox]),textarea,.ability-box,.ability-mod,.ds-box,.combat-top label,.passive-box,.spell-level-number,.spell-sheet-header,.spell-level-box,.symbol-card,.portrait-upload,.character-portrait),
+#character .dnd-sheet .sheet-level-slot-dot:not(.used) {background:transparent!important}
+#character .dnd-sheet .sheet-level-slot-dot:not(.used) {box-shadow:none!important}
+#character .dnd-sheet textarea[readonly] {overflow:auto;cursor:default}
+.roll-dock {position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:900;display:grid;justify-items:end;gap:6px;pointer-events:none}
+.roll-dock .roll-d20 {width:44px;height:44px;padding:0;border:0;background:transparent;cursor:pointer;pointer-events:auto;filter:drop-shadow(0 2px 3px #100914)}
+.roll-d20 svg {width:100%;height:100%}
+.roll-history,.roll-toast {width:min(300px,80vw);padding:12px;color:#f5e7d3;background:#21172bed;border:1px solid #a18563;border-radius:12px;font:14px/1.45 system-ui;overflow-wrap:anywhere}
+.roll-history {pointer-events:auto;max-height:45vh;overflow:auto}
+.roll-history small,.roll-history strong,.roll-toast strong:first-child {display:block}
+.roll-history > div > div {padding:8px 0;border-top:1px solid #68546c}
+.roll-history div div strong,.roll-toast div div strong {display:inline;color:#ffdc8d}
+.roll-toast {max-height:8em;overflow:hidden}
+.roll-dock [hidden]{display:none!important}
