@@ -301,6 +301,7 @@ function spellMaxLevel(b){
  return slots.reduce((max,n,i)=>n?i+1:max,0);
 }
 function racialSpells(b){
+ if(b.raceId==='hexblood')return x=>['disguise-self','hex'].includes(x.index)||['disfrazarse','maleficio'].includes(normalized(x.title));
  if(b.raceId==='elfo'&&b.subraceId==='alto')return x=>x.level===0&&x.classes.includes('mago');
  const grants=b.raceId==='elfo'&&b.subraceId==='oscuro'?{'dancing-lights':1,'faerie-fire':3,darkness:5}:b.raceId==='gnomo'&&b.subraceId==='bosque'?{'minor-illusion':1}:b.raceId==='tiflin'&&(!b.subraceId||b.subraceId==='basico')?{thaumaturgy:1,'hellish-rebuke':3,darkness:5}:null;
  return grants?x=>grants[x.index]&&b.level>=grants[x.index]:null;
@@ -318,7 +319,7 @@ function showSpellDetails(original){
  let dialog=$('playerSpellDetails');if(!dialog){dialog=document.createElement('dialog');dialog.id='playerSpellDetails';dialog.className='spell-details';dialog.setAttribute('aria-labelledby','playerSpellDetailsTitle');document.body.append(dialog);}
  dialog.replaceChildren();const banner=document.createElement('div');banner.className='spell-modal-banner';const glyph=document.createElement('span');glyph.className='modal-glyph';glyph.append(spellGlyph(item.title));const eyebrow=document.createElement('p');eyebrow.className='eyebrow';eyebrow.textContent=Number(item.level)?'NIVEL '+item.level:'TRUCO';const h=document.createElement('h2');h.id='playerSpellDetailsTitle';h.textContent=item.title;banner.append(glyph,eyebrow,h);
  const close=document.createElement('button');close.type='button';close.className='dialog-close';close.setAttribute('aria-label','Cerrar');close.textContent='×';close.onclick=()=>dialog.close();
- const text=document.createElement('div');text.className='fulltext spell-formatted';const classNames={bardo:'bardo',brujo:'brujo',clerigo:'clérigo',druida:'druida',explorador:'explorador',hechicero:'hechicero',mago:'mago',paladin:'paladín'};
+ const text=document.createElement('div');text.className='fulltext spell-formatted';const classNames={artifice:'artífice',bardo:'bardo',brujo:'brujo',clerigo:'clérigo',druida:'druida',explorador:'explorador',hechicero:'hechicero',mago:'mago',paladin:'paladín'};
  const description=item.pdfPage?[item.summary,item.kind,'Origen: '+item.originText,'Componentes: '+item.components,'Tiempo de lanzamiento: '+item.castingTime,'Alcance: '+item.range,'Duración: '+item.duration,'Listas de conjuros: '+item.classes.map(c=>'Conjuros de '+(classNames[c]||c)).join(', '),item.body].join('\n'):spellInSpanish(item);
  for(const [i,line] of description.split('\n').entries()){if(!line.trim())continue;const p=document.createElement('p');if(i===0)p.className='spell-summary';const key=line.match(/^(Origen|Componentes|Tiempo de lanzamiento|Alcance|Duración|Listas de conjuros|Tirada de salvación|Ataque):/i);if(key){const label=document.createElement('strong');label.textContent=key[0];p.append(label,document.createTextNode(line.slice(key[0].length)));}else p.textContent=line;text.append(p);}
  dialog.append(close,banner,text);
@@ -328,7 +329,9 @@ function showSpellDetails(original){
  dialog.showModal();
 }
 async function loadSpellCatalog(){
- try{const response=await fetch('player-spells-2014.json?v=63');if(!response.ok)throw Error();const data=await response.json();spellLibrary=data.spells;}
+ try{const response=await fetch('player-spells-2014.json?v=63');if(!response.ok)throw Error();const data=await response.json();spellLibrary=data.spells;
+ const names=new Set((window.ALAK_RULE_SPELLS?.artifice||'').split(';').map(s=>normalized(s.split('|')[1])));
+ for(const spell of spellLibrary)if([spell.title,...(spell.aliases||[])].some(name=>names.has(normalized(name)))&&!spell.classes.includes('artifice'))spell.classes.push('artifice');}
  catch{spellLibrary=[];}
  renderSpellCatalog();renderPrepared();renderSheetSpellTools();
 }
@@ -343,10 +346,12 @@ function renderSpellCatalog(){
  const messages={class:'Lista de clase. Los conocidos y preparados dependen de tu nivel y rasgos; las selecciones son manuales.',race:raceFilter?'Magia racial según tu raza, subraza y nivel. Sus usos no gastan necesariamente espacios de clase.':'Elige únicamente la magia que conceda tu linaje. Configura raza y subraza para ver las opciones básicas de 2014.',subclass:'Elige solo los conjuros que conceda tu subclase. Un dominio puede tener conjuros siempre preparados; un patrón de brujo amplía opciones, no los aprende automáticamente.',background:'Los trasfondos básicos de 2014 no conceden conjuros por defecto. Usa este origen solo si tu trasfondo específico lo permite.',feat:'Elige los conjuros permitidos por tu dote y respeta sus límites y usos.',other:'Registra aquí una opción concedida por un rasgo o acordada con tu DM.'};
  $('spellCatalogNotice').textContent=messages[origin]+' Catálogo de la mesa en español; las elecciones dependen de tu personaje.';
  const chosen=x=>model.spells.some(s=>s.catalogId===x.index||normalized(s.title)===normalized(x.title));
+ const expanded=classFilter==='brujo'&&b.subclassId==='muertoviviente'
+  ?new Set(window.ALAK_UNDEAD_SPELLS.split(';').map(s=>normalized(s.split('|')[1]))):new Set();
  const items=spellLibrary.filter(x=>
   (level==='all'||String(x.level)===level)&&(!query||normalized(x.title+' '+(x.aliases||[]).join(' ')+' '+x.originalName+' '+x.description).includes(query))&&
   (show!=='chosen'||chosen(x))&&
-  (origin!=='class'||!klass||klass==='all'||x.classes.includes(classFilter))&&
+  (origin!=='class'||!klass||klass==='all'||x.classes.includes(classFilter)||[x.title,...(x.aliases||[])].some(t=>expanded.has(normalized(t))))&&
   (origin!=='race'||!raceFilter||raceFilter(x))&&
   (show!=='available'||origin!=='class'||!b.classId||x.level<=max));
  if(!items.length){const hint=document.createElement('p');hint.textContent=spellLibrary.length?'No hay conjuros para estos filtros. Revisa tu clase y nivel o cambia el origen.':'No se pudo cargar el catálogo. Puedes añadir conjuros manualmente.';host.append(hint);}
@@ -546,6 +551,10 @@ window.alakRuleBridge={
   if(model.ruleBuild&&model.traits.some(t=>t.rulesId)&&['classId','subclassId','raceId','subraceId'].some(key=>model.ruleBuild[key]&&(model.ruleBuild[key]||'')!==(choice[key]||'')))return {ok:false,message:'Esta ficha ya tiene rasgos de otra configuración. En Rasgos, usa «Eliminar todos los rasgos» antes de aplicar otra raza, clase o especialización.'};
   const race=cat.races[choice.raceId],klass=cat.classes[choice.classId];
   const features=cat.featuresFor(choice.raceId,choice.subraceId,choice.classId,choice.subclassId,choice.level);
+  if(choice.raceId==='hexblood'&&choice.lineageAbility){
+   const magic=features.find(f=>f.title==='Magia maléfica');
+   if(magic)magic.note+=' Aptitud elegida: '+cat.keys[choice.lineageAbility]+'.';
+  }
   const bg=window.ALAK_RULE_BACKGROUNDS?.[choice.background];
   if(bg)features.push({id:"background:"+choice.background,level:1,kind:"trasfondo",title:bg.feature,note:bg.note,source:choice.background});
 
@@ -586,7 +595,7 @@ window.alakRuleBridge={
   if(klass?.casting!=="none"&&klass?.casting){
    addSheet("spell_class",klass.name);
    if(klass.casting==="pact"||klass.casting==="full"||klass.casting==="half"){
-    const castAbility=({bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
+    const castAbility=({artifice:"int",bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
     if(castAbility)addSheet("spell_ability",cat.keys[castAbility]);
    }
   }
@@ -634,10 +643,10 @@ window.alakRuleBridge={
   }
   for(const spell of choice.selectedSpells||[]){
    if(!model.spells.some(x=>String(x.title||"").toLowerCase()===String(spell.title||"").toLowerCase()&&Number(x.level)===Number(spell.level))){
-    model.spells.push({id:genId(),title:spell.title,level:String(spell.level),origin:spell.extra?"race":"class",sourceDetail:spell.source||"Clase",alwaysPrepared:spell.extra===true,description:"Conjuro elegido con Manual del Jugador 2014. Consulta el capítulo 11 para su descripción completa.",prepared:spell.extra===true||Number(spell.level)>0,source:"Manual 2014"});
+    model.spells.push({id:genId(),title:spell.title,level:String(spell.level),origin:spell.extra?(spell.source===klass?.subs?.[choice.subclassId]?"subclass":"race"):"class",sourceDetail:spell.source||"Clase",alwaysPrepared:spell.extra===true,description:"Conjuro elegido con Manual del Jugador 2014. Consulta el capítulo 11 para su descripción completa.",prepared:spell.extra===true||Number(spell.level)>0,source:"Manual 2014"});
    }
   }
-  const klassProf=({"barbaro":"Armadura ligera y media; escudos. Armas simples y marciales.",
+  const klassProf=({"artifice":"Armadura ligera y media, escudos y armas simples. Herramientas de ladrón, de hojalatero y una de artesano a elección.","barbaro":"Armadura ligera y media; escudos. Armas simples y marciales.",
    "bardo":"Armadura ligera. Instrumentos musicales. Competencias de bardo.",
    "brujo":"Armadura ligera. Armas simples.",
    "clerigo":"Armadura ligera y media; escudos. Armas simples.",
@@ -692,7 +701,7 @@ window.alakRuleBridge={
    }
   }
   if(klass?.casting!=="none"&&klass?.casting){
-   const castAbility=({bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
+   const castAbility=({artifice:"int",bardo:"cha",brujo:"cha",clerigo:"wis",druida:"wis",explorador:"wis",hechicero:"cha",mago:"int",paladin:"cha"})[choice.classId];
    const scoreKey=({str:"strength",dex:"dexterity",con:"constitution",int:"intelligence",wis:"wisdom",cha:"charisma"})[castAbility];
    const score=Number(model.stats?.[scoreKey]);
    if(Number.isFinite(score)&&score>0){
@@ -702,7 +711,7 @@ window.alakRuleBridge={
    }
   }
     model.ruleBuild={
-   edition:"2014",raceId:choice.raceId,subraceId:choice.subraceId||"",
+   edition:"2014",lineageAbility:choice.lineageAbility||null,raceId:choice.raceId,subraceId:choice.subraceId||"",
    classId:choice.classId,subclassId:choice.subclassId||"",level:Number(choice.level),
    background:choice.background||"",autoProgress:choice.autoProgress!==false,
    selectedFeatureIds:choice.selectedFeatureIds||features.map(x=>x.id),

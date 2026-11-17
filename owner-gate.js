@@ -53,12 +53,12 @@ async function startApp() {
   await insertScript("combat-status.js?v=80");
   await insertScript("encounter-bridge.js?v=83");
   await insertScript("mesa-compartida.js?v=103", true);
-  await insertScript("rules-2014-catalog.js?v=50");
-  await insertScript("rules-2014-subclasses.js?v=50");
+  await insertScript("rules-2014-catalog.js?v=104");
+  await insertScript("rules-2014-subclasses.js?v=104");
   await insertScript("rules-2014-backgrounds.js?v=50");
-  await insertScript("rules-2014-spells.js?v=50");
-  await insertScript("player-rules-guidance.js?v=69");
-  await insertScript("rules-2014-wizard.js?v=71");
+  await insertScript("rules-2014-spells.js?v=104");
+  await insertScript("player-rules-guidance.js?v=104");
+  await insertScript("rules-2014-wizard.js?v=104");
   await insertScript("new-character-sheet.js?v=101",true);
   await insertScript("dice-3d.js?v=91");
   await insertScript("adventure-tools.js?v=101");

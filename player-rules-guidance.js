@@ -10,18 +10,25 @@
  function policy(b,scores={}){
   const n=Math.max(1,Math.min(20,Number(b.level)||1)),id=b.classId;
   const third=(id==='guerrero'&&b.subclassId==='eldritchknight')||(id==='picaro'&&b.subclassId==='arcanetrickster');
-  const cast=third?n>=3:['bardo','brujo','clerigo','druida','hechicero','mago'].includes(id)||(['paladin','explorador'].includes(id)&&n>=2);
+  const cast=third?n>=3:['artifice','bardo','brujo','clerigo','druida','hechicero','mago'].includes(id)||(['paladin','explorador'].includes(id)&&n>=2);
   let cantrips=cast?({bardo:2,brujo:2,clerigo:3,druida:2,hechicero:4,mago:3}[id]||0):0;
   if(cantrips)cantrips+=(n>=4?1:0)+(n>=10?1:0);
+  if(id==="artifice")cantrips=2+(n>=10?1:0)+(n>=14?1:0);
   if(third&&n>=3)cantrips=(id==='picaro'?3:2)+(n>=10?1:0);
   let slots=window.ALAK_RULES_2014.spellSlots(id,n);
   if(third)slots=n<3?[]:window.ALAK_RULES_2014.spellSlots('mago',Math.ceil(n/3));
-  const stat=id==='paladin'?'cha':id==='mago'?'int':'wis',raw=scores[stat],mod=raw===undefined||raw===null?null:Math.floor((Number(raw)-10)/2);
+  const stat=id==='paladin'?'cha':['artifice','mago'].includes(id)?'int':'wis',raw=scores[stat],mod=raw===undefined||raw===null?null:Math.floor((Number(raw)-10)/2);
   let count=cast?(tables[third?'third':id]?.[n-1]??null):0,kind='conjuros conocidos';
-  if(['clerigo','druida','paladin','mago'].includes(id)&&cast){kind='conjuros preparados';count=mod===null?null:Math.max(1,(id==='paladin'?Math.floor(n/2):n)+mod);}
+  if(['artifice','clerigo','druida','paladin','mago'].includes(id)&&cast){kind='conjuros preparados';count=mod===null?null:Math.max(1,(['paladin','artifice'].includes(id)?Math.floor(n/2):n)+mod);}
   const extras=[];
   const add=(title,level,source)=>extras.push({title,level,source,extra:true});
-  if(b.raceId==='gnomo'&&b.subraceId==='bosque')add('Ilusión menor',0,'Gnomo de los bosques');
+  if(b.raceId==='hexblood')for(const title of ['Disfrazarse','Maleficio'])add(title,1,'Hexblood (sangre maléfica) · 1/descanso largo por conjuro');
+  if(id==='bardo'&&b.subclassId==='espiritus'&&n>=3)add('Guía',0,'Colegio de los Espíritus');
+  if(id==='artifice'){
+   const lists={alquimista:['Palabra de curación|Rayo debilitador','Esfera en llamas|Flecha ácida de Melf','Forma gaseosa|Palabra de curación en masa','Marchitar|Guardia contra la muerte','Nube aniquiladora|Alzar a los muertos'],armero:['Proyectil mágico|Ola atronadora','Imagen múltiple|Hacer añicos','Patrón hipnótico|Relámpago','Escudo de fuego|Invisibilidad mejorada','Pasamuros|Muro de fuerza'],artillero:['Escudo|Ola atronadora','Rayo abrasador|Hacer añicos','Bola de fuego|Muro de viento','Tormenta de hielo|Muro de fuego','Cono de frío|Muro de fuerza'],herrero:['Heroísmo|Escudo','Castigo marcador|Vínculo protector','Aura de vitalidad|Conjurar bombardeo','Aura de pureza|Escudo de fuego','Castigo desterrador|Curar heridas en masa']};
+   (lists[b.subclassId]||[]).forEach((pair,i)=>{if(n>=[3,5,9,13,17][i])for(const title of pair.split('|'))add(title,i+1,window.ALAK_RULES_2014.classes.artifice.subs[b.subclassId]);});
+  }
+  if(b.raceId==='gnomo' &&b.subraceId==='bosque')add('Ilusión menor',0,'Gnomo de los bosques');
   if(b.raceId==='tiflin'&&b.subraceId!=='zariel'){add('Taumaturgia',0,'Legado infernal');if(n>=3)add('Reprensión infernal',1,'Legado infernal · 1/descanso largo, a nivel 2');if(n>=5)add('Oscuridad',2,'Legado infernal · 1/descanso largo');}
   if(id==='clerigo'&&b.subclassId==='light')add('Luz',0,'Dominio de la Luz');
   const hints=[];
