@@ -17,8 +17,8 @@ html.phone-sheet-app #character .phone-sheet-info{flex:1;min-width:0;display:gri
 html.phone-sheet-app #character .phone-sheet-info strong{font:600 23px/1.15 Georgia,serif;overflow-wrap:anywhere}
 html.phone-sheet-app #character .phone-sheet-info>span{font:13px/1.2 system-ui;color:#efdbc2}
 html.phone-sheet-app #character .phone-sheet-lock{font-size:0;width:44px;height:44px;min-width:44px;padding:0;margin:0;border:1px solid #b58c56;background:#291629;border-radius:10px}
-html.phone-sheet-app #character .phone-sheet-lock::before{content:'🔓';font-size:21px}
-html.phone-sheet-app #character .phone-sheet-lock[aria-pressed=true]::before{content:'🔒'}
+html.phone-sheet-app #character .phone-sheet-lock[data-phone-locked="false"]::before{content:'🔓';font-size:21px}
+html.phone-sheet-app #character .phone-sheet-lock[data-phone-locked="true"]::before{content:'🔒'}
 html.phone-sheet-app #character .phone-sheet-resources{display:flex;align-items:center;gap:8px;margin-top:8px}
 html.phone-sheet-app #character .phone-sheet-resources button{min-height:36px;padding:5px 10px;border:1px solid #c29c62;border-radius:8px;background:#f4e6c9;color:#3c2430;font:bold 14px Georgia,serif;white-space:nowrap}
 html.phone-sheet-app #character .phone-sheet-save{font:10px/1.25 system-ui;color:#c5e1b0;max-height:30px;overflow:auto;flex:1}
@@ -98,3 +98,9 @@ html.phone-sheet-app body.phone-sheet-active dialog{box-sizing:border-box;max-wi
  html.phone-sheet-app #character .dnd-abilities{grid-template-columns:repeat(6,minmax(0,1fr))!important}
  html.phone-sheet-app #character .hitdeath-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+html.phone-sheet-app #character .phone-sheet-lock{font-size:0!important;line-height:1!important}
+html.phone-sheet-app #character .phone-lock-wrap{display:grid;justify-items:center;gap:4px;flex:0 0 78px}
+html.phone-sheet-app #character .phone-lock-label{font:10px/1.25 system-ui;text-align:center;color:#ffe4b0}
+html.phone-sheet-app #character .phone-sheet-portrait{height:52px;position:relative}
+html.phone-sheet-app #character .phone-sheet-portrait:not(:disabled)::after{content:"✎";position:absolute;right:0;bottom:0;background:#251228;color:#ffe4b0;font:12px system-ui;padding:1px 3px}

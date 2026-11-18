@@ -1,0 +1,87 @@
+/* This class is assigned only to installed phone apps, never width alone.
+   Layout overrides retain each section's existing background and artwork. */
+html.phone-app,html.phone-app body{min-width:0!important;width:100%!important;overflow:auto!important}
+html.phone-app body>.rotate,html.phone-app body>.portrait-turn-notice{display:none!important}
+html.phone-app body>:not(.rotate):not(.portrait-turn-notice){visibility:visible!important;pointer-events:auto!important}
+html.phone-app body>:is(main,#workspace){box-sizing:border-box;width:100%;max-width:100%;min-width:0;padding:12px 10px 80px!important;margin:0}
+html.phone-app #workspace{min-width:0;width:100%}
+html.phone-app :is(.panel,.screen,.player-home,.mesa-compartida){box-sizing:border-box;max-width:100%;min-width:0}
+html.phone-app :is(.panel:not(#character):not(#home),.screen:not(#sheetView)){padding:14px 10px!important}
+html.phone-app :is(h1,h2,h3,h4,p,strong){overflow-wrap:anywhere}
+html.phone-app :is(.redesign-heading h2,.section-head h2,.campaign-hero h2,.mc-header h2){font-size:30px!important}
+html.phone-app :is(.section-heading,.section-head,.redesign-heading){padding:12px 0!important;margin:0 0 12px}
+html.phone-app body:not(.phone-sheet-active)>:is(.hero,.topbar){position:relative!important;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px!important;min-height:0!important;height:auto!important}
+html.phone-app :is(.hero h1,.topbar .mark){font-size:20px}
+html.phone-app :is(.tabs,.topnav){box-sizing:border-box;position:relative!important;top:auto!important;display:flex!important;flex-wrap:wrap!important;gap:6px!important;width:100%;max-width:100%;padding:8px!important;height:auto!important}
+html.phone-app :is(.nav-primary,.nav-actions,.session){display:flex;flex-wrap:wrap;gap:6px;max-width:100%;margin:0!important}
+html.phone-app :is(.tabs,.topnav) button{min-height:40px;white-space:normal;padding:8px!important;font-size:13px!important}
+html.phone-app :is(input,select,textarea){box-sizing:border-box;max-width:100%;min-width:0}
+html.phone-app :is(.screen,.panel):not(#character) :is(input,select,textarea){font-size:16px}
+html.phone-app :is(button,a){touch-action:manipulation}
+html.phone-app :is(.settings-layout,.settings-grid,.design-grid,.home-design-grid,.home-design-text-fields,.background-choice-grid,.cover-grid,.image-grid,.tile-design-grid,.combat-admin-groups,.campaign-diary-grid,.campaign-table-list,.combat-layout,.spell-sections,.prepared-groups,.spell-catalog,.trait-grid,.channel-grid,.expansion-fields,.form-grid,.editor-grid,.player-columns,.mc-roster){grid-template-columns:minmax(0,1fr)!important;min-width:0!important;gap:12px!important}
+html.phone-app :is(.settings-layout,.settings-grid,.design-grid)>*{grid-column:auto!important;min-width:0!important}
+html.phone-app :is(.home-design-image,.background-choice,.settings-card,.campaign-surface,.mc-surface,.roster-panel,.initiative-panel,.player-library,.prepared-panel){box-sizing:border-box;max-width:100%;min-width:0!important;padding:12px!important}
+html.phone-app :is(.mc-form,.spell-metadata-grid){grid-template-columns:minmax(0,1fr)!important}
+html.phone-app .mc-summary{gap:6px}
+html.phone-app .mc-stat{flex:1;min-width:0;padding:8px}
+html.phone-app :is(.campaign-tabs,.mc-nav,.filters,.library-filters,.grimoire-filters,.combat-header-actions){display:flex;flex-wrap:wrap;gap:7px;max-width:100%}
+html.phone-app :is(.mc-header,.campaign-hero){padding:16px!important}
+html.phone-app :is(.channel-card,.flare-frame){box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0!important}
+html.phone-app .channel-card{grid-template-columns:60px minmax(0,1fr)!important;padding:14px!important;gap:12px!important}
+html.phone-app .channel-art{width:56px!important;height:56px!important;font-size:36px!important}
+html.phone-app .channel-copy h3{font-size:23px!important}
+html.phone-app .flare-line{flex-wrap:wrap}
+html.phone-app :is(.settings-item-row,.home-foot){flex-wrap:wrap}
+html.phone-app :is(.home-foot,.home-foot>div){gap:10px}
+html.phone-app .player-home{width:100%!important;min-height:calc(100dvh - 160px);padding:24px 12px!important}
+html.phone-app .player-home .home-title h1{font-size:38px!important}
+html.phone-app .player-home .tiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+html.phone-app .player-home .tile{min-width:0!important;min-height:160px!important;padding:14px 8px!important}
+html.phone-app .player-home .tile h2,html.phone-app .player-home .tile h3{font-size:20px!important}
+html.phone-app #home{padding:0!important}
+html.phone-app #home .home-stage{min-height:100dvh;justify-content:flex-start;gap:22px;padding:14px 14px 85px!important}
+html.phone-app #home .home-toolbar{position:relative!important;inset:auto!important;display:flex;flex-wrap:wrap;gap:8px;width:100%}
+html.phone-app #home .home-heading.home-fixed-heading{margin:0!important;width:min(100%,350px)!important;max-width:100%}
+html.phone-app #home .home-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px;width:100%}
+html.phone-app #home .home-tile-copy strong{font-size:20px!important}
+html.phone-app #home .home-tile-copy small{font-size:11px!important}
+html.phone-app #home .home-bottom-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+html.phone-app #home .home-bottom-actions .home-hit{min-width:0;width:100%;padding:8px!important}
+html.phone-app #home .home-small-icon{width:22px;height:22px}
+html.phone-app #home .home-action-copy{font-size:12px!important}
+html.phone-app #combat .initiative-row{min-width:0!important;grid-template-columns:28px 44px minmax(0,1fr) 28px!important;gap:8px!important;padding:10px!important}
+html.phone-app #combat .initiative-row .identity{grid-column:3;grid-row:1}
+html.phone-app #combat .initiative-row .turn-arrows{grid-column:4;grid-row:1}
+html.phone-app #combat .initiative-row .hp-tracker{grid-column:1/-1;grid-row:2}
+html.phone-app #combat .initiative-row .damage-box{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+html.phone-app #combat .damage-enter{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+html.phone-app #combat .damage-amount{width:64px!important}
+html.phone-app #combat .initiative-list{overflow:visible;min-width:0}
+html.phone-app #combat .init-name{white-space:normal;font-size:16px}
+html.phone-app #combat .roster-list{display:flex;flex-wrap:wrap;gap:8px;max-height:240px;overflow:auto}
+html.phone-app dialog{box-sizing:border-box;width:calc(100% - 20px)!important;max-width:600px!important;max-height:90dvh!important;overflow:auto!important;padding:16px!important}
+html.phone-app dialog :is(.combat-admin-groups,.mc-roster,.rw-grid){grid-template-columns:minmax(0,1fr)!important}
+html.phone-app .quick-combat .mc-figure{min-width:0}
+html.phone-app .quick-combat .mc-actions{flex-wrap:wrap}
+html.phone-app .phone-portrait-dialog{color:#ffe7c4;background:#21142d;border:1px solid #b08c62;border-radius:16px}
+html.phone-app .phone-portrait-dialog canvas{display:block;width:min(280px,100%);height:auto;margin:12px auto;touch-action:none;border:1px solid #b08c62;border-radius:10px}
+html.phone-app .phone-portrait-dialog label{display:grid;gap:4px;font-size:14px}
+html.phone-app .phone-portrait-dialog input{width:100%;min-height:34px}
+html.phone-app .phone-crop-position{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html.phone-app .phone-portrait-dialog .crop-actions{display:flex;flex-wrap:wrap;gap:8px}
+html.phone-app .phone-portrait-dialog button{min-height:42px;color:#ffe7c4;background:#563064;border:1px solid #b08c62;border-radius:8px;padding:8px}
+@media(orientation:landscape){
+ html.phone-app #home .home-card-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ html.phone-app #home .home-bottom-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+html.phone-app body>.hero{display:none!important}
+html.phone-app .phone-app-menu{position:relative;z-index:40;color:#ffe0a5;background:#211326ed;border-bottom:1px solid #806344}
+html.phone-app .phone-app-menu>summary{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;font:600 17px Georgia;list-style:none}
+html.phone-app .phone-app-menu>summary::-webkit-details-marker{display:none}
+html.phone-app .phone-app-menu .topbar{position:static!important;display:flex;flex-wrap:wrap;padding:10px;gap:8px;height:auto}
+html.phone-app .phone-app-menu .mark{display:none}
+html.phone-app body.phone-sheet-active>.phone-app-menu{display:none}
+html.phone-app body>.phone-app-menu+main{padding-top:0!important}
+html.phone-app .phone-app-menu .session{font-size:12px}
+html.phone-app body.home-active main{padding-left:0!important;padding-right:0!important}
+html.phone-app body.phone-sheet-active .quick-swords-solo{bottom:calc(85px + env(safe-area-inset-bottom))!important;z-index:920}

@@ -18,7 +18,8 @@
  part(sheet.querySelector('.dnd-abilities'),'ficha');
  for(const selector of ['.dnd-pill-row','.saving','.skills','.passive-box'])part(sheet.querySelector(selector),'habilidades');
  part(sheet.querySelector('.proficiencies-box'),'equipo','Competencias e idiomas');
- for(const selector of ['.combat-top','.hp-box','.hitdeath-grid','.attacks'])part(sheet.querySelector(selector),'ficha');
+ for(const selector of ['.combat-top','.hp-box','.hitdeath-grid'])part(sheet.querySelector(selector),'ficha');
+ part(sheet.querySelector('.attacks'),'equipo');
  part(sheet.querySelector('.equipment-box'),'equipo');
  sheet.querySelectorAll('.personality-box').forEach(e=>part(e,'ficha',e.querySelector('h3')?.textContent));
  for(const [selector,label] of [['.features-box','Rasgos y características'],['.page-two .ds-header','Descripción física'],['.portrait-panel','Retrato del personaje'],['.allies-panel','Aliados y organizaciones'],['.backstory-panel','Historia del personaje'],['.additional-panel','Rasgos adicionales']])part(sheet.querySelector(selector),'ficha',label);
@@ -30,9 +31,11 @@
  const menu=create('button','phone-sheet-menu','‹ Inicio');menu.type='button';menu.onclick=()=>window.alakNavigate?.(player?'home':'home');
  const brand=create('span','phone-sheet-brand','☀ Alak Hul');
  const top=create('div','phone-sheet-top');top.append(menu,brand);header.append(top);
- const identity=create('div','phone-sheet-identity'),portrait=create('button','phone-sheet-portrait'),image=create('img');portrait.type='button';image.alt='';portrait.append(image);portrait.setAttribute('aria-label','Ampliar retrato');portrait.onclick=()=>document.getElementById('characterPortrait')?.click();
+ const identity=create('div','phone-sheet-identity'),portrait=create('button','phone-sheet-portrait'),image=create('img');portrait.type='button';image.alt='';portrait.append(image);portrait.setAttribute('aria-label','Ajustar rostro para la ficha y combate');portrait.onclick=()=>window.alakEditPhonePortrait?.();
  const info=create('div','phone-sheet-info'),name=create('strong'),description=create('span');info.append(name,description);
- const lock=document.querySelector('[data-sheet-lock]');identity.append(portrait,info);if(lock)identity.append(lock);header.append(identity);
+ const lock=document.querySelector('[data-sheet-lock]'),lockWrap=create('div','phone-lock-wrap'),lockLabel=create('span','phone-lock-label');identity.append(portrait,info);if(lock){lockWrap.append(lock,lockLabel);identity.append(lockWrap);}header.append(identity);
+ const syncLock=()=>{if(!lock)return;const locked=lock.getAttribute('aria-pressed')==='true';lock.dataset.phoneLocked=String(locked);lockLabel.textContent=locked?'Escritura bloqueada':'Edición activada';};
+ if(lock){new MutationObserver(syncLock).observe(lock,{attributes:true,attributeFilter:['aria-pressed']});syncLock();}
  const resources=create('div','phone-sheet-resources'),hp=create('button'),ac=create('button'),save=create('span','phone-sheet-save');hp.type=ac.type='button';hp.onclick=()=>{select('ficha');sheet.querySelector('.hp-box')?.scrollIntoView({block:'center'});};ac.onclick=()=>{select('ficha');sheet.querySelector('.combat-top')?.scrollIntoView({block:'center'});};resources.append(hp,ac,save);header.append(resources);
  character.insertBefore(header,sheet);
  const heading=create('h2','phone-sheet-title','Ficha');heading.tabIndex=-1;sheet.prepend(heading);
@@ -54,9 +57,9 @@
   // The owner page has no workspace container.
   const open=player?now:screen.classList.contains('active')&&!document.documentElement.classList.contains('owner-locked');
   document.body.classList.toggle('phone-sheet-active',open);nav.hidden=!open;header.hidden=!open;
-  if(open!==visible){visible=open;const viewport=document.querySelector('meta[name="viewport"]');viewport.content=open?'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes':'width=1440, user-scalable=yes';if(open)window.scrollTo(0,0);}
+  if(open!==visible){visible=open;const viewport=document.querySelector('meta[name="viewport"]');viewport.content='width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes';if(open)window.scrollTo(0,0);}
   set(name,value('name')==='—'?'Mi personaje':value('name'));set(description,value('classLevel'));
-  const src=document.getElementById('characterPortrait')?.getAttribute('src');if(src&&image.getAttribute('src')!==src)image.src=src;
+  const profile=window.alakPhonePortrait?.get();portrait.disabled=!window.alakPhonePortrait?.canEdit();const src=profile?.thumbnail||document.getElementById('characterPortrait')?.getAttribute('src');if(src&&image.getAttribute('src')!==src)image.src=src;
   set(hp,'♥ PG '+value('hpCurrent')+' / '+value('hpMax'));set(ac,'◇ CA '+value('ac'));
   set(save,document.getElementById(player?'saveIndicator':'cloudStatus')?.textContent||'');
   const paper=sheet.querySelector('.page-one')?.dataset.paperStyle||'current';if(sheet.dataset.phonePaper!==paper)sheet.dataset.phonePaper=paper;

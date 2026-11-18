@@ -811,3 +811,14 @@ onAuthStateChanged(auth,account=>{
  else{void window.alakImages?.bind(null);$("workspace").hidden=true;$("authWall").hidden=false;$("logoutBtn").hidden=true;status("Sin conectar");$("loginStatus").textContent=""}
 });
 window.addEventListener("beforeunload",()=>{if(model&&pending){try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify(model))}catch{}}});
+
+window.alakPhonePortrait={
+ canEdit:()=>canChangePortrait()&&!sheetResetting,
+ get:()=>({identity:targetUid,source:model?.portrait||model?.combatImage||'assets/hero.svg',thumbnail:model?.combatThumbnail||model?.portrait,crop:model?.combatImage===model?.portrait?model?.combatCrop:null}),
+ save:async p=>{
+  if(!canChangePortrait()||sheetResetting||p.identity!==targetUid)throw Error('Abre tu propia hoja para ajustar el rostro.');
+  model.combatImage=p.source;model.combatThumbnail=p.thumbnail;model.combatCrop=p.crop;
+  change();renderDesign();await window.alakRuleBridge.save();if(pending)throw Error('Revisa tu conexión y vuelve a guardar.');
+  await publishMyPortrait();
+ }
+};

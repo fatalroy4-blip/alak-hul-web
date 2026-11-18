@@ -317,3 +317,17 @@ if(!configured){
     status('Entra con Google para sincronizar');
   }catch(err){status('No se pudieron cargar los módulos de Firebase: '+friendlyError(err),'error');}
 }
+
+window.alakPhonePortrait={
+ canEdit:()=>!!account&&ready&&!resettingSheet,
+ get:()=>{const data=getLocal(),p=data.state.phonePortrait||{};return {identity:account?.uid,source:data.character.portrait||el('characterPortrait')?.getAttribute('src'),thumbnail:p.thumbnail,crop:p.source===data.character.portrait?p.crop:null};},
+ save:async p=>{
+  if(!account||!ready||resettingSheet||p.identity!==account.uid)throw Error('Espera a que tu hoja se sincronice.');
+  const name=el('character')?.querySelector('[data-char="name"]')?.value||'Alak Hul';
+  await api.setDoc(api.doc(firestore,'combatPortraits',account.uid),{portrait:p.source,thumbnail:p.thumbnail,name:name.slice(0,200),updatedAt:api.serverTimestamp()});
+  state.phonePortrait={source:p.source,thumbnail:p.thumbnail,crop:p.crop};
+  state.portraits??={};state.portraits[name]=p.thumbnail;saveState();onLocalChange();await flush(true);
+  if(dirty)throw Error('El rostro de combate se guardó; falta sincronizar la ficha. Revisa tu conexión.');
+  repaintLocal();
+ }
+};

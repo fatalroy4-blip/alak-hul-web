@@ -47,7 +47,7 @@ async function startApp() {
   await insertScript("background-upload.js?v=108");
   await insertScript("home-design.js?v=108");
   await insertScript("campaign-controls.js?v=102");
-  await insertScript("cloud-sync.js?v=105", true);
+  await insertScript("cloud-sync.js?v=110", true);
   await insertScript("combat-effects.js?v=80");
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");
