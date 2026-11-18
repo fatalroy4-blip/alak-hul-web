@@ -44,7 +44,7 @@ async function startApp() {
   await insertScript("script.js?v=103");
   await insertScript("warding-flare.js?v=1");
   await insertScript("campaign-v42.js?v=99");
-  await insertScript("background-upload.js?v=92");
+  await insertScript("background-upload.js?v=107");
   await insertScript("home-design.js?v=93");
   await insertScript("campaign-controls.js?v=102");
   await insertScript("cloud-sync.js?v=105", true);

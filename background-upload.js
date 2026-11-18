@@ -1,7 +1,7 @@
 
 /* V41: fondos propios; las imágenes optimizadas se guardan junto al progreso. */
 (function(){
-const titles={solar:"Santuario solar",celestial:"Templo celestial",arcane:"Biblioteca arcana",violetvale:"Valle místico"};
+const titles={solar:"",arcane:""};
 const assets={solar:"assets/theme-santuario-solar.png",celestial:"assets/theme-templo-celestial.png",arcane:"assets/theme-biblioteca-arcana.png",violetvale:"assets/theme-valle-violeta.png"};
 const valid=v=>typeof v==="string"&&v.length<160000&&/^data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(v);
 const host=document.getElementById("backgroundChoiceGrid");
@@ -32,7 +32,7 @@ for(const [key,title] of Object.entries(titles)){
  label.appendChild(input);wrap.appendChild(label);
  input.addEventListener("change",async()=>{
   const file=input.files&&input.files[0];input.value="";if(!file)return;
-  notice.textContent="Preparando "+title+"…";
+  notice.textContent="Preparando imagen…";
   try{
    const picture=await compact(file);
    const before=state.customBackgrounds?.[key],previous=state.pageTheme;
@@ -49,13 +49,13 @@ for(const [key,title] of Object.entries(titles)){
     state.removedBackgrounds[key]=wasRemoved||false;state.pageTheme=previous;throw e;
    }
    refresh();
-   notice.textContent="✓ Fondo "+title+" guardado y activo. Se sincronizará con Firebase si has iniciado sesión.";
+   notice.textContent="✓ Fondo guardado y activo. Se sincronizará con Firebase si has iniciado sesión.";
   }catch(e){notice.textContent="No se pudo guardar: "+(e.message||String(e));}
  });
 }
 for(const btn of host.querySelectorAll('[data-theme-choice]')){
  const key=btn.dataset.themeChoice;let wrap=btn.closest('.background-theme-card');if(!wrap){wrap=document.createElement('div');wrap.className='background-theme-card';btn.before(wrap);wrap.append(btn);}
- for(const remove of [true,false]){const control=document.createElement('button');control.type='button';control.textContent=remove?'Eliminar imagen':'Restaurar imagen';control.dataset.themeImage=remove?'remove':'restore';control.onclick=()=>{state.customBackgrounds=state.customBackgrounds||{};delete state.customBackgrounds[key];state.removedBackgrounds={...state.removedBackgrounds,[key]:remove};saveState();refresh();notice.textContent=remove?'Imagen eliminada de tu configuración.':'Imagen original restaurada.';};wrap.append(control);}
+ for(const remove of [true]){const control=document.createElement('button');control.type='button';control.textContent=remove?'Eliminar imagen':'Restaurar imagen';control.dataset.themeImage=remove?'remove':'restore';control.onclick=()=>{state.customBackgrounds=state.customBackgrounds||{};delete state.customBackgrounds[key];state.removedBackgrounds={...state.removedBackgrounds,[key]:remove};saveState();refresh();notice.textContent=remove?'Imagen eliminada de tu configuración.':'Imagen original restaurada.';};wrap.append(control);}
 }
 styles.textContent+='\nbody[data-background-empty="true"]:not(.home-active)::before{background:none!important}';
 const baseApply=applyAlakBackground,baseRender=renderAlakBackgroundChoices;
@@ -82,7 +82,20 @@ renderAlakBackgroundChoices=function(){
  }
 };
 const renderImages=renderAlakBackgroundChoices;
-renderAlakBackgroundChoices=function(){renderImages();for(const btn of host.querySelectorAll('[data-theme-choice]')){const key=btn.dataset.themeChoice,removed=!!state.removedBackgrounds?.[key],img=btn.querySelector('img');if(img){img.hidden=removed;img.style.display=removed?'none':'';}if(removed){btn.disabled=false;btn.querySelector('small').textContent='Sin imagen';}else if(key==='purple')btn.querySelector('small').textContent='Fondo original';const wrap=btn.closest('.background-theme-card');wrap.querySelector('[data-theme-image="remove"]').disabled=removed;wrap.querySelector('[data-theme-image="restore"]').disabled=!removed&&!state.customBackgrounds?.[key];}};
+renderAlakBackgroundChoices=function(){renderImages();for(const btn of host.querySelectorAll('[data-theme-choice]')){const key=btn.dataset.themeChoice,removed=!!state.removedBackgrounds?.[key],img=btn.querySelector('img');if(img){img.hidden=removed;img.style.display=removed?'none':'';}if(removed){btn.disabled=false;btn.querySelector('small').textContent='Sin imagen';}else if(key==='purple')btn.querySelector('small').textContent='Fondo original';const wrap=btn.closest('.background-theme-card');wrap.querySelector('[data-theme-image="remove"]').disabled=removed;}};
+const renderFinal=renderAlakBackgroundChoices;
+renderAlakBackgroundChoices=function(){
+ renderFinal();
+ const status=document.getElementById("themeSelectionStatus");
+ if(status)status.textContent="";
+ for(const btn of host.querySelectorAll('[data-theme-choice]')){
+  const removed=!!state.removedBackgrounds?.[btn.dataset.themeChoice];
+  btn.setAttribute('aria-label',removed?'Fondo sin imagen':'Seleccionar este fondo');
+  btn.disabled=removed;
+  const label=btn.closest('.background-theme-card').querySelector('.background-upload-label');
+  label.firstChild.textContent=removed?'⬆ Subir nuevo fondo':'⬆ Cambiar imagen';
+ }
+};
 function refresh(){applyAlakBackground();renderAlakBackgroundChoices();}
 window.alakBgRefresh=refresh;
 function compact(file){
