@@ -13,8 +13,6 @@
 /* Original generated paper textures; only the sheet surface and previews. */
 .paper-parchment,.dnd-sheet[data-paper-style=parchment]{background: url("assets/paper-textures/parchment.webp") center / 100% 100% no-repeat #f3ecd9!important;}
 .paper-worn,.dnd-sheet[data-paper-style=worn]{background: url("assets/paper-textures/worn.webp") center / 100% 100% no-repeat #f3ecd9!important;}
-.paper-notebook,.dnd-sheet[data-paper-style=notebook]{background: url("assets/paper-textures/notebook.webp") center / 100% 100% no-repeat #f3ecd9!important;}
-.paper-textured,.dnd-sheet[data-paper-style=textured]{background: url("assets/paper-textures/textured.webp") center / 100% 100% no-repeat #f3ecd9!important;}
 #sheetPaperSettings .paper-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;padding:5px}
 #sheetPaperSettings .paper-swatch{min-height:210px;max-width:none;display:flex;align-items:end;justify-content:center;padding:12px}
 #sheetPaperSettings .paper-swatch span{display:block;background:#fffcf1eb;color:#332719;border:1px solid #aa987a88;border-radius:5px;padding:8px;font-weight:700;width:100%}

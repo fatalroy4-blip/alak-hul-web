@@ -61,7 +61,7 @@ async function startApp() {
   await insertScript("rules-2014-wizard.js?v=104");
   await insertScript("new-character-sheet.js?v=101",true);
   await insertScript("dice-3d.js?v=91");
-  await insertScript("adventure-tools.js?v=101");
+  await insertScript("adventure-tools.js?v=106");
  } catch (err) {
   lock();
   message("No se pudo iniciar la hoja de Alak Hul: " + err.message);
