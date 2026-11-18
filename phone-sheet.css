@@ -1,0 +1,100 @@
+/* Every rule is gated by installed-phone detection; never a width-only layout. */
+html.phone-sheet-app body.phone-sheet-active{overflow:auto!important;min-width:0!important}
+html.phone-sheet-app body.phone-sheet-active>.rotate,
+html.phone-sheet-app body.phone-sheet-active>.portrait-turn-notice{display:none!important}
+html.phone-sheet-app body.phone-sheet-active> :not(.rotate):not(.portrait-turn-notice){visibility:visible!important;pointer-events:auto!important}
+html.phone-sheet-app body.phone-sheet-active :is(.topbar,body>header,body>.tabs,#sheetView>.section-head,#character>.character-intro){display:none!important}
+html.phone-sheet-app body.phone-sheet-active :is(main,#workspace,#sheetView,#character){min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important}
+html.phone-sheet-app body.phone-sheet-active #character{background:none!important;overflow:visible!important}
+html.phone-sheet-app #character .phone-sheet-header{position:sticky;top:0;z-index:35;background:linear-gradient(135deg,#3c142d,#201124);color:#ffe5ac;padding:calc(8px + env(safe-area-inset-top)) 12px 9px;border-bottom:1px solid #b88c49;box-shadow:0 3px 16px #0005}
+html.phone-sheet-app #character .phone-sheet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+html.phone-sheet-app #character .phone-sheet-brand{font:600 19px Georgia,serif;color:#f8d690}
+html.phone-sheet-app #character .phone-sheet-menu{min-height:36px;padding:5px 12px;color:#f9deb0;border:1px solid #a77b50;background:#2a1426;border-radius:8px}
+html.phone-sheet-app #character .phone-sheet-identity{display:flex;align-items:center;gap:10px}
+html.phone-sheet-app #character .phone-sheet-portrait{flex:0 0 52px;width:52px;height:60px;border:1px solid #c79d5e;border-radius:9px;overflow:hidden;background:#251228;padding:0}
+html.phone-sheet-app #character .phone-sheet-portrait img{width:100%;height:100%;object-fit:cover}
+html.phone-sheet-app #character .phone-sheet-info{flex:1;min-width:0;display:grid;gap:4px}
+html.phone-sheet-app #character .phone-sheet-info strong{font:600 23px/1.15 Georgia,serif;overflow-wrap:anywhere}
+html.phone-sheet-app #character .phone-sheet-info>span{font:13px/1.2 system-ui;color:#efdbc2}
+html.phone-sheet-app #character .phone-sheet-lock{font-size:0;width:44px;height:44px;min-width:44px;padding:0;margin:0;border:1px solid #b58c56;background:#291629;border-radius:10px}
+html.phone-sheet-app #character .phone-sheet-lock::before{content:'🔓';font-size:21px}
+html.phone-sheet-app #character .phone-sheet-lock[aria-pressed=true]::before{content:'🔒'}
+html.phone-sheet-app #character .phone-sheet-resources{display:flex;align-items:center;gap:8px;margin-top:8px}
+html.phone-sheet-app #character .phone-sheet-resources button{min-height:36px;padding:5px 10px;border:1px solid #c29c62;border-radius:8px;background:#f4e6c9;color:#3c2430;font:bold 14px Georgia,serif;white-space:nowrap}
+html.phone-sheet-app #character .phone-sheet-save{font:10px/1.25 system-ui;color:#c5e1b0;max-height:30px;overflow:auto;flex:1}
+html.phone-sheet-app #character .sheet-scroll{display:flex!important;flex-direction:column;gap:12px;box-sizing:border-box;width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;padding:16px 12px calc(100px + env(safe-area-inset-bottom))!important;background:#f2ead3;color:#2b2119}
+html.phone-sheet-app #character .sheet-scroll[data-phone-paper=parchment]{background:url('assets/paper-textures/parchment.webp') center/100% 100% #f2ead3}
+html.phone-sheet-app #character .sheet-scroll[data-phone-paper=worn]{background:url('assets/paper-textures/worn.webp') center/100% 100% #f2ead3}
+html.phone-sheet-app #character :is(.dnd-sheet,.dnd-page1-grid,.dnd-page2-grid,.dnd-left-info,.dnd-center,.dnd-right){display:contents!important}
+html.phone-sheet-app #character :is(.dnd-sheet,.dnd-page1-grid,.dnd-page2-grid)::before,
+html.phone-sheet-app #character :is(.dnd-sheet,.dnd-page1-grid,.dnd-page2-grid)::after,
+html.phone-sheet-app #character .dnd-sheet-brand{display:none!important}
+html.phone-sheet-app #character [data-phone-part]:not([data-phone-visible]){display:none!important}
+html.phone-sheet-app #character .phone-sheet-title{font:600 25px Georgia,serif;color:#562039;margin:0 0 2px;text-align:center;outline-offset:4px}
+html.phone-sheet-app #character :is(.ds-box,.passive-box,.combat-top,.hitdeath-grid,.dnd-abilities,.spell-page-grid,.spell-sheet-header,.dnd-pill-row,.ds-header){position:static!important;box-sizing:border-box;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:10px!important;transform:none!important;flex:none!important}
+html.phone-sheet-app #character :is(.ds-box,.passive-box,.spell-level-box){border:1px solid #9a8061!important;border-radius:12px!important;background:#fff9e726!important;box-shadow:none!important}
+html.phone-sheet-app #character .ds-box h3{font:700 14px Georgia,serif!important;color:#4c2635;margin:0 0 10px!important}
+html.phone-sheet-app #character .ds-box h3::before,
+html.phone-sheet-app #character .ds-box h3::after{display:none!important}
+html.phone-sheet-app #character .dnd-abilities{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px;padding:0!important}
+html.phone-sheet-app #character .ability-box{height:auto!important;min-height:0!important;border:1px solid #a58a65!important;border-radius:10px!important;padding:10px 5px 6px!important;margin:0!important;background:#fff7df55!important}
+html.phone-sheet-app #character .ability-box::before,
+html.phone-sheet-app #character .ability-box::after{display:none!important}
+html.phone-sheet-app #character .ability-box>span{font:bold 10px system-ui!important;letter-spacing:0!important;color:#4c3528}
+html.phone-sheet-app #character .ability-box>input:not(.ability-mod){height:37px!important;font:600 27px Georgia!important;padding:0!important;text-align:center;border:0!important}
+html.phone-sheet-app #character .ability-box .ability-mod{position:static!important;inset:auto!important;transform:none!important;display:block;margin:0 auto!important;width:45px!important;height:24px!important;min-height:0!important;font:600 15px Georgia!important;border:1px solid #b49c79!important;border-radius:12px!important;padding:0!important;background:#f6ebd5!important}
+html.phone-sheet-app #character :is(input:not([type=checkbox]):not([type=file]),textarea,select){box-sizing:border-box;min-width:0!important;max-width:100%;font-size:16px!important;color:#2d211b!important;border-color:#aa9479!important;border-radius:5px;padding:6px!important}
+html.phone-sheet-app #character .dnd-sheet label{font-size:12px!important;line-height:1.35;margin-bottom:6px}
+html.phone-sheet-app #character :is(.skill-line,.save-grid>label){display:grid!important;grid-template-columns:28px 48px minmax(0,1fr)!important;align-items:center!important;gap:8px!important;min-height:47px;margin:0!important;border-bottom:1px solid #a68d6333;padding:3px 0!important}
+html.phone-sheet-app #character :is(.skill-line,.save-grid>label)>span{font:500 14px/1.3 system-ui!important;color:#30231c}
+html.phone-sheet-app #character .prof-dot{width:21px!important;height:21px!important;margin:auto!important;accent-color:#681f3d}
+html.phone-sheet-app #character :is(.skill-line,.save-grid>label)>input:not([type=checkbox]){height:36px!important;text-align:center}
+html.phone-sheet-app #character .save-grid{display:block!important}
+html.phone-sheet-app #character .combat-top{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;padding:0!important}
+html.phone-sheet-app #character .combat-top label{height:auto!important;padding:8px 3px!important;border:1px solid #a58a65!important;border-radius:10px!important;clip-path:none!important}
+html.phone-sheet-app #character .combat-top label span{font-size:9px!important;display:block;text-align:center}
+html.phone-sheet-app #character .combat-top input{height:38px!important;font-size:25px!important}
+html.phone-sheet-app #character .hp-box{display:grid!important;grid-template-rows:auto auto auto!important;gap:8px!important}
+html.phone-sheet-app #character .ds-box::before,
+html.phone-sheet-app #character .ds-box::after{display:none!important}
+html.phone-sheet-app #character .hp-box label span{font-size:10px!important}
+html.phone-sheet-app #character .hp-box :is(.hp-current,.hp-temp) input{height:43px!important;font-size:26px!important}
+html.phone-sheet-app #character .hitdeath-grid{display:grid!important;grid-template-columns:1fr!important;padding:0!important;gap:10px!important}
+html.phone-sheet-app #character .hitdeath-grid .ds-box{height:auto!important}
+html.phone-sheet-app #character :is(.ds-header,.ds-header-grid,.physical-grid,.spell-sheet-header){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+html.phone-sheet-app #character .ds-header{grid-template-columns:1fr!important}
+html.phone-sheet-app #character .ds-name input{font-size:22px!important}
+html.phone-sheet-app #character :is(.features-box,.personality-box,.equipment-layout,.allies-panel,.additional-panel,.treasure-panel,.backstory-panel){height:auto!important;min-height:0!important}
+html.phone-sheet-app #character textarea{width:100%!important;height:180px!important;min-height:100px!important;max-height:60vh;resize:vertical!important;overflow:auto!important;font:15px/1.6 Georgia,serif!important}
+html.phone-sheet-app #character .equipment-layout{display:grid!important;grid-template-columns:70px minmax(0,1fr)!important;gap:9px}
+html.phone-sheet-app #character .equipment-layout textarea{height:340px!important}
+html.phone-sheet-app #character .coin-rail input{height:40px!important}
+html.phone-sheet-app #character .phone-sheet-details{border:1px solid #b19a78;border-radius:10px;padding:0 10px;background:#fff8e530}
+html.phone-sheet-app #character .phone-sheet-details>summary{padding:14px 0;cursor:pointer;font:600 15px Georgia;color:#532539;min-height:44px;box-sizing:border-box}
+html.phone-sheet-app #character .phone-sheet-details>.ds-box{border:0!important;padding:0 0 10px!important}
+html.phone-sheet-app #character .phone-sheet-details>.ds-box>h3{display:none!important}
+html.phone-sheet-app #character .spell-page-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;padding:0!important}
+html.phone-sheet-app #character .spell-level-box{height:auto!important;min-height:0!important;margin:0!important;padding:12px!important;overflow:visible!important}
+html.phone-sheet-app #character .spell-level-heading{min-height:48px;height:auto!important;gap:10px}
+html.phone-sheet-app #character .spell-level-number{width:39px!important;height:39px!important;line-height:37px!important;flex:0 0 39px;font-size:22px!important}
+html.phone-sheet-app #character .spell-level-heading h3{font-size:17px!important}
+html.phone-sheet-app #character .sheet-spell-list>label{display:flex!important;align-items:center;gap:9px;min-height:42px!important}
+html.phone-sheet-app #character .sheet-spell-list input:not([type=checkbox]),
+html.phone-sheet-app #character .sheet-spell-name{font-size:16px!important;min-height:40px!important;white-space:normal!important;flex:1;min-width:0!important}
+html.phone-sheet-app #character .sheet-level-slot-track{display:flex!important;flex-wrap:wrap;gap:8px!important}
+html.phone-sheet-app #character .sheet-level-slot-dot{width:28px!important;height:28px!important;min-width:28px!important;border-width:2px!important}
+html.phone-sheet-app #character .character-portrait{height:360px!important}
+html.phone-sheet-app #character .phone-sheet-tabs{position:fixed;bottom:0;left:0;right:0;z-index:910;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:7px max(7px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));border-top:1px solid #bf954e;background:linear-gradient(#391629,#211021);box-shadow:0 -4px 15px #0004}
+html.phone-sheet-app #character .phone-sheet-tabs[hidden]{display:none!important}
+html.phone-sheet-app #character .phone-sheet-tabs button{display:grid;place-items:center;gap:3px;min-height:56px;padding:5px 2px;border:1px solid transparent;border-radius:10px;color:#f4deb3;background:transparent;font:600 11px system-ui}
+html.phone-sheet-app #character .phone-sheet-tabs button[aria-current=page]{background:linear-gradient(#ffe4a3,#c89740);border-color:#ffdc84;color:#32182c}
+html.phone-sheet-app #character .phone-tab-icon{font:25px Georgia;line-height:1}
+html.phone-sheet-app body.phone-sheet-active .roll-dock{bottom:calc(85px + env(safe-area-inset-bottom));right:8px}
+html.phone-sheet-app body.phone-sheet-active dialog{box-sizing:border-box;max-width:calc(100vw - 20px)!important;max-height:85dvh!important;overflow:auto}
+@media(orientation:landscape){
+ html.phone-sheet-app #character .phone-sheet-header{position:relative;padding-top:8px}
+ html.phone-sheet-app #character .phone-sheet-top{margin-bottom:2px}
+ html.phone-sheet-app #character .phone-sheet-portrait{height:44px}
+ html.phone-sheet-app #character .dnd-abilities{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+ html.phone-sheet-app #character .hitdeath-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
