@@ -116,34 +116,11 @@ function exportJson() {
   document.body.appendChild(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-async function compressPortrait(dataUrl) {
-  if (typeof dataUrl !== 'string' || dataUrl.length <= 110000) return dataUrl;
-  if (!dataUrl.startsWith('data:image/')) return dataUrl;
-  return await new Promise((resolve,reject)=>{
-    const img=new Image();
-    img.onload=()=>{
-      try {
-        const scale=Math.min(1,420/Math.max(img.naturalWidth,img.naturalHeight));
-        const canvas=document.createElement('canvas');
-        canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
-        canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-        const ctx=canvas.getContext('2d');
-        ctx.fillStyle='#15121a';ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        const result=canvas.toDataURL('image/jpeg',.73);
-        resolve(result);
-      } catch(err) { reject(err); }
-    };
-    img.onerror=()=>reject(new Error('No se pudo optimizar la foto para sincronizar.'));
-    img.src=dataUrl;
-  });
-}
 async function payload() {
   const local=getLocal();
   local.character={...local.character};
-  if(local.character.portrait) local.character.portrait=await compressPortrait(local.character.portrait);
   const size=new Blob([JSON.stringify(local)]).size;
-  if(size>820000) throw new Error('El guardado supera el tamaño permitido. Reduce el tamaño de la foto antes de sincronizar.');
+  if(size>820000) throw new Error('El original supera el espacio disponible de la hoja. Elige una imagen de menor peso para guardarla en la nube.');
   return local;
 }
 function docRef() { return api.doc(firestore,'users',account.uid,'characters',documentId); }
