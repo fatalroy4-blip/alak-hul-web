@@ -457,39 +457,8 @@ function openCombatCrop(src,initial){
  save.onclick=()=>{if(!ready||!canChangePortrait()||targetUid!==owner)return;model.combatImage=src;model.combatThumbnail=canvas.toDataURL('image/jpeg',.82);model.combatCrop={zoom:z,x,y};change();renderDesign();dialog.close();};
  dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();img.src=src;
 }
-async function optimize(file){
- if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error("Elige un JPG, PNG o WebP menor de 20 MB");
- return new Promise((resolve,reject)=>{
-  const image=new Image(),url=URL.createObjectURL(file);
-  image.onerror=()=>{URL.revokeObjectURL(url);reject(Error("Imagen no válida"))};
-  image.onload=()=>{
-   URL.revokeObjectURL(url);
-   try{
-    const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d",{alpha:false});
-    let width=Math.min(1350,image.naturalWidth);
-    for(let step=0;step<8;step++){
-     canvas.width=Math.max(1,width);canvas.height=Math.max(1,Math.round(width*image.naturalHeight/image.naturalWidth));
-     ctx.fillStyle="#24142d";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
-     for(const quality of [.75,.53,.35,.2,.12]){
-      let value=canvas.toDataURL("image/webp",quality);
-      if(!value.startsWith("data:image/webp"))value=canvas.toDataURL("image/jpeg",quality);
-      if(value.length<82000){resolve(value);return}
-     }width=Math.max(350,Math.floor(width*.77));
-    }reject(Error("No se pudo optimizar"));
-   }catch(e){reject(e)}
-  };image.src=url;
- });
-}
-// Portraits retain detail independently of the compact combat thumbnail.
-async function portraitImage(file,budget){
- if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw Error('Elige un JPG, PNG o WebP.');
- if(Math.ceil(file.size/3)*4+50>budget)throw Error('El archivo original supera el espacio disponible de esta hoja. No se ha comprimido ni sustituido tu retrato. Para guardar originales más grandes hace falta habilitar almacenamiento de imágenes separado.');
- const url=URL.createObjectURL(file),image=new Image();
- try{
-  await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('No se pudo leer la imagen'));image.src=url;});
-  return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('No se pudo leer la imagen'));reader.readAsDataURL(file);});
- }finally{URL.revokeObjectURL(url);}
-}
+async function optimize(file,kind='private'){return window.alakImages.upload(file,kind,targetUid);}
+async function portraitImage(file,budget){return window.alakImages.upload(file);}
 async function changePortrait(file){
  if(!canChangePortrait())return;
  const owner=targetUid,generation=model.sheetGeneration;
@@ -503,8 +472,9 @@ async function changePortrait(file){
  }catch(e){status('Error de imagen: '+e.message);alert(e.message);}
 }
 async function changeImage(file,callback,refresh=false){
+ const owner=targetUid,generation=model.sheetGeneration;
  status("Preparando imagen…");
- try{callback(await optimize(file));change();renderHome();renderSheet();if(refresh)renderDesign()}catch(e){status("Error de imagen: "+e.message)}
+ try{const image=await optimize(file);if(targetUid!==owner||model.sheetGeneration!==generation)return;callback(image);change();renderHome();renderSheet();if(refresh)renderDesign()}catch(e){status("Error de imagen: "+e.message)}
 }
 function renderAll(){if(!model)return;
  const newLabel=model.traitsButtonName||"Rasgos";
@@ -512,6 +482,7 @@ function renderAll(){if(!model)return;
  const heading=document.querySelector("#traitsView h2");if(heading)heading.textContent=newLabel;
  renderSheet();renderHome();renderEntries("spells");renderEntries("traits");renderExtraNav();renderDesign();renderCombat();renderSpellSlots();renderSpellCatalog();window.alakRefreshAdventureTools?.();window.alakCombatEffects?.refresh();}
 async function activate(account){
+ await window.alakImages?.bind(account);
  user=account;const requested=new URLSearchParams(location.search).get("uid");
  currentRole=await role(account.uid);
  administrator=["owner","dm"].includes(currentRole);
@@ -764,7 +735,7 @@ function bind(){
   delete model.traitsTrash;change();renderEntries('traits');renderSheet();$('traitBulkStatus').textContent='Rasgos restaurados. La incorporación automática continúa pausada.';
  };
 
- $('combatImageUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file||!canChangePortrait())return;try{openCombatCrop(await optimize(file),null);}catch(error){status(error.message);}};
+ $('combatImageUpload').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file||!canChangePortrait())return;try{openCombatCrop(await optimize(file,'combat'),null);}catch(error){status(error.message);}};
  $('adjustCombatThumbnail').onclick=()=>{if(canChangePortrait()&&model.combatImage)openCombatCrop(model.combatImage,model.combatCrop);};
  $('viewCombatImage').onclick=()=>window.alakViewPortrait?.(model.fields.name||'Mi personaje',model.combatImage||'assets/hero.svg',$('viewCombatImage'));
 
@@ -837,6 +808,6 @@ onAuthStateChanged(auth,account=>{
  window.alakNavigation?.stop();
  if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(timer);model=null;user=null;targetUid=null;pending=false;renderReturnControls();
  if(account)void activate(account);
- else{$("workspace").hidden=true;$("authWall").hidden=false;$("logoutBtn").hidden=true;status("Sin conectar");$("loginStatus").textContent=""}
+ else{void window.alakImages?.bind(null);$("workspace").hidden=true;$("authWall").hidden=false;$("logoutBtn").hidden=true;status("Sin conectar");$("loginStatus").textContent=""}
 });
 window.addEventListener("beforeunload",()=>{if(model&&pending){try{localStorage.setItem("aventurero-respaldo-"+targetUid,JSON.stringify(model))}catch{}}});

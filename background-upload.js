@@ -3,7 +3,7 @@
 (function(){
 const titles={solar:"",arcane:""};
 const assets={solar:"assets/theme-santuario-solar.png",celestial:"assets/theme-templo-celestial.png",arcane:"assets/theme-biblioteca-arcana.png",violetvale:"assets/theme-valle-violeta.png"};
-const valid=v=>typeof v==="string"&&v.length<160000&&/^data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(v);
+const valid=v=>window.alakImages?.valid(v)||typeof v==="string"&&v.length<160000&&/^data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(v);
 const host=document.getElementById("backgroundChoiceGrid");
 if(!host)return;
 const styles=document.createElement("style");
@@ -98,36 +98,6 @@ renderAlakBackgroundChoices=function(){
 };
 function refresh(){applyAlakBackground();renderAlakBackgroundChoices();}
 window.alakBgRefresh=refresh;
-function compact(file){
- return new Promise((resolve,reject)=>{
-  if(!/^image\/(?:png|jpeg|webp)$/.test(file.type))return reject(Error("Selecciona un archivo PNG, JPG o WebP."));
-  if(file.size>20000000)return reject(Error("La imagen supera los 20 MB."));
-  const im=new Image(),url=URL.createObjectURL(file);
-  im.onerror=()=>{URL.revokeObjectURL(url);reject(Error("No se pudo leer la imagen."));};
-  im.onload=()=>{
-   URL.revokeObjectURL(url);
-   try{
-    if(im.naturalWidth*im.naturalHeight>44000000)throw Error("Imagen demasiado grande.");
-    const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d",{alpha:false});
-    if(!ctx)throw Error("Este dispositivo no pudo procesar la imagen.");
-    let w=Math.min(1672,im.naturalWidth),best="";
-    for(let round=0;round<6;round++){
-     const h=Math.round(w*im.naturalHeight/im.naturalWidth);
-     canvas.width=w;canvas.height=h;ctx.fillStyle="#181223";ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h);
-     for(const q of [.8,.7,.59,.48,.38,.28,.2,.14]){
-      let data=canvas.toDataURL("image/webp",q);
-      if(!data.startsWith("data:image/webp"))data=canvas.toDataURL("image/jpeg",q);
-      if(!best||data.length<best.length)best=data;
-      if(data.length<=140000)return resolve(data);
-     }
-     w=Math.max(900,Math.round(w*.85));if(w===900)break;
-    }
-    if(best.length<150000)return resolve(best);
-    throw Error("No se pudo optimizar la imagen. Intenta con otra.");
-   }catch(e){reject(e);}
-  };
-  im.src=url;
- });
-}
+function compact(file){return window.alakImages.upload(file);}
 refresh();
 })();

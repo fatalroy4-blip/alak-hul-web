@@ -41,18 +41,18 @@ async function startApp() {
   await insertScript("cleric-grimoire-2014.js?v=64");
   await insertScript("legacy-adventure.js?v=95");
   await insertScript("armor-class.js?v=71");
-  await insertScript("script.js?v=103");
+  await insertScript("script.js?v=108");
   await insertScript("warding-flare.js?v=1");
-  await insertScript("campaign-v42.js?v=99");
-  await insertScript("background-upload.js?v=107");
-  await insertScript("home-design.js?v=93");
+  await insertScript("campaign-v42.js?v=108");
+  await insertScript("background-upload.js?v=108");
+  await insertScript("home-design.js?v=108");
   await insertScript("campaign-controls.js?v=102");
   await insertScript("cloud-sync.js?v=105", true);
   await insertScript("combat-effects.js?v=80");
   await insertScript("combat-status-data.js?v=79");
   await insertScript("combat-status.js?v=80");
-  await insertScript("encounter-bridge.js?v=83");
-  await insertScript("mesa-compartida.js?v=103", true);
+  await insertScript("encounter-bridge.js?v=108");
+  await insertScript("mesa-compartida.js?v=108", true);
   await insertScript("rules-2014-catalog.js?v=104");
   await insertScript("rules-2014-subclasses.js?v=104");
   await insertScript("rules-2014-backgrounds.js?v=50");
@@ -93,6 +93,7 @@ try {
  onAuthStateChanged(auth, async user => {
   const attempt = ++verifying;
   if (!user) {
+   void window.alakImages?.bind(null);
    lock();
    message("Inicia sesión con la cuenta propietaria de Alak Hul.");
    login.hidden = false;
@@ -109,7 +110,7 @@ try {
    if (roleSnapshot.exists() && roleSnapshot.data().role === "owner") {
     const previous=await getDoc(doc(db,'users',user.uid,'characters','alak-hul'));
     if(previous.exists()&&previous.data().newSheetActive){location.replace('jugador.html'+location.search);return;}
-    await startApp();window.alakNavigation?.start(user.uid,'owner');
+    await window.alakImages?.bind(user);await startApp();window.alakNavigation?.start(user.uid,'owner');
    } else {
     location.replace("jugador.html");
    }

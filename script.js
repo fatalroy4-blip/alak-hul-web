@@ -349,7 +349,7 @@ function getDefaultPortrait(name,isEnemy){
  if(/^A\d+$/i.test(name))return 'assets/ally.svg';
  return isEnemy?'assets/enemy.svg':'assets/hero.svg';
 }
-function getPortrait(name,isEnemy){const val=state.portraits?.[name];return typeof val==='string'&&/^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(val)?val:getDefaultPortrait(name,isEnemy);}
+function getPortrait(name,isEnemy){const val=state.portraits?.[name];return typeof val==='string'&&(window.alakImages?.valid(val)||/^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(val))?val:getDefaultPortrait(name,isEnemy);}
 function isNamedCombatant(name){return !/^[EA]\d+$/i.test(name);}
 let portraitTarget=null;
 
@@ -976,7 +976,7 @@ function bindCharacter(){
   document.querySelectorAll('[data-char]').forEach(el=>el.addEventListener('input',saveCharacter));
   ['hpCurrent','hpMax'].forEach(key=>{const el=hpInput(key);if(el)el.addEventListener('change',syncRogerCombatFromSheet);});
   const up=document.getElementById('portraitUpload');
-  if(up)up.addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=document.getElementById('characterPortrait');if(img)img.src=r.result;let s={};try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch(e){}s.portrait=r.result;localStorage.setItem(CHAR_KEY,JSON.stringify(s));window.alakCloud?.onLocalChange?.();};r.readAsDataURL(f)});
+  if(up)up.addEventListener('change',async e=>{const f=e.target.files?.[0];e.target.value='';if(!f)return;up.disabled=true;try{const src=await window.alakImages.upload(f);let s={};try{s=JSON.parse(localStorage.getItem(CHAR_KEY)||'{}')}catch{}s.portrait=src;localStorage.setItem(CHAR_KEY,JSON.stringify(s));const img=document.getElementById('characterPortrait');if(img)img.src=src;window.alakCloud?.onLocalChange?.();}catch(err){alert('No se pudo cambiar el retrato: '+err.message);}finally{up.disabled=false;}});
 }
 
 // --- Migración v8: completa campos que v7 tenía resumidos ---

@@ -214,14 +214,17 @@ function buildCrop(){
  $("campaignPortraitCenter")?.addEventListener("click",()=>{panX=0;panY=0;zoom=1;slider.value="1";redraw();});
  $("campaignPortraitCancel")?.addEventListener("click",()=>dialog.close());
  dialog.addEventListener("close",cleanup);
- $("campaignPortraitSave")?.addEventListener("click",()=>{
+ $("campaignPortraitSave")?.addEventListener("click",async()=>{
   if(!image||!subject)return;
   const out=document.createElement("canvas");out.width=256;out.height=256;
   paint(out,256);
   const data=out.toDataURL("image/jpeg",.76);
   if(data.length>200000){$("campaignPortraitMessage").textContent="La imagen todavía es demasiado grande.";return;}
+  const target=subject,save=$("campaignPortraitSave");save.disabled=true;
+  let uploaded;try{const blob=await (await fetch(data)).blob();uploaded=await window.alakImages.upload(blob,"combat");}catch(e){$("campaignPortraitMessage").textContent=e.message;save.disabled=false;return;}
+  save.disabled=false;if(subject!==target||!dialog.open)return;
   const previous=state.portraits?.[subject];
-  state.portraits=state.portraits||{};state.portraits[subject]=data;
+  state.portraits=state.portraits||{};state.portraits[subject]=uploaded;
   try{
    saveState();renderCombatAdmin();renderRoster();renderInitiative();renderTable();
    dialog.close();

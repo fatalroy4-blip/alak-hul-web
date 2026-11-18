@@ -203,7 +203,7 @@ if(mountPoints.length){
  function portrait(entry,full=false){
   if(entry.uid){const profile=portraitProfiles.get(entry.uid);return (!full&&profile?.thumbnail)||profile?.portrait||'assets/hero.svg';}
   const value=entry.portrait||info.participantCatalog?.find(p=>p.id===entry.id)?.portrait;
-  return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
+  return typeof value==='string'&&(window.alakImages?.valid(value)||/^(data:image\/(jpeg|png|webp);base64,|assets\/)/i.test(value))?value:entry.type==='enemy'?'assets/enemy.svg':entry.type==='ally'?'assets/ally.svg':'assets/hero.svg';
  }
  function combatList(quick=false){
   const list=create('div','mc-combat-list');
@@ -407,6 +407,7 @@ if(mountPoints.length){
  }
  function render(){window.alakCombatEffects?.set(hasCampaign?info:null,current?.uid);if(!hasCampaign)return;nav.hidden=false;watchPortraits();if(info.selectionInitialized)window.alakApplyEncounterRoster?.(info.roster,info.started,info.turnIndex);renderTable();renderCombat();if(quickDialog?.open)renderCombat(quickDialog.lastElementChild,true);renderDiary();renderManage();renderPlayerLinks();select(window.alakNavigation?.get()?.campaign||active)}
  async function activate(account){
+  await window.alakImages?.bind(account);
   const localCatalog=window.alakEncounterCatalog?.();
   current=account;warn("⏳ Verificando acceso…");
   try{
@@ -466,7 +467,7 @@ if(mountPoints.length){
   for(const stop of portraitSubscriptions.values())stop();portraitSubscriptions.clear();portraitProfiles.clear();
   window.alakCombatEffects?.set(null,null);current=null;players=[];info=defaults();role="player";isAdmin=false;
   if(account)void activate(account);
-  else{warn("Inicia sesión con Google para acceder a la mesa.");render()}
+  else{void window.alakImages?.bind(null);warn("Inicia sesión con Google para acceder a la mesa.");render()}
  });
  select("table");
 }

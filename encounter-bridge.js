@@ -50,7 +50,7 @@ window.alakApplyEncounterRoster=(roster,started=false,index=0)=>{
   if(p.dead!==undefined)c.dead=p.dead;
   c.downed=!!p.downed;c.conditions=Array.isArray(p.conditions)?p.conditions:[];c.conditionSources=p.conditionSources||{};
   if(p.side)c.side=p.side;
-  if(p.portrait?.startsWith('data:image/'))state.portraits[p.name]=p.portrait;
+  if(p.portrait?.startsWith('data:image/')||window.alakImages?.valid(p.portrait))state.portraits[p.name]=p.portrait;
   state.combat[p.name]=c;
   if(p.name==='Roger'&&typeof hpInput==='function'){const field=hpInput('hpMax');if(field&&p.maxHP!=null)field.value=String(p.maxHP);syncRogerHpFromCombat();}
  }

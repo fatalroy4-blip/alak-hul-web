@@ -2,7 +2,7 @@
 (()=>{
 const host=document.getElementById('homeDesignEditor');if(!host)return;
 const cards=[['character','Personaje'],['spells','Conjuros'],['channel','Canalizar Divinidad'],['combat','Campaña']];
-const valid=s=>typeof s==='string'&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
+const valid=s=>window.alakImages?.valid(s)||typeof s==='string'&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
 const message=s=>document.getElementById('homeDesignStatus').textContent=s;
 function apply(){const design=state.homeAppearance||{};
 const logo=document.querySelector('.home-fixed-logo');logo.src=valid(design.logo)?design.logo:'assets/home-fixed-logo.webp';logo.hidden=design.logo===null;logo.style.display=design.logo===null?'none':'';logo.alt=valid(design.logo)?'Logotipo personalizado de Inicio':'Alak Hul — Hoja de Aventurero';
@@ -11,16 +11,8 @@ const home=document.getElementById('home');if(valid(design.background))home.styl
 for(const [key] of cards){const button=document.querySelector('.home-card-grid .home-'+key);button.style.removeProperty('background-image');button.classList.remove('has-custom-background');button.style.removeProperty('--home-card-background');}
 }
 function commit(next){const candidate={...state,homeAppearance:next};let character={};try{character=JSON.parse(localStorage.getItem('alakHulCharacterV7')||'{}')}catch{}if(new Blob([JSON.stringify({state:candidate,character})]).size>800000)throw Error('No queda espacio para otra imagen. Restaura alguna imagen personalizada antes de continuar.');const previous=state.homeAppearance;state.homeAppearance=next;try{saveState();}catch(e){state.homeAppearance=previous;throw e;}apply();message('Cambios guardados en esta hoja. Consulta el indicador de nube para confirmar la sincronización.');}
-async function prepare(file,cover){if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error('Selecciona JPG, PNG o WebP de hasta 20 MB.');const image=new Image(),url=URL.createObjectURL(file);try{await new Promise((ok,no)=>{image.onload=ok;image.onerror=()=>no(Error('No se pudo abrir la imagen.'));image.src=url;});const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');for(const edge of (cover?[1600,1200,900]:[900,700,500])){const scale=Math.min(1,edge/Math.max(image.naturalWidth,image.naturalHeight));canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));ctx.drawImage(image,0,0,canvas.width,canvas.height);for(const quality of [.9,.8,.7]){const value=canvas.toDataURL('image/webp',quality);if(value.length<(cover?150000:100000))return value;}}throw Error('La imagen tiene demasiado detalle para el espacio disponible. Prueba otra.');}finally{URL.revokeObjectURL(url);}}
-async function prepareForeground(file,logo,available){
-if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>20000000)throw Error('Selecciona JPG, PNG o WebP de hasta 20 MB.');
-const limit=Math.min(logo?230000:100000,available);if(limit<8000)throw Error('No queda espacio en la hoja para este icono. Restaura una imagen personalizada e inténtalo de nuevo.');
-const image=new Image(),url=URL.createObjectURL(file);
-try{await new Promise((ok,no)=>{image.onload=ok;image.onerror=()=>no(Error('No se pudo abrir la imagen.'));image.src=url;});
-if(Math.ceil(file.size/3)*4+50<=limit)return await new Promise((ok,no)=>{const reader=new FileReader();reader.onload=()=>ok(reader.result);reader.onerror=()=>no(Error('No se pudo leer el archivo.'));reader.readAsDataURL(file);});
-const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');for(const edge of (logo?[1200,1000,800,600]:[700,500,350,256])){const scale=Math.min(1,edge/Math.max(image.naturalWidth,image.naturalHeight));canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));ctx.drawImage(image,0,0,canvas.width,canvas.height);for(const quality of [.94,.9,.85,.8]){const value=canvas.toDataURL('image/webp',quality);if(value.length<=limit)return value;}}
-throw Error('No se pudo preparar la imagen conservando suficiente calidad. Prueba un archivo más ligero.');
-}finally{URL.revokeObjectURL(url);}}
+async function prepare(file,cover){return window.alakImages.upload(file);}
+async function prepareForeground(file,logo,available){return window.alakImages.upload(file);}
 function foregroundRoom(key,isLogo){const current=state.homeAppearance||{},design=isLogo?{...current,logo:''}:{...current,icons:{...current.icons,[key]:''}};let character={};try{character=JSON.parse(localStorage.getItem('alakHulCharacterV7')||'{}')}catch{}return Math.max(0,790000-new Blob([JSON.stringify({state:{...state,homeAppearance:design},character})]).size);}
 function refreshPreviews(){const design=state.homeAppearance||{};
 for(const input of host.querySelectorAll('input[type="file"]')){const card=input.closest('.home-design-image'),preview=card.querySelector('.home-design-preview'),reset=card.querySelector('button');const foreground=input.dataset.homeForeground,key=foreground||input.dataset.homeBackground;const value=foreground?(key==='logo'?design.logo:design.icons?.[key]):(key==='background'?design.background:design.cards?.[key]);reset.disabled=value!==null&&!value;card.querySelector('[data-remove-image]').disabled=value===null;preview.replaceChildren();preview.style.removeProperty('background-image');
